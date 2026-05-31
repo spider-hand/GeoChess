@@ -2,3 +2,9 @@ pre-commit:
   commands:
     ruff:
       run: cd server && uv run ruff check .
+
+    eslint:
+      run: cd apps/web && pnpm lint
+
+    prettier:
+      run: cd apps/web && pnpm format:check

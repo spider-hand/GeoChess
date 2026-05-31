@@ -1,5 +1,26 @@
-# Vue 3 + TypeScript + Vite
+# Web Client
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Setup
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+### Prerequisites
+
+- [Node.js](https://nodejs.org)
+- [pnpm](https://pnpm.io/installation)
+
+Install devendencies:
+
+```sh
+pnpm install
+```
+
+Run development server:
+
+```sh
+pnpm dev
+```
+
+## Generate API Client with [OpenAPI Generator](https://openapi-generator.tech/)
+
+```sh
+openapi-generator generate -i ../../server/openapi/openapi.yml -g typescript-fetch -o ./src/services/
+```

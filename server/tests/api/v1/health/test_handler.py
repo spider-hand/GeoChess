@@ -1,5 +1,6 @@
 import json
 from unittest.mock import MagicMock
+
 from api.v1.health.handler import handler
 
 

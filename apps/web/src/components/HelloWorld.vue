@@ -1,7 +1,13 @@
 <script setup lang="ts">
+import useHealthApi from "../composables/useHealthApi";
+
 defineProps<{
   name: string;
 }>();
+
+const { healthApi } = useHealthApi();
+
+healthApi.getHealth();
 </script>
 
 <template>

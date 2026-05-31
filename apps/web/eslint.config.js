@@ -17,4 +17,11 @@ export default defineConfig([
     files: ["**/*.vue"],
     languageOptions: { parserOptions: { parser: tseslint.parser } },
   },
+  {
+    name: "app/auto-generated-components",
+    files: ["src/components/ui/**/*.vue"],
+    rules: {
+      "vue/multi-word-component-names": "off",
+    },
+  },
 ]);

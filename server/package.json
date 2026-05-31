@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "sst dev --stage dev",
+    "deploy:dev": "sst deploy --stage dev",
+    "deploy:prod": "sst deploy --stage prod",
+    "remove:dev": "sst remove --stage dev",
+    "remove:prod": "sst remove --stage prod"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.32.1",
+  "dependencies": {
+    "sst": "4.15.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.161"
+  }
+}

@@ -1,0 +1,14 @@
+openapi: 3.1.0
+info:
+  title: Geo Chess Server API
+  version: 1.0.0
+  description: API specification for the Geo Chess server.
+servers:
+  - url: /
+paths:
+  /api/v1/health:
+    $ref: ./paths/api/v1/health.yml
+components:
+  schemas:
+    HealthResponse:
+      $ref: ./components/schemas/health-response.yml

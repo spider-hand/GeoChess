@@ -1,0 +1,4 @@
+pre-commit:
+  commands:
+    ruff:
+      run: cd server && uv run ruff check .

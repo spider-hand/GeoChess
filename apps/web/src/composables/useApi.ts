@@ -1,4 +1,4 @@
-import { Configuration } from "../services";
+import { Configuration } from "@/services";
 
 const useApi = () => {
   const apiConfig = new Configuration({

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useHealthApi from "../composables/useHealthApi";
+import useHealthApi from "@/composables/useHealthApi";
 
 defineProps<{
   name: string;

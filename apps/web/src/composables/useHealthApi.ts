@@ -1,5 +1,5 @@
-import { HealthApi } from "../services";
-import useApi from "./useApi";
+import { HealthApi } from "@/services";
+import useApi from "@/composables/useApi";
 
 const useHealthApi = () => {
   const { apiConfig } = useApi();

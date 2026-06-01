@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "generate:data": "node scripts/generateCountryData.js",
     "dev:web": "cd apps/web && pnpm dev",
     "dev:server": "cd server && pnpm dev",
     "dev": "concurrently \"pnpm dev:web\" \"pnpm dev:server\""
@@ -15,5 +16,7 @@
   "devDependencies": {
     "concurrently": "^10.0.0",
     "lefthook": "^2.1.9"
-  }
+  },
+  "private": true,
+  "type": "module"
 }

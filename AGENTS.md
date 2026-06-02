@@ -25,7 +25,7 @@ Key paths are below:
 - Do not manually modify files under `apps/web/src/services/`
 - Always keep API handlers, OpenAPI spec, and SST infrastructure definitions in sync
 - Always regenerate API client with OpenAPI Generator after updating API endpoint and OpenAPI spec inside `server/openapi/`
-- Always create a composable to manage server state, instead of using `fetch`.  If it doesn't have to manage the state of the API response, the file name should be `use{api-name}Api.ts` (e.g. `useHealthApi.ts`). If it manages the state of API responses, the file name should be `use{api-name}Query.ts` (e.g. `useUserQuery.ts`)
+- Always create a composable to manage server state, instead of using `fetch`. If it doesn't have to manage the state of the API response, the file name should be `use{api-name}Api.ts` (e.g. `useHealthApi.ts`). If it manages the state of API responses, the file name should be `use{api-name}Query.ts` (e.g. `useUserQuery.ts`)
 
 ## Development Commands
 
@@ -38,8 +38,8 @@ Execute commands below at `apps/web/`:
 - `pnpm format` - Automatically fix format issues
 - `pnpm format:check` - Check format issues
 - `pnpm test:browser` - Run unit test with browser mode
+- `pnpm generate:api` - Generate API client with OpenAPI Generator
 - `pnpm dlx shadcn-vue@latest add <component-name>` - Generate shadcn-vue component
-- `openapi-generator generate -i ../../server/openapi/openapi.yml -g typescript-fetch -o ./src/services/` - Generate API client
 
 ### Backend
 

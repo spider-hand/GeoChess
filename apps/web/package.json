@@ -11,7 +11,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "test:browser": "vitest --config=vitest.browser.config.ts"
+    "test:browser": "vitest --config=vitest.browser.config.ts",
+    "generate:api": "openapi-generator generate -i ../../server/openapi/openapi.yml -g typescript-fetch -o ./src/services/"
   },
   "dependencies": {
     "@lucide/vue": "^1.17.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@openapitools/openapi-generator-cli": "^2.34.0",
     "@types/node": "^24.12.3",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vitest/browser-playwright": "^4.1.7",

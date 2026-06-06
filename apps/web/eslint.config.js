@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
@@ -6,7 +9,7 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   {
-    ignores: ["dist/**", "node_modules/**"],
+    ignores: ["dist/**", "node_modules/**", "storybook-static/**"],
   },
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,vue}"],
@@ -20,11 +23,5 @@ export default defineConfig([
     files: ["**/*.vue"],
     languageOptions: { parserOptions: { parser: tseslint.parser } },
   },
-  {
-    name: "app/auto-generated-components",
-    files: ["src/components/ui/**/*.vue"],
-    rules: {
-      "vue/multi-word-component-names": "off",
-    },
-  },
+  ...storybook.configs["flat/recommended"],
 ]);

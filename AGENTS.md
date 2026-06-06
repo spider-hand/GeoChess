@@ -5,8 +5,11 @@
 Key paths are below:
 
 - `apps/web/` - Vue application for web client
+  - `src/components/` - Components, the directory are separated based on layouts and pages, except for `shared/` directory
+    - `shared/` - Components used across pages and layouts
   - `src/composables/` - Shared reactive logic and server state management with TanStack Query
   - `src/services/` - Auto-generated API client from OpenAPI Generator
+  - `src/stories/` - Stories for Storybook, the directory structure matches the project structure (e.g. `stories/components/shared/`)
   - `src/tests/unit/` - Unit test, the directory structure matches the project structure (e.g. `unit/components/`, `unit/composables/`)
 - `server/` - Backend (AWS Lambda + SST)
   - `openapi/` - OpenAPI spec

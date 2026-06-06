@@ -12,7 +12,9 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "test:browser": "vitest --config=vitest.browser.config.ts",
-    "generate:api": "openapi-generator generate -i ../../server/openapi/openapi.yml -g typescript-fetch -o ./src/services/"
+    "generate:api": "openapi-generator generate -i ../../server/openapi/openapi.yml -g typescript-fetch -o ./src/services/",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@lucide/vue": "^1.17.0",
@@ -35,6 +37,15 @@
     "vite": "^8.0.12",
     "vitest": "^4.1.7",
     "vitest-browser-vue": "^2.1.0",
-    "vue-tsc": "^3.2.8"
+    "vue-tsc": "^3.2.8",
+    "storybook": "^10.4.2",
+    "@storybook/vue3-vite": "^10.4.2",
+    "@chromatic-com/storybook": "^5.2.1",
+    "@storybook/addon-vitest": "^10.4.2",
+    "@storybook/addon-a11y": "^10.4.2",
+    "@storybook/addon-docs": "^10.4.2",
+    "eslint-plugin-storybook": "^10.4.2",
+    "playwright": "^1.60.0",
+    "@vitest/coverage-v8": "4.1.7"
   }
 }

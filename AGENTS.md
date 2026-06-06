@@ -5,16 +5,17 @@
 Key paths are below:
 
 - `apps/web/` - Vue application for web client
-  - `src/components/` - Components, the directory are separated based on layouts and pages, except for `shared/` directory
+  - `src/components/` - Components; the directory are separated based on layouts and pages, except for `shared/` directory
     - `shared/` - Components used across pages and layouts
   - `src/composables/` - Shared reactive logic and server state management with TanStack Query
+  - `src/pages/` - Page components
   - `src/services/` - Auto-generated API client from OpenAPI Generator
-  - `src/stories/` - Stories for Storybook, the directory structure matches the project structure (e.g. `stories/components/shared/`)
-  - `src/tests/unit/` - Unit test, the directory structure matches the project structure (e.g. `unit/components/`, `unit/composables/`)
+  - `src/stories/` - Stories for Storybook; the subdirectory structure mirrors `apps/web/src/` (e.g. `stories/components/shared/`, `stories/pages/`)
+  - `src/tests/unit/` - Unit tests; the subdirectory structure mirrors `apps/web/src/` (e.g. `unit/components/`, `unit/composables/`, `unit/pages/`)
 - `server/` - Backend (AWS Lambda + SST)
   - `openapi/` - OpenAPI spec
   - `src/` - Anything which should be included in the build artifact
-    - `api/` - Handler, the directory structure matches the endpoint structure (e.g. `api/v1/health/`)
+    - `api/` - Handler; the subdirectory structure mirrors the endpoint structure (e.g. `api/v1/health/`)
     - `core/` - Shared infrastructure and cross-cutting concerns, such as logging, authentication, configuration and utilities
     - `data/` - Static application data bundled with Lambda
     - `features/` - Feature-oriented business modules, such as repositories, services, models and domain logic

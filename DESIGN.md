@@ -393,6 +393,8 @@ Because the system currently uses generic fallback stacks, no special substituti
 
 The system is denser than airy editorial sites. It relies on contrast, structure, and repeated spacing tokens more than oversized whitespace. Separation comes from consistent vertical rhythm, card surfaces, and semantic color emphasis rather than large empty bands.
 
+Proximity is an explicit relationship signal in the layout system. Controls that belong to the same functional cluster should sit closer together than adjacent groups with different roles.
+
 ## Elevation & Depth
 
 | Level | Treatment | Use |
@@ -435,6 +437,8 @@ The radius hierarchy stays tight. Most surfaces sit within the 6-12px range, kee
 ### Top Navigation
 
 **`top-nav`** — The primary top navigation on dark canvas. 64px tall with `{colors.canvas-dark}` background and `{colors.on-dark}` text. It carries the product mark at left, primary navigation links, and a right-side action cluster including text actions and a primary CTA.
+
+Action spacing inside the top nav should reflect relationship, not just rhythm. Utility icon actions should form a tighter cluster than surrounding text actions, and the primary CTA should remain slightly separated so it reads as the final, highest-priority action.
 
 ### Buttons
 

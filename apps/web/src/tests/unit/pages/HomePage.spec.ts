@@ -8,11 +8,22 @@ test("renders the home page for the root route", async () => {
   await router.push("/");
   await router.isReady();
 
-  const { getByText } = render(App, {
+  const { getByRole } = render(App, {
     global: {
       plugins: [router],
     },
   });
 
-  await expect.element(getByText("Hello world")).toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "GeoChess" }))
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "How to play" }))
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "Language settings" }))
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "Sign Up" }))
+    .toBeInTheDocument();
 });

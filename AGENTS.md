@@ -22,13 +22,18 @@ Key paths are below:
 
 ## Coding Guidelines
 
+- Always create files for unit tests and stories when creating a new component
+- Always write one story per meaningful branch
 - Always check and resolve lint and format errors after modifying code
-- Always run unit test and make sure to pass all test cases after modifying code
+- Always run unit tests and make sure to pass all test cases after modifying code
+- Always write unit tests with a focus on branch coverage. Make sure to test rendered structure, emitted events, state branches and composed component branches
+- Do not add test cases for something which doesn't introduce branching or conditional behavior
 - Do not manually modify files under `apps/web/src/services/`
 - Always keep API handlers, OpenAPI spec, and SST infrastructure definitions in sync
 - Always regenerate API client with OpenAPI Generator after updating API endpoint and OpenAPI spec inside `server/openapi/`
 - Always create a composable to manage server state, instead of using `fetch`. If it doesn't have to manage the state of the API response, the file name should be `use{api-name}Api.ts` (e.g. `useHealthApi.ts`). If it manages the state of API responses, the file name should be `use{api-name}Query.ts` (e.g. `useUserQuery.ts`)
 - Always use the `@` alias instead of relative paths for imports within `apps/web/src/`
+- Always use `@lucide/vue` for icons
 
 ## Development Commands
 

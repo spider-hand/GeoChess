@@ -42,7 +42,7 @@ export AWS_PROFILE=<your-profile>
 Verify authentication:
 
 ```sh
-aws sts get-caller-identit
+aws sts get-caller-identity
 ```
 
 Expected output:

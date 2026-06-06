@@ -28,6 +28,7 @@ Key paths are below:
 - Always keep API handlers, OpenAPI spec, and SST infrastructure definitions in sync
 - Always regenerate API client with OpenAPI Generator after updating API endpoint and OpenAPI spec inside `server/openapi/`
 - Always create a composable to manage server state, instead of using `fetch`. If it doesn't have to manage the state of the API response, the file name should be `use{api-name}Api.ts` (e.g. `useHealthApi.ts`). If it manages the state of API responses, the file name should be `use{api-name}Query.ts` (e.g. `useUserQuery.ts`)
+- Always use the `@` alias instead of relative paths for imports within `apps/web/src/`
 
 ## Development Commands
 

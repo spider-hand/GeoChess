@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-import HomePage from "../../pages/HomePage.vue";
+import HomePage from "@/pages/HomePage.vue";
 
 const meta = {
   title: "Pages/HomePage",

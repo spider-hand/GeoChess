@@ -1,7 +1,7 @@
 import { expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
-import Button from "../../../../components/shared/Button.vue";
+import Button from "@/components/shared/Button.vue";
 
 test("renders slot content", async () => {
   const { getByRole } = render(Button, {

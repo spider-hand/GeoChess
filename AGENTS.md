@@ -5,7 +5,6 @@
 Key paths are below:
 
 - `apps/web/` - Vue application for web client
-  - `src/components/ui/` - Auto-generated components with shadcn-vue
   - `src/composables/` - Shared reactive logic and server state management with TanStack Query
   - `src/services/` - Auto-generated API client from OpenAPI Generator
   - `src/tests/unit/` - Unit test, the directory structure matches the project structure (e.g. `unit/components/`, `unit/composables/`)
@@ -21,7 +20,6 @@ Key paths are below:
 
 - Always check and resolve lint and format errors after modifying code
 - Always run unit test and make sure to pass all test cases after modifying code
-- Do not manually modify files under `apps/web/src/components/ui/`
 - Do not manually modify files under `apps/web/src/services/`
 - Always keep API handlers, OpenAPI spec, and SST infrastructure definitions in sync
 - Always regenerate API client with OpenAPI Generator after updating API endpoint and OpenAPI spec inside `server/openapi/`
@@ -39,7 +37,6 @@ Execute commands below at `apps/web/`:
 - `pnpm format:check` - Check format issues
 - `pnpm test:browser` - Run unit test with browser mode
 - `pnpm generate:api` - Generate API client with OpenAPI Generator
-- `pnpm dlx shadcn-vue@latest add <component-name>` - Generate shadcn-vue component
 
 ### Backend
 

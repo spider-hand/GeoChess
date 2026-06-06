@@ -48,3 +48,17 @@ Execute commands below at `server/`:
 - `uv run ruff check .` - Run linter
 - `uv run ruff check . --fix` - Automatically fix lint issues
 - `uv run pytest` - Run unit test
+
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked in GitHub Issues for this repository. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the default GitHub label vocabulary for the five canonical triage states. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This repo uses a single-context domain-doc layout. See `docs/agents/domain.md`.

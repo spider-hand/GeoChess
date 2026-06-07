@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bot, Flame, Leaf, Swords } from "@lucide/vue";
+import { Bot, SignalMedium, SignalHigh, Signal } from "@lucide/vue";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -21,17 +21,17 @@ const emit = defineEmits<{
 
 const difficultyOptions = computed(() => [
   {
-    icon: Leaf,
+    icon: SignalMedium,
     label: t("components.pages.Home.PlayVsAiCard.easy"),
     value: "easy" as const,
   },
   {
-    icon: Swords,
+    icon: SignalHigh,
     label: t("components.pages.Home.PlayVsAiCard.medium"),
     value: "medium" as const,
   },
   {
-    icon: Flame,
+    icon: Signal,
     label: t("components.pages.Home.PlayVsAiCard.hard"),
     value: "hard" as const,
   },

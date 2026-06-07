@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Globe } from "@lucide/vue";
+import { Wifi } from "@lucide/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -42,7 +42,7 @@ function emitJoinRandomMatch() {
   <section class="random-match-card">
     <div class="random-match-card__header">
       <div class="random-match-card__title">
-        <Globe class="random-match-card__title-icon" :size="20" />
+        <Wifi class="random-match-card__title-icon" :size="20" />
         <h2 class="random-match-card__title-label">
           {{ t("components.pages.Home.RandomMatchCard.title") }}
         </h2>

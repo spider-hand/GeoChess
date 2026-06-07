@@ -28,6 +28,17 @@ test("renders the home page for the root route", async () => {
     .element(getByRole("button", { name: "Sign Up" }))
     .toBeInTheDocument();
   await expect
+    .element(
+      getByText(`© ${new Date().getFullYear()} GeoChess All rights reserved.`),
+    )
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("navigation", { name: "Footer navigation" }))
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "GitHub", exact: true }))
+    .toBeInTheDocument();
+  await expect
     .element(getByRole("heading", { name: "Play vs AI" }))
     .toBeInTheDocument();
   await expect

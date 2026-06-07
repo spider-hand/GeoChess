@@ -110,7 +110,6 @@ function emitSignUpClick(event: MouseEvent) {
   position: relative;
   z-index: 1;
   width: 100%;
-  border-bottom: 1px solid var(--hairline);
   background-color: color-mix(in srgb, var(--canvas-dark) 92%, transparent);
 }
 

@@ -2,6 +2,7 @@
 import PlayVsAiCard from "@/components/pages/Home/PlayVsAiCard.vue";
 import PlayWithFriendsCard from "@/components/pages/Home/PlayWithFriendsCard.vue";
 import RandomMatchCard from "@/components/pages/Home/RandomMatchCard.vue";
+import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 </script>
 
@@ -14,11 +15,15 @@ import NavigationHeader from "@/components/shared/NavigationHeader.vue";
       <PlayWithFriendsCard />
       <RandomMatchCard :online-players="40" />
     </section>
+
+    <NavigationFooter />
   </main>
 </template>
 
 <style scoped>
 .home-page {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background:
     radial-gradient(
@@ -30,6 +35,7 @@ import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 }
 
 .home-page__content {
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 440px));
   gap: var(--spacing-lg);

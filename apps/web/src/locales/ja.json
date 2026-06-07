@@ -35,6 +35,14 @@
         "howToPlay": "遊び方",
         "signUp": "サインアップ",
         "githubRepositoryLink": "GitHub リポジトリへのリンク"
+      },
+      "NavigationFooter": {
+        "navigationLabel": "フッターナビゲーション",
+        "credit": "© {year} GeoChess All rights reserved.",
+        "github": "GitHub",
+        "privacy": "プライバシー",
+        "terms": "利用規約",
+        "contact": "お問い合わせ"
       }
     }
   }

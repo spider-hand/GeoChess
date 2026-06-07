@@ -35,6 +35,14 @@
         "howToPlay": "Spielanleitung",
         "signUp": "Registrieren",
         "githubRepositoryLink": "GitHub-Repository-Link"
+      },
+      "NavigationFooter": {
+        "navigationLabel": "Fußzeilennavigation",
+        "credit": "© {year} GeoChess Alle Rechte vorbehalten.",
+        "github": "GitHub",
+        "privacy": "Datenschutz",
+        "terms": "Nutzungsbedingungen",
+        "contact": "Kontakt"
       }
     }
   }

@@ -35,6 +35,14 @@
         "howToPlay": "玩法说明",
         "signUp": "注册",
         "githubRepositoryLink": "GitHub 仓库链接"
+      },
+      "NavigationFooter": {
+        "navigationLabel": "页脚导航",
+        "credit": "© {year} GeoChess 版权所有。",
+        "github": "GitHub",
+        "privacy": "隐私",
+        "terms": "条款",
+        "contact": "联系"
       }
     }
   }

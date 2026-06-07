@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PlayVsAiCard from "@/components/pages/Home/PlayVsAiCard.vue";
+import PlayWithFriendsCard from "@/components/pages/Home/PlayWithFriendsCard.vue";
 import RandomMatchCard from "@/components/pages/Home/RandomMatchCard.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 </script>
@@ -10,6 +11,7 @@ import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 
     <section class="home-page__content">
       <PlayVsAiCard />
+      <PlayWithFriendsCard />
       <RandomMatchCard :online-players="40" />
     </section>
   </main>

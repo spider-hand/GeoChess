@@ -9,6 +9,14 @@
           "hard": "Difícil",
           "startGame": "Iniciar partida"
         },
+        "PlayWithFriendsCard": {
+          "title": "Jugar con amigos",
+          "createRoom": "Crear sala",
+          "or": "o",
+          "roomKey": "Clave de 6 dígitos",
+          "roomKeyError": "Introduce una clave de 6 dígitos",
+          "enterRoom": "Entrar en la sala"
+        },
         "RandomMatchCard": {
           "title": "Partida aleatoria",
           "joinLobby": "Unirse al lobby",

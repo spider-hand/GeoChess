@@ -9,6 +9,14 @@
           "hard": "困难",
           "startGame": "开始游戏"
         },
+        "PlayWithFriendsCard": {
+          "title": "与朋友一起玩",
+          "createRoom": "创建房间",
+          "or": "或",
+          "roomKey": "6位数字密钥",
+          "roomKeyError": "请输入6位数字密钥",
+          "enterRoom": "进入房间"
+        },
         "RandomMatchCard": {
           "title": "随机匹配",
           "joinLobby": "加入大厅",

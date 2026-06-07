@@ -9,6 +9,14 @@
           "hard": "むずかしい",
           "startGame": "ゲーム開始"
         },
+        "PlayWithFriendsCard": {
+          "title": "友達と遊ぶ",
+          "createRoom": "ルームを作成",
+          "or": "または",
+          "roomKey": "6桁のキー",
+          "roomKeyError": "6桁のキーを入力してください",
+          "enterRoom": "ルームに入る"
+        },
         "RandomMatchCard": {
           "title": "ランダムマッチ",
           "joinLobby": "ロビーに参加",

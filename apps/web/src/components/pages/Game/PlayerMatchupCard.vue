@@ -72,10 +72,6 @@ function flagSrc(countryCode: string) {
 .player-matchup-card {
   width: min(100%, 520px);
   padding: var(--spacing-md);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-token-xl);
-  background-color: var(--surface-card-dark);
-  color: var(--on-dark);
 }
 
 .player-matchup-card__content {
@@ -92,16 +88,15 @@ function flagSrc(countryCode: string) {
   gap: var(--spacing-sm);
   padding: var(--spacing-md);
   border: 1px solid var(--hairline);
-  border-radius: var(--radius-token-lg);
-  background-color: var(--surface-elevated-dark);
+  border-radius: var(--radius-token-xl);
 }
 
 .player-matchup-card__avatar {
   flex-shrink: 0;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 999px;
-  background-color: color-mix(in srgb, var(--surface-card-dark) 72%, black);
+  background-color: var(--canvas-dark);
 }
 
 .player-matchup-card__identity {

@@ -25,13 +25,7 @@ import NavigationHeader from "@/components/shared/NavigationHeader.vue";
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background:
-    radial-gradient(
-      circle at top,
-      color-mix(in srgb, var(--primary) 14%, transparent),
-      transparent 28%
-    ),
-    var(--canvas-dark);
+  background-color: var(--on-primary);
 }
 
 .home-page__content {

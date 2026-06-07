@@ -82,7 +82,7 @@ function emitContactClick(event: MouseEvent) {
   position: relative;
   z-index: 1;
   width: 100%;
-  background-color: color-mix(in srgb, var(--canvas-dark) 92%, transparent);
+  background-color: var(--on-primary);
 }
 
 .navigation-footer__content {

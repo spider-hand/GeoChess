@@ -29,13 +29,7 @@ defineOptions({
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background:
-    radial-gradient(
-      circle at top,
-      color-mix(in srgb, var(--primary) 14%, transparent),
-      transparent 28%
-    ),
-    var(--canvas-dark);
+  background-color: var(--on-primary);
 }
 
 .game-page__content {

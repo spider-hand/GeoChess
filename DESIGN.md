@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: GeoChess-design-system
-description: A confident dark-mode interface system anchored on a deep near-black canvas, where a single high-contrast yellow accent carries primary calls to action, key highlights, and emphasis moments. The system uses generic sans-serif typography with a preserved separation between editorial and numeric roles, flat color-block surfaces, compact spacing, and restrained radii for a dense but readable product experience.
+description: A confident dark-mode interface system anchored on `on-primary` as the site base color, with darker support surfaces and a single high-contrast yellow accent carrying primary calls to action, key highlights, and emphasis moments. The system uses generic sans-serif typography with a preserved separation between editorial and numeric roles, flat color-block surfaces, compact spacing, and restrained radii for a dense but readable product experience.
 
 colors:
   primary: "#fcd535"
@@ -281,7 +281,7 @@ components:
 
 ## Overview
 
-GeoChess uses a dark-mode design language that feels confident, dense, and highly legible. The base atmosphere is a **deep near-black canvas** (`{colors.canvas-dark}` — #0b0e11) carrying light text and a single, high-contrast accent: **yellow** (`{colors.primary}` — #FCD535). That accent does most of the visual emphasis work. It appears on primary CTAs, highlighted statistics, key links, and moments that need immediate visual priority.
+GeoChess uses a dark-mode design language that feels confident, dense, and highly legible. The site base is **On Primary** (`{colors.on-primary}` — #181a20), carrying light text and a single, high-contrast accent: **yellow** (`{colors.primary}` — #FCD535). Darker support surfaces such as **Canvas Dark** (`{colors.canvas-dark}` — #0b0e11) are layered on top for navigation bands and section separation. That accent does most of the visual emphasis work. It appears on primary CTAs, highlighted statistics, key links, and moments that need immediate visual priority.
 
 The system is intentionally compact. It prefers flat surfaces, clear color separation, modest corner radii, and consistent 4px-based spacing over decorative depth or oversized whitespace. The result is a UI language that can support product messaging, navigation, dashboards, forms, and data-heavy layouts without changing its underlying structure.
 
@@ -289,7 +289,7 @@ Typography keeps a deliberate separation between editorial roles and numeric rol
 
 **Key Characteristics:**
 - Single accent color: `{colors.primary}` (#FCD535) carries primary actions, emphasized statistics, and highlight moments.
-- Dark-mode only: all surfaces assume a dark canvas with lighter elevated cards and high-contrast text.
+- Dark-mode only: the site base uses `{colors.on-primary}` with darker layered surfaces and high-contrast text.
 - Preserved role separation in typography: display/body and numeric styles remain distinct at the token level.
 - Flat color-block surfaces: depth comes from surface contrast and hairlines, not heavy shadows.
 - Compact density: spacing is controlled and consistent, making the system suitable for both content and data display.
@@ -306,7 +306,8 @@ Typography keeps a deliberate separation between editorial roles and numeric rol
 
 The system is dark-mode only and uses a small set of layered surfaces:
 
-- **Canvas Dark** (`{colors.canvas-dark}` — #0b0e11): The main page floor. Near-black, slightly warm, and never pure black.
+- **On Primary** (`{colors.on-primary}` — #181a20): The site-wide base color used by the page root and default app background.
+- **Canvas Dark** (`{colors.canvas-dark}` — #0b0e11): A darker structural surface used for navigation bands, hero bands, and sections that need stronger separation from the page base.
 - **Surface Card Dark** (`{colors.surface-card-dark}` — #1e2329): Default elevated surface for cards, menus, panels, and secondary controls.
 - **Surface Elevated Dark** (`{colors.surface-elevated-dark}` — #2b3139): One step lighter than the main card surface, used for nested panels, hover states, and internal separation.
 
@@ -320,7 +321,7 @@ The system is dark-mode only and uses a small set of layered surfaces:
 - **Muted** (`{colors.muted}` — #707a8a): Secondary labels, metadata, helper text, and low-priority navigation.
 - **Muted Strong** (`{colors.muted-strong}` — #929aa5): A stronger secondary text tone for emphasized labels.
 - **On Primary** (`{colors.on-primary}` — #181a20): High-contrast text for primary yellow controls.
-- **On Dark** (`{colors.on-dark}` — #ffffff): Strong headline and UI text on the dark canvas.
+- **On Dark** (`{colors.on-dark}` — #ffffff): Strong headline and UI text on both the site base and darker support surfaces.
 
 ### Semantic Status
 - **Success** (`{colors.success}` — #0ecb81): Positive state, increase, confirmation, or success.
@@ -401,11 +402,11 @@ Proximity is an explicit relationship signal in the layout system. Controls that
 |---|---|---|
 | Flat | No shadow, no border | Body sections, navigation bars, large background bands |
 | Soft hairline | 1px `{colors.hairline}` | Inputs, table dividers, row separators, secondary controls |
-| Card surface | `{colors.surface-card-dark}` on `{colors.canvas-dark}` | Standard cards, menus, panels, grouped content |
+| Card surface | `{colors.surface-card-dark}` on `{colors.on-primary}` or `{colors.canvas-dark}` | Standard cards, menus, panels, grouped content |
 | Nested surface | `{colors.surface-elevated-dark}` | Hovered panels, nested cards, internal raised sections |
 | Focus ring | `0 0 0 2px {colors.info-ring}` at 50% alpha | Keyboard focus and active input state |
 
-The elevation philosophy is **flat surfaces with restrained separation**. Depth comes from shifts between `{colors.canvas-dark}`, `{colors.surface-card-dark}`, and `{colors.surface-elevated-dark}`, not from heavy shadows, blur, or glass effects.
+The elevation philosophy is **flat surfaces with restrained separation**. Depth comes from shifts between `{colors.on-primary}`, `{colors.canvas-dark}`, `{colors.surface-card-dark}`, and `{colors.surface-elevated-dark}`, not from heavy shadows, blur, or glass effects.
 
 ### Decorative Depth
 
@@ -436,7 +437,7 @@ The radius hierarchy stays tight. Most surfaces sit within the 6-12px range, kee
 
 ### Top Navigation
 
-**`top-nav`** — The primary top navigation on dark canvas. 64px tall with `{colors.canvas-dark}` background and `{colors.on-dark}` text. It carries the product mark at left, primary navigation links, and a right-side action cluster including text actions and a primary CTA.
+**`top-nav`** — The primary top navigation presented as a darker structural band over the site base. 64px tall with `{colors.canvas-dark}` background and `{colors.on-dark}` text. It carries the product mark at left, primary navigation links, and a right-side action cluster including text actions and a primary CTA.
 
 Action spacing inside the top nav should reflect relationship, not just rhythm. Utility icon actions should form a tighter cluster than surrounding text actions, and the primary CTA should remain slightly separated so it reads as the final, highest-priority action.
 

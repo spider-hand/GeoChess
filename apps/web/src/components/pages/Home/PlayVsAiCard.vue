@@ -56,7 +56,7 @@ function emitStartAiMatch() {
     </div>
 
     <div class="play-vs-ai-card__difficulty" role="group">
-      <Button
+      <button
         v-for="option in difficultyOptions"
         :key="option.value"
         class="play-vs-ai-card__difficulty-button"
@@ -64,12 +64,13 @@ function emitStartAiMatch() {
           'play-vs-ai-card__difficulty-button--selected':
             selectedDifficulty === option.value,
         }"
-        variant="secondary"
+        type="button"
+        :aria-pressed="selectedDifficulty === option.value"
         @click="selectDifficulty(option.value)"
       >
         <component :is="option.icon" :size="16" />
         <span>{{ option.label }}</span>
-      </Button>
+      </button>
     </div>
 
     <Button class="play-vs-ai-card__start-button" @click="emitStartAiMatch">
@@ -117,18 +118,52 @@ function emitStartAiMatch() {
 }
 
 .play-vs-ai-card__difficulty-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
   width: 100%;
-  padding-inline: var(--spacing-sm);
+  min-height: 40px;
+  padding: 0 var(--spacing-sm) var(--spacing-xs);
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--font-size-button);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-button);
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.play-vs-ai-card__difficulty-button::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 25%;
+  height: 3px;
+  background-color: transparent;
+  transform: translateX(-50%);
+}
+
+.play-vs-ai-card__difficulty-button:hover,
+.play-vs-ai-card__difficulty-button:focus-visible {
+  color: var(--on-dark);
+}
+
+.play-vs-ai-card__difficulty-button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--info-ring) 50%, transparent);
+  outline-offset: 2px;
 }
 
 .play-vs-ai-card__difficulty-button--selected {
-  border-color: var(--primary);
-  background-color: var(--primary);
-  color: var(--on-primary);
+  color: var(--on-dark);
 }
 
-.play-vs-ai-card__difficulty-button--selected:hover:not(.button--disabled) {
-  background-color: var(--primary-active);
+.play-vs-ai-card__difficulty-button--selected::after {
+  background-color: var(--primary);
 }
 
 .play-vs-ai-card__start-button {

@@ -1,5 +1,16 @@
 {
   "components": {
+    "pages": {
+      "Home": {
+        "PlayVsAiCard": {
+          "title": "AI と対戦",
+          "easy": "かんたん",
+          "medium": "ふつう",
+          "hard": "むずかしい",
+          "startGame": "ゲーム開始"
+        }
+      }
+    },
     "shared": {
       "LanguageSelector": {
         "triggerLabel": "言語設定",

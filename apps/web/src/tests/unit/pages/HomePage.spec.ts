@@ -27,4 +27,13 @@ test("renders the home page for the root route", async () => {
   await expect
     .element(getByRole("button", { name: "Sign Up" }))
     .toBeInTheDocument();
+  await expect
+    .element(getByRole("heading", { name: "Play vs AI" }))
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "Medium" }))
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "Start Game" }))
+    .toBeInTheDocument();
 });

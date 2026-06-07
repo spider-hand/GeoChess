@@ -1,5 +1,16 @@
 {
   "components": {
+    "pages": {
+      "Home": {
+        "PlayVsAiCard": {
+          "title": "Jouer contre l'IA",
+          "easy": "Facile",
+          "medium": "Moyen",
+          "hard": "Difficile",
+          "startGame": "Démarrer la partie"
+        }
+      }
+    },
     "shared": {
       "LanguageSelector": {
         "triggerLabel": "Paramètres de langue",

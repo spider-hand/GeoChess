@@ -1,5 +1,16 @@
 {
   "components": {
+    "pages": {
+      "Home": {
+        "PlayVsAiCard": {
+          "title": "Gegen die KI spielen",
+          "easy": "Leicht",
+          "medium": "Mittel",
+          "hard": "Schwer",
+          "startGame": "Spiel starten"
+        }
+      }
+    },
     "shared": {
       "LanguageSelector": {
         "triggerLabel": "Spracheinstellungen",

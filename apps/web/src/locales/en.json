@@ -1,5 +1,16 @@
 {
   "components": {
+    "pages": {
+      "Home": {
+        "PlayVsAiCard": {
+          "title": "Play vs AI",
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard",
+          "startGame": "Start Game"
+        }
+      }
+    },
     "shared": {
       "LanguageSelector": {
         "triggerLabel": "Language settings",

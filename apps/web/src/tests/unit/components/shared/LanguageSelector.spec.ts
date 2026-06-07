@@ -1,6 +1,7 @@
 import { expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
+import { createAppI18n } from "../../../../i18n";
 import LanguageSelector from "../../../../components/shared/LanguageSelector.vue";
 
 async function nextTick() {
@@ -8,7 +9,11 @@ async function nextTick() {
 }
 
 test("is closed by default", async () => {
-  const { getByRole, container } = render(LanguageSelector);
+  const { getByRole, container } = render(LanguageSelector, {
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
 
   await expect
     .element(getByRole("button", { name: "Language settings" }))
@@ -17,7 +22,11 @@ test("is closed by default", async () => {
 });
 
 test("opens and renders the supported languages", async () => {
-  const { getByRole } = render(LanguageSelector);
+  const { getByRole } = render(LanguageSelector, {
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
 
   await getByRole("button", { name: "Language settings" }).click();
 
@@ -51,6 +60,9 @@ test("selects a language, emits the value, and closes the menu", async () => {
     props: {
       onSelect,
     },
+    global: {
+      plugins: [createAppI18n()],
+    },
   });
 
   await getByRole("button", { name: "Language settings" }).click();
@@ -62,12 +74,12 @@ test("selects a language, emits the value, and closes the menu", async () => {
 
 test("reflects the selected state when reopened", async () => {
   const { getByRole } = render(LanguageSelector, {
-    props: {
-      initialLanguage: "fr",
+    global: {
+      plugins: [createAppI18n("fr")],
     },
   });
 
-  await getByRole("button", { name: "Language settings" }).click();
+  await getByRole("button", { name: "Paramètres de langue" }).click();
 
   await expect
     .element(getByRole("menuitemradio", { name: /Français/ }))
@@ -75,7 +87,11 @@ test("reflects the selected state when reopened", async () => {
 });
 
 test("closes on outside click and escape", async () => {
-  const { getByRole, container } = render(LanguageSelector);
+  const { getByRole, container } = render(LanguageSelector, {
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
 
   await getByRole("button", { name: "Language settings" }).click();
   await expect.element(getByRole("menu")).toBeInTheDocument();

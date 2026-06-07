@@ -1,0 +1,16 @@
+{
+  "components": {
+    "shared": {
+      "LanguageSelector": {
+        "triggerLabel": "语言设置",
+        "supportedLanguagesLabel": "支持的语言。当前选择：{language}"
+      },
+      "NavigationHeader": {
+        "primaryNavigationLabel": "主导航",
+        "howToPlay": "玩法说明",
+        "signUp": "注册",
+        "githubRepositoryLink": "GitHub 仓库链接"
+      }
+    }
+  }
+}

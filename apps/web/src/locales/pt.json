@@ -1,0 +1,16 @@
+{
+  "components": {
+    "shared": {
+      "LanguageSelector": {
+        "triggerLabel": "Configurações de idioma",
+        "supportedLanguagesLabel": "Idiomas compatíveis. Seleção atual: {language}"
+      },
+      "NavigationHeader": {
+        "primaryNavigationLabel": "Navegação principal",
+        "howToPlay": "Como jogar",
+        "signUp": "Cadastre-se",
+        "githubRepositoryLink": "Link do repositório do GitHub"
+      }
+    }
+  }
+}

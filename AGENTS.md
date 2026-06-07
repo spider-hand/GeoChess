@@ -8,6 +8,7 @@ Key paths are below:
   - `src/components/` - Components; the directory are separated based on layouts and pages, except for `shared/` directory
     - `shared/` - Components used across pages and layouts
   - `src/composables/` - Shared reactive logic and server state management with TanStack Query
+  - `src/locales` - Translations; the structure of the entries mirrors `apps/web/src/` (e.g. `components/shared/LanguageSelector/`)
   - `src/pages/` - Page components
   - `src/services/` - Auto-generated API client from OpenAPI Generator
   - `src/stories/` - Stories for Storybook; the subdirectory structure mirrors `apps/web/src/` (e.g. `stories/components/shared/`, `stories/pages/`)
@@ -34,6 +35,7 @@ Key paths are below:
 - Always create a composable to manage server state, instead of using `fetch`. If it doesn't have to manage the state of the API response, the file name should be `use{api-name}Api.ts` (e.g. `useHealthApi.ts`). If it manages the state of API responses, the file name should be `use{api-name}Query.ts` (e.g. `useUserQuery.ts`)
 - Always use the `@` alias instead of relative paths for imports within `apps/web/src/`
 - Always use `@lucide/vue` for icons
+- Always update locale files for all supported languages as we add texts to components
 
 ## Development Commands
 

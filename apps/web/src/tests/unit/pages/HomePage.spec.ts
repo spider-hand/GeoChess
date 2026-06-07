@@ -2,6 +2,7 @@ import { expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import App from "@/App.vue";
+import { createAppI18n } from "@/i18n";
 import router from "@/router";
 
 test("renders the home page for the root route", async () => {
@@ -10,7 +11,7 @@ test("renders the home page for the root route", async () => {
 
   const { getByRole } = render(App, {
     global: {
-      plugins: [router],
+      plugins: [createAppI18n(), router],
     },
   });
 

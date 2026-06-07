@@ -1,0 +1,16 @@
+{
+  "components": {
+    "shared": {
+      "LanguageSelector": {
+        "triggerLabel": "言語設定",
+        "supportedLanguagesLabel": "対応言語。現在の選択: {language}"
+      },
+      "NavigationHeader": {
+        "primaryNavigationLabel": "メインナビゲーション",
+        "howToPlay": "遊び方",
+        "signUp": "サインアップ",
+        "githubRepositoryLink": "GitHub リポジトリへのリンク"
+      }
+    }
+  }
+}

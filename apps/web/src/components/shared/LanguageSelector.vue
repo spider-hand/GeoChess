@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onClickOutside } from "@vueuse/core";
 import { computed, onBeforeUnmount, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 import IconButton from "@/components/shared/IconButton.vue";
 
@@ -26,23 +27,18 @@ const LANGUAGE_OPTIONS: LanguageOption[] = [
   { value: "zh", label: "中文", flag: "🇨🇳" },
 ];
 
-const props = defineProps<{
-  initialLanguage?: SupportedLanguage;
-}>();
-
 const emit = defineEmits<{
   select: [language: SupportedLanguage];
 }>();
 
+const { locale, t } = useI18n({ useScope: "global" });
 const root = ref<HTMLElement | null>(null);
 const isOpen = ref(false);
-const selectedLanguage = ref<SupportedLanguage>(props.initialLanguage ?? "en");
 
 const currentLanguage = computed(
   () =>
-    LANGUAGE_OPTIONS.find(
-      (option) => option.value === selectedLanguage.value,
-    ) ?? LANGUAGE_OPTIONS[0],
+    LANGUAGE_OPTIONS.find((option) => option.value === locale.value) ??
+    LANGUAGE_OPTIONS[0],
 );
 
 function closeMenu() {
@@ -54,7 +50,7 @@ function toggleMenu() {
 }
 
 function selectLanguage(language: SupportedLanguage) {
-  selectedLanguage.value = language;
+  locale.value = language;
   emit("select", language);
   closeMenu();
 }
@@ -80,7 +76,10 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="root" class="language-selector">
-    <IconButton ariaLabel="Language settings" @click="toggleMenu">
+    <IconButton
+      :ariaLabel="t('components.shared.LanguageSelector.triggerLabel')"
+      @click="toggleMenu"
+    >
       <svg
         aria-hidden="true"
         fill="none"
@@ -107,19 +106,22 @@ onBeforeUnmount(() => {
       v-if="isOpen"
       class="language-selector__menu"
       role="menu"
-      :aria-label="`Supported languages. Current selection: ${currentLanguage.label}`"
+      :aria-label="
+        t('components.shared.LanguageSelector.supportedLanguagesLabel', {
+          language: currentLanguage.label,
+        })
+      "
     >
       <button
         v-for="language in LANGUAGE_OPTIONS"
         :key="language.value"
         class="language-selector__item"
         :class="{
-          'language-selector__item--selected':
-            language.value === selectedLanguage,
+          'language-selector__item--selected': language.value === locale,
         }"
         type="button"
         role="menuitemradio"
-        :aria-checked="language.value === selectedLanguage"
+        :aria-checked="language.value === locale"
         @click="selectLanguage(language.value)"
       >
         <span aria-hidden="true" class="language-selector__flag">

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
+
 import Button from "@/components/shared/Button.vue";
 import IconButton from "@/components/shared/IconButton.vue";
 import LanguageSelector from "@/components/shared/LanguageSelector.vue";
@@ -6,6 +8,8 @@ import LanguageSelector from "@/components/shared/LanguageSelector.vue";
 defineOptions({
   name: "SharedNavigationHeader",
 });
+
+const { t } = useI18n();
 
 const emit = defineEmits<{
   brandClick: [event: MouseEvent];
@@ -38,7 +42,12 @@ function emitSignUpClick(event: MouseEvent) {
 
 <template>
   <header class="navigation-header">
-    <nav class="navigation-header__content" aria-label="Primary">
+    <nav
+      class="navigation-header__content"
+      :aria-label="
+        t('components.shared.NavigationHeader.primaryNavigationLabel')
+      "
+    >
       <button
         class="navigation-header__brand"
         type="button"
@@ -50,13 +59,15 @@ function emitSignUpClick(event: MouseEvent) {
       <div class="navigation-header__actions">
         <div class="navigation-header__nav-actions">
           <Button variant="tertiary" @click="emitHowToPlayClick">
-            How to play
+            {{ t("components.shared.NavigationHeader.howToPlay") }}
           </Button>
         </div>
 
         <div class="navigation-header__utility-actions">
           <IconButton
-            ariaLabel="Github repository link"
+            :ariaLabel="
+              t('components.shared.NavigationHeader.githubRepositoryLink')
+            "
             @click="emitGithubClick"
           >
             <svg
@@ -85,7 +96,9 @@ function emitSignUpClick(event: MouseEvent) {
         </div>
 
         <div class="navigation-header__cta-actions">
-          <Button pill @click="emitSignUpClick">Sign Up</Button>
+          <Button pill @click="emitSignUpClick">
+            {{ t("components.shared.NavigationHeader.signUp") }}
+          </Button>
         </div>
       </div>
     </nav>

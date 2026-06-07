@@ -1,20 +1,12 @@
 {
-  "pages": {
-    "GameVsAiPage": {
-      "title": "AI と対戦",
-      "placeholder": "このページはスキャフォールドのみです。ゲームフローは後で追加します。"
-    },
-    "GameWithFriendsPage": {
-      "title": "友達と遊ぶ",
-      "placeholder": "このページはスキャフォールドのみです。ゲームフローは後で追加します。"
-    },
-    "GameRandomMatchPage": {
-      "title": "ランダムマッチ",
-      "placeholder": "このページはスキャフォールドのみです。ゲームフローは後で追加します。"
-    }
-  },
   "components": {
     "pages": {
+      "Game": {
+        "AvailableMovesCard": {
+          "title": "選択可能な手",
+          "select": "選択"
+        }
+      },
       "Home": {
         "PlayVsAiCard": {
           "title": "AI と対戦",

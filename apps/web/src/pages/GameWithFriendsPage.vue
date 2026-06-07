@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
+import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 
 defineOptions({
   name: "GameWithFriendsPage",
 });
-
-const { t } = useI18n();
 </script>
 
 <template>
@@ -16,12 +13,7 @@ const { t } = useI18n();
     <NavigationHeader />
 
     <section class="game-page__content">
-      <h1 class="game-page__title">
-        {{ t("pages.GameWithFriendsPage.title") }}
-      </h1>
-      <p class="game-page__description">
-        {{ t("pages.GameWithFriendsPage.placeholder") }}
-      </p>
+      <AvailableMovesCard />
     </section>
 
     <NavigationFooter />
@@ -45,29 +37,8 @@ const { t } = useI18n();
 .game-page__content {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  gap: var(--spacing-md);
   padding: var(--spacing-xl);
-  text-align: center;
-}
-
-.game-page__title {
-  margin: 0;
-  color: var(--on-dark);
-  font-family: var(--font-body);
-  font-size: var(--font-size-title-lg);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-title-lg);
-}
-
-.game-page__description {
-  margin: 0;
-  max-width: 32rem;
-  color: var(--muted);
-  font-family: var(--font-body);
-  font-size: var(--font-size-body-md);
-  line-height: var(--line-height-body);
 }
 </style>

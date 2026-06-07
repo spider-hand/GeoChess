@@ -1,20 +1,12 @@
 {
-  "pages": {
-    "GameVsAiPage": {
-      "title": "Jouer contre l'IA",
-      "placeholder": "Cette page n'est qu'une base. Le déroulement du jeu sera ajouté plus tard."
-    },
-    "GameWithFriendsPage": {
-      "title": "Jouer avec des amis",
-      "placeholder": "Cette page n'est qu'une base. Le déroulement du jeu sera ajouté plus tard."
-    },
-    "GameRandomMatchPage": {
-      "title": "Match aléatoire",
-      "placeholder": "Cette page n'est qu'une base. Le déroulement du jeu sera ajouté plus tard."
-    }
-  },
   "components": {
     "pages": {
+      "Game": {
+        "AvailableMovesCard": {
+          "title": "Coups disponibles",
+          "select": "Sélectionner"
+        }
+      },
       "Home": {
         "PlayVsAiCard": {
           "title": "Jouer contre l'IA",

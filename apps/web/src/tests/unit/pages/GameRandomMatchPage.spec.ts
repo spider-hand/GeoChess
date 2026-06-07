@@ -9,18 +9,16 @@ test("renders the game random match page route", async () => {
   await router.push("/game/random-match");
   await router.isReady();
 
-  const { getByRole, getByText } = render(App, {
+  const { getByRole } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
   });
 
   await expect
-    .element(getByRole("heading", { name: "Random Match" }))
+    .element(getByRole("heading", { name: "Available Moves" }))
     .toBeInTheDocument();
-  await expect
-    .element(getByText("Page scaffold only. Game flow will be added later."))
-    .toBeInTheDocument();
+  await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
   await expect
     .element(getByRole("navigation", { name: "Footer navigation" }))
     .toBeInTheDocument();

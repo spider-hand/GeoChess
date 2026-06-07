@@ -11,6 +11,9 @@
           "legendLabel": "経路履歴の凡例",
           "you": "You",
           "opponent": "Opponent"
+        },
+        "PlayerMatchupCard": {
+          "versus": "vs"
         }
       },
       "Home": {

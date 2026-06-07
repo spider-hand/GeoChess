@@ -11,6 +11,9 @@
           "legendLabel": "Legende des Pfadverlaufs",
           "you": "You",
           "opponent": "Opponent"
+        },
+        "PlayerMatchupCard": {
+          "versus": "vs"
         }
       },
       "Home": {

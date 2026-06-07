@@ -11,6 +11,9 @@
           "legendLabel": "Leyenda del historial de ruta",
           "you": "You",
           "opponent": "Opponent"
+        },
+        "PlayerMatchupCard": {
+          "versus": "vs"
         }
       },
       "Home": {

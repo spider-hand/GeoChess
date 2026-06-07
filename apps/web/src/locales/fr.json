@@ -11,6 +11,9 @@
           "legendLabel": "Légende de l'historique du parcours",
           "you": "You",
           "opponent": "Opponent"
+        },
+        "PlayerMatchupCard": {
+          "versus": "vs"
         }
       },
       "Home": {

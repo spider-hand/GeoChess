@@ -9,7 +9,7 @@ test("renders the game with friends page route", async () => {
   await router.push("/game/with-friends");
   await router.isReady();
 
-  const { getByRole } = render(App, {
+  const { getByRole, getByText } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
@@ -21,6 +21,7 @@ test("renders the game with friends page route", async () => {
   await expect
     .element(getByRole("heading", { name: "Path History" }))
     .toBeInTheDocument();
+  await expect.element(getByText("vs")).toBeInTheDocument();
   await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
   await expect
     .element(getByRole("navigation", { name: "Footer navigation" }))

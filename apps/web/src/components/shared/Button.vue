@@ -77,7 +77,7 @@ function handleClick(event: MouseEvent) {
   border-radius: var(--radius-token-md);
   font-family: var(--font-body);
   font-size: var(--font-size-button);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-regular);
   line-height: var(--line-height-button);
   cursor: pointer;
   transition:

@@ -8,6 +8,12 @@
           "medium": "Medium",
           "hard": "Hard",
           "startGame": "Start Game"
+        },
+        "RandomMatchCard": {
+          "title": "Random Match",
+          "joinLobby": "Join Lobby",
+          "onlinePlayersOne": "{count} player online",
+          "onlinePlayersOther": "{count} players online"
         }
       }
     },

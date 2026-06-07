@@ -8,6 +8,12 @@
           "medium": "中等",
           "hard": "困难",
           "startGame": "开始游戏"
+        },
+        "RandomMatchCard": {
+          "title": "随机匹配",
+          "joinLobby": "加入大厅",
+          "onlinePlayersOne": "{count} 名玩家在线",
+          "onlinePlayersOther": "{count} 名玩家在线"
         }
       }
     },

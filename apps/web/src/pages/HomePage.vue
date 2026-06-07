@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PlayVsAiCard from "@/components/pages/Home/PlayVsAiCard.vue";
+import RandomMatchCard from "@/components/pages/Home/RandomMatchCard.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 </script>
 
@@ -9,6 +10,7 @@ import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 
     <section class="home-page__content">
       <PlayVsAiCard />
+      <RandomMatchCard :online-players="40" />
     </section>
   </main>
 </template>
@@ -26,6 +28,9 @@ import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 }
 
 .home-page__content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 440px));
+  gap: var(--spacing-lg);
   padding: var(--spacing-xl);
 }
 </style>

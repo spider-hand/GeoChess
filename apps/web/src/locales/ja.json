@@ -8,6 +8,12 @@
           "medium": "ふつう",
           "hard": "むずかしい",
           "startGame": "ゲーム開始"
+        },
+        "RandomMatchCard": {
+          "title": "ランダムマッチ",
+          "joinLobby": "ロビーに参加",
+          "onlinePlayersOne": "オンライン {count} 人",
+          "onlinePlayersOther": "オンライン {count} 人"
         }
       }
     },

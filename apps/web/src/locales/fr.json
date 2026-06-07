@@ -8,6 +8,12 @@
           "medium": "Moyen",
           "hard": "Difficile",
           "startGame": "Démarrer la partie"
+        },
+        "RandomMatchCard": {
+          "title": "Match aléatoire",
+          "joinLobby": "Rejoindre le lobby",
+          "onlinePlayersOne": "{count} joueur en ligne",
+          "onlinePlayersOther": "{count} joueurs en ligne"
         }
       }
     },

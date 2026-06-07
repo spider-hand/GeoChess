@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from "@/components/shared/Button.vue";
 import IconButton from "@/components/shared/IconButton.vue";
+import LanguageSelector from "@/components/shared/LanguageSelector.vue";
 
 defineOptions({
   name: "SharedNavigationHeader",
@@ -10,7 +11,7 @@ const emit = defineEmits<{
   brandClick: [event: MouseEvent];
   howToPlayClick: [event: MouseEvent];
   githubClick: [event: MouseEvent];
-  languageClick: [event: MouseEvent];
+  languageSelect: [language: string];
   signUpClick: [event: MouseEvent];
 }>();
 
@@ -26,8 +27,8 @@ function emitGithubClick(event: MouseEvent) {
   emit("githubClick", event);
 }
 
-function emitLanguageClick(event: MouseEvent) {
-  emit("languageClick", event);
+function emitLanguageSelect(language: string) {
+  emit("languageSelect", language);
 }
 
 function emitSignUpClick(event: MouseEvent) {
@@ -80,28 +81,7 @@ function emitSignUpClick(event: MouseEvent) {
             </svg>
           </IconButton>
 
-          <IconButton ariaLabel="Language settings" @click="emitLanguageClick">
-            <svg
-              aria-hidden="true"
-              fill="none"
-              height="18"
-              viewBox="0 0 24 24"
-              width="18"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="9"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-              <path
-                d="M3 12h18M12 3c2.6 2.5 4 5.7 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.7-4-9s1.4-6.5 4-9Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-            </svg>
-          </IconButton>
+          <LanguageSelector @select="emitLanguageSelect" />
         </div>
 
         <div class="navigation-header__cta-actions">

@@ -1,0 +1,195 @@
+<script setup lang="ts">
+import { onClickOutside } from "@vueuse/core";
+import { computed, onBeforeUnmount, ref } from "vue";
+
+import IconButton from "@/components/shared/IconButton.vue";
+
+type SupportedLanguage = "zh" | "en" | "fr" | "de" | "ja" | "pt" | "es";
+
+type LanguageOption = {
+  value: SupportedLanguage;
+  label: string;
+  flag: string;
+};
+
+defineOptions({
+  name: "SharedLanguageSelector",
+});
+
+const LANGUAGE_OPTIONS: LanguageOption[] = [
+  { value: "de", label: "Deutsch", flag: "🇩🇪" },
+  { value: "en", label: "English", flag: "🇬🇧" },
+  { value: "es", label: "Español", flag: "🇪🇸" },
+  { value: "fr", label: "Français", flag: "🇫🇷" },
+  { value: "ja", label: "日本語", flag: "🇯🇵" },
+  { value: "pt", label: "Português", flag: "🇵🇹" },
+  { value: "zh", label: "中文", flag: "🇨🇳" },
+];
+
+const props = defineProps<{
+  initialLanguage?: SupportedLanguage;
+}>();
+
+const emit = defineEmits<{
+  select: [language: SupportedLanguage];
+}>();
+
+const root = ref<HTMLElement | null>(null);
+const isOpen = ref(false);
+const selectedLanguage = ref<SupportedLanguage>(props.initialLanguage ?? "en");
+
+const currentLanguage = computed(
+  () =>
+    LANGUAGE_OPTIONS.find(
+      (option) => option.value === selectedLanguage.value,
+    ) ?? LANGUAGE_OPTIONS[0],
+);
+
+function closeMenu() {
+  isOpen.value = false;
+}
+
+function toggleMenu() {
+  isOpen.value = !isOpen.value;
+}
+
+function selectLanguage(language: SupportedLanguage) {
+  selectedLanguage.value = language;
+  emit("select", language);
+  closeMenu();
+}
+
+function handleDocumentKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape") {
+    closeMenu();
+  }
+}
+
+onClickOutside(root, closeMenu);
+
+if (typeof document !== "undefined") {
+  document.addEventListener("keydown", handleDocumentKeydown);
+}
+
+onBeforeUnmount(() => {
+  if (typeof document !== "undefined") {
+    document.removeEventListener("keydown", handleDocumentKeydown);
+  }
+});
+</script>
+
+<template>
+  <div ref="root" class="language-selector">
+    <IconButton ariaLabel="Language settings" @click="toggleMenu">
+      <svg
+        aria-hidden="true"
+        fill="none"
+        height="18"
+        viewBox="0 0 24 24"
+        width="18"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="9"
+          stroke="currentColor"
+          stroke-width="1.5"
+        />
+        <path
+          d="M3 12h18M12 3c2.6 2.5 4 5.7 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.7-4-9s1.4-6.5 4-9Z"
+          stroke="currentColor"
+          stroke-width="1.5"
+        />
+      </svg>
+    </IconButton>
+
+    <div
+      v-if="isOpen"
+      class="language-selector__menu"
+      role="menu"
+      :aria-label="`Supported languages. Current selection: ${currentLanguage.label}`"
+    >
+      <button
+        v-for="language in LANGUAGE_OPTIONS"
+        :key="language.value"
+        class="language-selector__item"
+        :class="{
+          'language-selector__item--selected':
+            language.value === selectedLanguage,
+        }"
+        type="button"
+        role="menuitemradio"
+        :aria-checked="language.value === selectedLanguage"
+        @click="selectLanguage(language.value)"
+      >
+        <span aria-hidden="true" class="language-selector__flag">
+          {{ language.flag }}
+        </span>
+        <span class="language-selector__label">{{ language.label }}</span>
+      </button>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.language-selector {
+  position: relative;
+}
+
+.language-selector__menu {
+  position: absolute;
+  top: calc(100% + var(--spacing-xs));
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xxs);
+  min-width: 176px;
+  padding: var(--spacing-xs);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-token-lg);
+  background-color: var(--surface-card-dark);
+  box-shadow: 0 12px 28px color-mix(in srgb, black 32%, transparent);
+}
+
+.language-selector__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-token-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: transparent;
+  color: var(--body);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.language-selector__item:hover {
+  background-color: var(--surface-elevated-dark);
+  color: var(--on-dark);
+}
+
+.language-selector__item:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--info-ring) 50%, transparent);
+  outline-offset: 2px;
+}
+
+.language-selector__item--selected {
+  color: var(--primary);
+}
+
+.language-selector__flag {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.language-selector__label {
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+}
+</style>

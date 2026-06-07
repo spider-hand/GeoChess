@@ -27,7 +27,7 @@ test("emits branch events for each action", async () => {
   const onBrandClick = vi.fn();
   const onHowToPlayClick = vi.fn();
   const onGithubClick = vi.fn();
-  const onLanguageClick = vi.fn();
+  const onLanguageSelect = vi.fn();
   const onSignUpClick = vi.fn();
 
   const { getByRole } = render(NavigationHeader, {
@@ -35,7 +35,7 @@ test("emits branch events for each action", async () => {
       onBrandClick,
       onHowToPlayClick,
       onGithubClick,
-      onLanguageClick,
+      onLanguageSelect,
       onSignUpClick,
     },
   });
@@ -44,12 +44,13 @@ test("emits branch events for each action", async () => {
   await getByRole("button", { name: "How to play" }).click();
   await getByRole("button", { name: "Github repository link" }).click();
   await getByRole("button", { name: "Language settings" }).click();
+  await getByRole("menuitemradio", { name: /日本語/ }).click();
   await getByRole("button", { name: "Sign Up" }).click();
 
   expect(onBrandClick).toHaveBeenCalledTimes(1);
   expect(onHowToPlayClick).toHaveBeenCalledTimes(1);
   expect(onGithubClick).toHaveBeenCalledTimes(1);
-  expect(onLanguageClick).toHaveBeenCalledTimes(1);
+  expect(onLanguageSelect).toHaveBeenCalledWith("ja");
   expect(onSignUpClick).toHaveBeenCalledTimes(1);
 });
 

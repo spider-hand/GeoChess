@@ -1,4 +1,18 @@
 {
+  "pages": {
+    "GameVsAiPage": {
+      "title": "Jugar contra la IA",
+      "placeholder": "Esta página es solo un andamio. El flujo del juego se añadirá más adelante."
+    },
+    "GameWithFriendsPage": {
+      "title": "Jugar con amigos",
+      "placeholder": "Esta página es solo un andamio. El flujo del juego se añadirá más adelante."
+    },
+    "GameRandomMatchPage": {
+      "title": "Partida aleatoria",
+      "placeholder": "Esta página es solo un andamio. El flujo del juego se añadirá más adelante."
+    }
+  },
   "components": {
     "pages": {
       "Home": {

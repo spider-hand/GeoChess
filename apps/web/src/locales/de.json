@@ -1,4 +1,18 @@
 {
+  "pages": {
+    "GameVsAiPage": {
+      "title": "Gegen die KI spielen",
+      "placeholder": "Dies ist nur ein Seiten-Grundgerüst. Der Spielablauf wird später hinzugefügt."
+    },
+    "GameWithFriendsPage": {
+      "title": "Mit Freunden spielen",
+      "placeholder": "Dies ist nur ein Seiten-Grundgerüst. Der Spielablauf wird später hinzugefügt."
+    },
+    "GameRandomMatchPage": {
+      "title": "Zufallsmatch",
+      "placeholder": "Dies ist nur ein Seiten-Grundgerüst. Der Spielablauf wird später hinzugefügt."
+    }
+  },
   "components": {
     "pages": {
       "Home": {

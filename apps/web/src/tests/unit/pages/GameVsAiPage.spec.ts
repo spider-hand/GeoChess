@@ -1,0 +1,27 @@
+import { expect, test } from "vitest";
+import { render } from "vitest-browser-vue";
+
+import App from "@/App.vue";
+import { createAppI18n } from "@/i18n";
+import router from "@/router";
+
+test("renders the game vs ai page route", async () => {
+  await router.push("/game/vs-ai");
+  await router.isReady();
+
+  const { getByRole, getByText } = render(App, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  await expect
+    .element(getByRole("heading", { name: "Play vs AI" }))
+    .toBeInTheDocument();
+  await expect
+    .element(getByText("Page scaffold only. Game flow will be added later."))
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("navigation", { name: "Footer navigation" }))
+    .toBeInTheDocument();
+});

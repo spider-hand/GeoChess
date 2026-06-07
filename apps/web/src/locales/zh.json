@@ -1,4 +1,18 @@
 {
+  "pages": {
+    "GameVsAiPage": {
+      "title": "与 AI 对战",
+      "placeholder": "此页面目前仅为脚手架，后续会补充游戏流程。"
+    },
+    "GameWithFriendsPage": {
+      "title": "与朋友一起玩",
+      "placeholder": "此页面目前仅为脚手架，后续会补充游戏流程。"
+    },
+    "GameRandomMatchPage": {
+      "title": "随机匹配",
+      "placeholder": "此页面目前仅为脚手架，后续会补充游戏流程。"
+    }
+  },
   "components": {
     "pages": {
       "Home": {

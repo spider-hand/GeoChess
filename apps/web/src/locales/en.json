@@ -1,4 +1,18 @@
 {
+  "pages": {
+    "GameVsAiPage": {
+      "title": "Play vs AI",
+      "placeholder": "Page scaffold only. Game flow will be added later."
+    },
+    "GameWithFriendsPage": {
+      "title": "Play with Friends",
+      "placeholder": "Page scaffold only. Game flow will be added later."
+    },
+    "GameRandomMatchPage": {
+      "title": "Random Match",
+      "placeholder": "Page scaffold only. Game flow will be added later."
+    }
+  },
   "components": {
     "pages": {
       "Home": {

@@ -1,4 +1,18 @@
 {
+  "pages": {
+    "GameVsAiPage": {
+      "title": "Jogar contra a IA",
+      "placeholder": "Esta página é apenas um esqueleto. O fluxo do jogo será adicionado depois."
+    },
+    "GameWithFriendsPage": {
+      "title": "Jogar com amigos",
+      "placeholder": "Esta página é apenas um esqueleto. O fluxo do jogo será adicionado depois."
+    },
+    "GameRandomMatchPage": {
+      "title": "Partida aleatória",
+      "placeholder": "Esta página é apenas um esqueleto. O fluxo do jogo será adicionado depois."
+    }
+  },
   "components": {
     "pages": {
       "Home": {

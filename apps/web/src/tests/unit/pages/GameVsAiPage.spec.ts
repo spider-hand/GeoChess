@@ -18,6 +18,9 @@ test("renders the game vs ai page route", async () => {
   await expect
     .element(getByRole("heading", { name: "Available Moves" }))
     .toBeInTheDocument();
+  await expect
+    .element(getByRole("heading", { name: "Path History" }))
+    .toBeInTheDocument();
   await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
   await expect
     .element(getByRole("navigation", { name: "Footer navigation" }))

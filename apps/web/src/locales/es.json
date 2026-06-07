@@ -5,6 +5,12 @@
         "AvailableMovesCard": {
           "title": "Movimientos disponibles",
           "select": "Seleccionar"
+        },
+        "PathHistoryCard": {
+          "title": "Historial de ruta",
+          "legendLabel": "Leyenda del historial de ruta",
+          "you": "You",
+          "opponent": "Opponent"
         }
       },
       "Home": {

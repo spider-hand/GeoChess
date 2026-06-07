@@ -5,6 +5,12 @@
         "AvailableMovesCard": {
           "title": "可用走法",
           "select": "选择"
+        },
+        "PathHistoryCard": {
+          "title": "路径历史",
+          "legendLabel": "路径历史图例",
+          "you": "You",
+          "opponent": "Opponent"
         }
       },
       "Home": {

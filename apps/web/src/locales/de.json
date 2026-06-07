@@ -5,6 +5,12 @@
         "AvailableMovesCard": {
           "title": "Verfügbare Züge",
           "select": "Auswählen"
+        },
+        "PathHistoryCard": {
+          "title": "Pfadverlauf",
+          "legendLabel": "Legende des Pfadverlaufs",
+          "you": "You",
+          "opponent": "Opponent"
         }
       },
       "Home": {

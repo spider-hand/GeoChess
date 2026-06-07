@@ -5,6 +5,12 @@
         "AvailableMovesCard": {
           "title": "選択可能な手",
           "select": "選択"
+        },
+        "PathHistoryCard": {
+          "title": "経路履歴",
+          "legendLabel": "経路履歴の凡例",
+          "you": "You",
+          "opponent": "Opponent"
         }
       },
       "Home": {

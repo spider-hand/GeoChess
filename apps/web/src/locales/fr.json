@@ -5,6 +5,12 @@
         "AvailableMovesCard": {
           "title": "Coups disponibles",
           "select": "Sélectionner"
+        },
+        "PathHistoryCard": {
+          "title": "Historique du parcours",
+          "legendLabel": "Légende de l'historique du parcours",
+          "you": "You",
+          "opponent": "Opponent"
         }
       },
       "Home": {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
+import PathHistoryCard from "@/components/pages/Game/PathHistoryCard.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 
@@ -14,6 +15,7 @@ defineOptions({
 
     <section class="game-page__content">
       <AvailableMovesCard />
+      <PathHistoryCard />
     </section>
 
     <NavigationFooter />
@@ -37,8 +39,10 @@ defineOptions({
 .game-page__content {
   flex: 1;
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: center;
+  gap: var(--spacing-xl);
   padding: var(--spacing-xl);
 }
 </style>

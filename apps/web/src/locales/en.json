@@ -5,6 +5,12 @@
         "AvailableMovesCard": {
           "title": "Available Moves",
           "select": "Select"
+        },
+        "PathHistoryCard": {
+          "title": "Path History",
+          "legendLabel": "Path history legend",
+          "you": "You",
+          "opponent": "Opponent"
         }
       },
       "Home": {

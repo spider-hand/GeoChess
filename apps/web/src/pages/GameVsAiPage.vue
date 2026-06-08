@@ -2,6 +2,7 @@
 import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
 import PathHistoryCard from "@/components/pages/Game/PathHistoryCard.vue";
 import PlayerMatchupCard from "@/components/pages/Game/PlayerMatchupCard.vue";
+import TurnStatusStrip from "@/components/pages/Game/TurnStatusStrip.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 
@@ -15,6 +16,7 @@ defineOptions({
     <NavigationHeader />
 
     <section class="game-page__content">
+      <TurnStatusStrip :current-turn="10" :is-your-turn="true" />
       <AvailableMovesCard />
       <PathHistoryCard />
       <PlayerMatchupCard />

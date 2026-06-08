@@ -12,6 +12,11 @@
           "you": "You",
           "opponent": "Opponent"
         },
+        "TurnStatusStrip": {
+          "yourTurn": "あなたのターン",
+          "opponentTurn": "相手のターン",
+          "turn": "{turn} ターン目"
+        },
         "PlayerMatchupCard": {
           "versus": "vs"
         }

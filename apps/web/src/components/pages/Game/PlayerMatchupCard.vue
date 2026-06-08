@@ -31,8 +31,15 @@ function flagSrc(countryCode: string) {
 <template>
   <section class="player-matchup-card">
     <div class="player-matchup-card__content">
-      <article class="player-matchup-card__player">
-        <div class="player-matchup-card__avatar" aria-hidden="true" />
+      <article
+        class="player-matchup-card__player"
+        data-testid="player-matchup-card-player"
+      >
+        <div
+          class="player-matchup-card__avatar"
+          aria-hidden="true"
+          data-testid="player-matchup-card-avatar"
+        />
 
         <div class="player-matchup-card__identity">
           <p class="player-matchup-card__name">
@@ -50,8 +57,15 @@ function flagSrc(countryCode: string) {
         {{ t("components.pages.Game.PlayerMatchupCard.versus") }}
       </span>
 
-      <article class="player-matchup-card__player">
-        <div class="player-matchup-card__avatar" aria-hidden="true" />
+      <article
+        class="player-matchup-card__player"
+        data-testid="player-matchup-card-player"
+      >
+        <div
+          class="player-matchup-card__avatar"
+          aria-hidden="true"
+          data-testid="player-matchup-card-avatar"
+        />
 
         <div class="player-matchup-card__identity">
           <p class="player-matchup-card__name">

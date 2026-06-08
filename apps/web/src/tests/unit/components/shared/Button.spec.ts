@@ -47,7 +47,7 @@ test("applies size and pill branches", async () => {
   const button = getByRole("button", { name: "Size" });
 
   await expect.element(button).toHaveClass("button--compact");
-  await expect.element(button).not.toHaveClass("button--pill");
+  expect(button.element().classList.contains("button--pill")).toBe(false);
 
   await rerender({ size: "compact", pill: true });
   await expect.element(button).toHaveClass("button--pill");

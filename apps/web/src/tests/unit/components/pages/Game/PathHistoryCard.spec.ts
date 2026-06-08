@@ -5,7 +5,7 @@ import PathHistoryCard from "@/components/pages/Game/PathHistoryCard.vue";
 import { createAppI18n } from "@/i18n";
 
 test("renders the title, legend badges, and condensed history for turn six", async () => {
-  const { getByRole, getByText, container } = render(PathHistoryCard, {
+  const { getByRole, getByText, getByTestId } = render(PathHistoryCard, {
     global: {
       plugins: [createAppI18n()],
     },
@@ -23,15 +23,13 @@ test("renders the title, legend badges, and condensed history for turn six", asy
   await expect.element(getByText(/^TURN 6$/)).toBeVisible();
   await expect.element(getByText("US")).toBeVisible();
   await expect.element(getByText("DE")).toBeVisible();
-  expect(container.textContent).toContain("...");
-  expect(container.querySelectorAll('[role="listitem"]')).toHaveLength(5);
-  expect(
-    container.querySelectorAll(".path-history-card__connector"),
-  ).toHaveLength(5);
+  await expect.element(getByTestId("path-history-card-ellipsis")).toBeVisible();
+  expect(getByRole("listitem").length).toBe(5);
+  expect(getByTestId("path-history-card-connector").length).toBe(5);
 });
 
 test("shows continuous turns without ellipsis when current turn is five", async () => {
-  const { container, getByText } = render(PathHistoryCard, {
+  const { getByRole, getByText, getByTestId } = render(PathHistoryCard, {
     props: {
       currentTurn: 5,
       historySteps: [
@@ -69,6 +67,6 @@ test("shows continuous turns without ellipsis when current turn is five", async 
   await expect.element(getByText(/^TURN 5$/)).toBeVisible();
   await expect.element(getByText("US")).toBeVisible();
   await expect.element(getByText("JP")).toBeVisible();
-  expect(container.textContent).not.toContain("...");
-  expect(container.querySelectorAll('[role="listitem"]')).toHaveLength(5);
+  expect(getByTestId("path-history-card-ellipsis").length).toBe(0);
+  expect(getByRole("listitem").length).toBe(5);
 });

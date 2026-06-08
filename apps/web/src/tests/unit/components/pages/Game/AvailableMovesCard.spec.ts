@@ -5,7 +5,7 @@ import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
 import { createAppI18n } from "@/i18n";
 
 test("renders the title, six country options, and disabled select button", async () => {
-  const { container, getByRole } = render(AvailableMovesCard, {
+  const { getByAltText, getByRole } = render(AvailableMovesCard, {
     global: {
       plugins: [createAppI18n()],
     },
@@ -14,12 +14,12 @@ test("renders the title, six country options, and disabled select button", async
   await expect
     .element(getByRole("heading", { name: "Available Moves" }))
     .toBeInTheDocument();
-  expect(container.querySelectorAll('[role="option"]')).toHaveLength(6);
+  expect(getByRole("option").length).toBe(6);
   await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
-  expect(
-    container.querySelector(".available-moves-card__options"),
-  ).not.toBeNull();
-  expect(container.querySelector('img[src="/flags/us.webp"]')).not.toBeNull();
+  await expect
+    .element(getByRole("listbox", { name: "Available Moves" }))
+    .toBeInTheDocument();
+  await expect.element(getByAltText("United States flag")).toBeInTheDocument();
 });
 
 test("selects a country row and enables the select button", async () => {
@@ -50,7 +50,7 @@ test("emits the selected country only when select is pressed", async () => {
 
   await getByRole("option", { name: /France flag France/i }).click();
 
-  expect(onSelect).not.toHaveBeenCalled();
+  expect(onSelect.mock.calls).toHaveLength(0);
 
   await getByRole("button", { name: "Select" }).click();
 

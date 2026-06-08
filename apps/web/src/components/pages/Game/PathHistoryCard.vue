@@ -134,6 +134,7 @@ function stepCode(countryCode: string) {
           v-if="step.kind === 'ellipsis'"
           class="path-history-card__ellipsis"
           aria-hidden="true"
+          data-testid="path-history-card-ellipsis"
         >
           ...
         </div>
@@ -171,6 +172,7 @@ function stepCode(countryCode: string) {
           v-if="index < displaySteps.length - 1"
           class="path-history-card__connector"
           aria-hidden="true"
+          data-testid="path-history-card-connector"
         />
       </template>
     </div>

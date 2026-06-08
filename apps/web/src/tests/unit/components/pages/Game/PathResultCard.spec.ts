@@ -5,7 +5,7 @@ import PathResultCard from "@/components/pages/Game/PathResultCard.vue";
 import { createAppI18n } from "@/i18n";
 
 test("renders the shared path-history header, legend, and six vertical result steps", async () => {
-  const { container, getByRole, getByText } = render(PathResultCard, {
+  const { getByRole, getByTestId, getByText } = render(PathResultCard, {
     global: {
       plugins: [createAppI18n()],
     },
@@ -20,28 +20,28 @@ test("renders the shared path-history header, legend, and six vertical result st
   await expect.element(getByText("Turn 6")).toBeVisible();
   await expect.element(getByText("United States")).toBeVisible();
   await expect.element(getByText("Canada")).toBeVisible();
-  expect(container.querySelectorAll('[role="listitem"]')).toHaveLength(6);
-  expect(container.querySelectorAll(".path-result-card__line")).toHaveLength(5);
-  expect(container.querySelector(".path-result-card__body")).not.toBeNull();
+  expect(getByRole("listitem").length).toBe(6);
+  expect(getByTestId("path-result-card-line").length).toBe(5);
+  await expect.element(getByRole("list")).toBeInTheDocument();
 });
 
 test("applies owner styling to both the timeline markers and step containers", async () => {
-  const { container } = render(PathResultCard, {
+  const { getByTestId } = render(PathResultCard, {
     global: {
       plugins: [createAppI18n()],
     },
   });
 
   await expect
-    .element(container.querySelector(".path-result-card__marker--you"))
+    .element(getByTestId("path-result-card-marker-you").first())
     .toHaveClass("path-result-card__marker--you");
   await expect
-    .element(container.querySelector(".path-result-card__marker--opponent"))
+    .element(getByTestId("path-result-card-marker-opponent").first())
     .toHaveClass("path-result-card__marker--opponent");
   await expect
-    .element(container.querySelector(".path-result-card__step--you"))
+    .element(getByTestId("path-result-card-step-you").first())
     .toHaveClass("path-result-card__step--you");
   await expect
-    .element(container.querySelector(".path-result-card__step--opponent"))
+    .element(getByTestId("path-result-card-step-opponent").first())
     .toHaveClass("path-result-card__step--opponent");
 });

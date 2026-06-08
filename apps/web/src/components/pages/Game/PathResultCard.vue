@@ -111,17 +111,20 @@ function stepFlagSrc(countryCode: string) {
           <span
             class="path-result-card__marker"
             :class="`path-result-card__marker--${step.owner}`"
+            :data-testid="`path-result-card-marker-${step.owner}`"
           />
           <span
             v-if="index < RESULT_STEPS.length - 1"
             class="path-result-card__line"
             :class="{ 'path-result-card__line--you': step.owner === 'you' }"
+            data-testid="path-result-card-line"
           />
         </div>
 
         <article
           class="path-result-card__step"
           :class="`path-result-card__step--${step.owner}`"
+          :data-testid="`path-result-card-step-${step.owner}`"
         >
           <span class="path-result-card__turn">
             {{

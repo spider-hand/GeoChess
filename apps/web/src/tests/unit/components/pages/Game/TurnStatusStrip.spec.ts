@@ -37,6 +37,8 @@ test("renders the opponent-turn branch and applies the opponent accent", async (
   await expect.element(getByText("Opponent's Turn")).toBeVisible();
   await expect.element(getByText("Turn 11")).toBeVisible();
   await expect
-    .element(container.querySelector(".turn-status-strip__status"))
+    .element(
+      container.querySelector(".turn-status-strip__status") as HTMLElement,
+    )
     .toHaveClass("turn-status-strip__status--opponent");
 });

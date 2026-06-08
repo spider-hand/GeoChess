@@ -36,21 +36,27 @@ test("defaults to medium and updates the selected branch on click", async () => 
   await expect
     .element(mediumButton)
     .toHaveClass("play-vs-ai-card__difficulty-button--selected");
-  await expect
-    .element(easyButton)
-    .not.toHaveClass("play-vs-ai-card__difficulty-button--selected");
-  await expect
-    .element(hardButton)
-    .not.toHaveClass("play-vs-ai-card__difficulty-button--selected");
+  expect(
+    easyButton
+      .element()
+      .classList.contains("play-vs-ai-card__difficulty-button--selected"),
+  ).toBe(false);
+  expect(
+    hardButton
+      .element()
+      .classList.contains("play-vs-ai-card__difficulty-button--selected"),
+  ).toBe(false);
 
   await hardButton.click();
 
   await expect
     .element(hardButton)
     .toHaveClass("play-vs-ai-card__difficulty-button--selected");
-  await expect
-    .element(mediumButton)
-    .not.toHaveClass("play-vs-ai-card__difficulty-button--selected");
+  expect(
+    mediumButton
+      .element()
+      .classList.contains("play-vs-ai-card__difficulty-button--selected"),
+  ).toBe(false);
 });
 
 test("emits the selected difficulty when starting an ai match", async () => {

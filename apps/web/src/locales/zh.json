@@ -12,6 +12,17 @@
           "you": "You",
           "opponent": "Opponent"
         },
+        "PathResultCard": {
+          "turn": "第 {turn} 回合",
+          "countries": {
+            "us": "美国",
+            "jp": "日本",
+            "fr": "法国",
+            "br": "巴西",
+            "de": "德国",
+            "ca": "加拿大"
+          }
+        },
         "TurnStatusStrip": {
           "yourTurn": "轮到你了",
           "opponentTurn": "轮到对手了",

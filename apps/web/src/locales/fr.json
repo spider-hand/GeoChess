@@ -12,6 +12,17 @@
           "you": "You",
           "opponent": "Opponent"
         },
+        "PathResultCard": {
+          "turn": "Tour {turn}",
+          "countries": {
+            "us": "États-Unis",
+            "jp": "Japon",
+            "fr": "France",
+            "br": "Brésil",
+            "de": "Allemagne",
+            "ca": "Canada"
+          }
+        },
         "TurnStatusStrip": {
           "yourTurn": "Votre tour",
           "opponentTurn": "Tour de l'adversaire",

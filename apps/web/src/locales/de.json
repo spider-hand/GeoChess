@@ -12,6 +12,17 @@
           "you": "You",
           "opponent": "Opponent"
         },
+        "PathResultCard": {
+          "turn": "Runde {turn}",
+          "countries": {
+            "us": "Vereinigte Staaten",
+            "jp": "Japan",
+            "fr": "Frankreich",
+            "br": "Brasilien",
+            "de": "Deutschland",
+            "ca": "Kanada"
+          }
+        },
         "TurnStatusStrip": {
           "yourTurn": "Du bist dran",
           "opponentTurn": "Gegner ist dran",

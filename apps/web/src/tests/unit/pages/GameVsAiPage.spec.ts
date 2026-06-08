@@ -1,5 +1,12 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
+
+vi.mock("@/components/pages/Game/GameMap.vue", () => ({
+  default: {
+    name: "GameMap",
+    template: '<div class="game-map" data-testid="game-map" />',
+  },
+}));
 
 import App from "@/App.vue";
 import { createAppI18n } from "@/i18n";
@@ -18,6 +25,12 @@ test("renders the game vs ai page route", async () => {
   await expect
     .element(getByRole("heading", { name: "Available Moves" }))
     .toBeInTheDocument();
+  expect(container.querySelectorAll(".game-page__map-card-row")).toHaveLength(
+    2,
+  );
+  expect(container.querySelectorAll('[data-testid="game-map"]')).toHaveLength(
+    2,
+  );
   expect(
     Array.from(container.querySelectorAll("h2")).filter(
       (heading) => heading.textContent === "Path History",

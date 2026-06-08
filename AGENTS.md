@@ -23,19 +23,24 @@ Key paths are below:
 
 ## Coding Guidelines
 
+### Frontend
+
 - Always create files for unit tests and stories when creating a new component
 - Always write one story per meaningful branch
-- Always check and resolve lint and format errors after modifying code
-- Always run unit tests and make sure to pass all test cases after modifying code
 - Always write unit tests with a focus on branch coverage. Make sure to test rendered structure, emitted events, state branches and composed component branches
 - Do not add test cases for something which doesn't introduce branching or conditional behavior
 - Do not manually modify files under `apps/web/src/services/`
-- Always keep API handlers, OpenAPI spec, and SST infrastructure definitions in sync
-- Always regenerate API client with OpenAPI Generator after updating API endpoint and OpenAPI spec inside `server/openapi/`
 - Always create a composable to manage server state, instead of using `fetch`. If it doesn't have to manage the state of the API response, the file name should be `use{api-name}Api.ts` (e.g. `useHealthApi.ts`). If it manages the state of API responses, the file name should be `use{api-name}Query.ts` (e.g. `useUserQuery.ts`)
 - Always use the `@` alias instead of relative paths for imports within `apps/web/src/`
 - Always use `@lucide/vue` for icons
-- Always update locale files for all supported languages as we add texts to components
+- Always update entries in locale files for all supported languages accordingly as we add, update or remove any user-facing text in `apps/web/src/`
+- Always run `pnpm lint`, `pnpm format:check`, `pnpm test:browser` and `pnpm exec vue-tsc --noEmit` and make sure to resolve all errors before finishing work
+
+### Backend
+
+- Always keep API handlers, OpenAPI spec, and SST infrastructure definitions in sync
+- Always run `pnpm generate:api` at `apps/web/` after updating API endpoint and OpenAPI spec inside `server/openapi/`
+- Always run `uv run ruff check .` and `uv run pytest` and make sure to resolve all errors before finishing work
 
 ## Development Commands
 
@@ -48,6 +53,7 @@ Execute commands below at `apps/web/`:
 - `pnpm format` - Automatically fix format issues
 - `pnpm format:check` - Check format issues
 - `pnpm test:browser` - Run unit test with browser mode
+- `pnpm exec vue-tsc --noEmit` - Run type check
 - `pnpm generate:api` - Generate API client with OpenAPI Generator
 
 ### Backend
@@ -59,14 +65,6 @@ Execute commands below at `server/`:
 - `uv run pytest` - Run unit test
 
 ## Agent skills
-
-### Issue tracker
-
-Issues are tracked in GitHub Issues for this repository. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-Use the default GitHub label vocabulary for the five canonical triage states. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 

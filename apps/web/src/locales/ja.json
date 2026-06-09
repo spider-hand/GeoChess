@@ -57,13 +57,18 @@
       }
     },
     "shared": {
+      "HowToPlayButton": {
+        "triggerLabel": "遊び方",
+        "descriptionLine1": "毎ターン、隣接する国を1つ取ります。",
+        "descriptionLine2": "合法手がない？ あなたの負けです。",
+        "descriptionLine3": "それだけ。楽しんで！"
+      },
       "LanguageSelector": {
         "triggerLabel": "言語設定",
         "supportedLanguagesLabel": "対応言語。現在の選択: {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "メインナビゲーション",
-        "howToPlay": "遊び方",
         "signUp": "サインアップ",
         "githubRepositoryLink": "GitHub リポジトリへのリンク"
       },

@@ -57,13 +57,18 @@
       }
     },
     "shared": {
+      "HowToPlayButton": {
+        "triggerLabel": "How to play",
+        "descriptionLine1": "Claim a neighboring country each turn.",
+        "descriptionLine2": "No legal moves? You lose.",
+        "descriptionLine3": "That's it. Enjoy!"
+      },
       "LanguageSelector": {
         "triggerLabel": "Language settings",
         "supportedLanguagesLabel": "Supported languages. Current selection: {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "Primary navigation",
-        "howToPlay": "How to play",
         "signUp": "Sign Up",
         "githubRepositoryLink": "GitHub repository link"
       },

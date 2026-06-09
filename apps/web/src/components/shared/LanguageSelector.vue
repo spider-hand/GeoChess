@@ -148,7 +148,7 @@ onBeforeUnmount(() => {
   min-width: 176px;
   padding: var(--spacing-xs);
   border: 1px solid var(--hairline);
-  border-radius: var(--radius-token-lg);
+  border-radius: var(--radius-token-sm);
   background-color: var(--surface-card-dark);
   box-shadow: 0 12px 28px color-mix(in srgb, black 32%, transparent);
 }

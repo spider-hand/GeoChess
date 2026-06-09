@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 
 import Button from "@/components/shared/Button.vue";
+import HowToPlayButton from "@/components/shared/HowToPlayButton.vue";
 import IconButton from "@/components/shared/IconButton.vue";
 import LanguageSelector from "@/components/shared/LanguageSelector.vue";
 
@@ -13,7 +14,6 @@ const { t } = useI18n();
 
 const emit = defineEmits<{
   brandClick: [event: MouseEvent];
-  howToPlayClick: [event: MouseEvent];
   githubClick: [event: MouseEvent];
   languageSelect: [language: string];
   signUpClick: [event: MouseEvent];
@@ -21,10 +21,6 @@ const emit = defineEmits<{
 
 function emitBrandClick(event: MouseEvent) {
   emit("brandClick", event);
-}
-
-function emitHowToPlayClick(event: MouseEvent) {
-  emit("howToPlayClick", event);
 }
 
 function emitGithubClick(event: MouseEvent) {
@@ -58,9 +54,7 @@ function emitSignUpClick(event: MouseEvent) {
 
       <div class="navigation-header__actions">
         <div class="navigation-header__nav-actions">
-          <Button variant="tertiary" @click="emitHowToPlayClick">
-            {{ t("components.shared.NavigationHeader.howToPlay") }}
-          </Button>
+          <HowToPlayButton />
         </div>
 
         <div class="navigation-header__utility-actions">

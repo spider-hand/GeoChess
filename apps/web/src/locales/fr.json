@@ -57,13 +57,18 @@
       }
     },
     "shared": {
+      "HowToPlayButton": {
+        "triggerLabel": "Comment jouer",
+        "descriptionLine1": "Revendiquer un pays voisin à chaque tour.",
+        "descriptionLine2": "Aucun coup légal ? Vous perdez.",
+        "descriptionLine3": "C'est tout. Amusez-vous bien !"
+      },
       "LanguageSelector": {
         "triggerLabel": "Paramètres de langue",
         "supportedLanguagesLabel": "Langues prises en charge. Sélection actuelle : {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "Navigation principale",
-        "howToPlay": "Comment jouer",
         "signUp": "S'inscrire",
         "githubRepositoryLink": "Lien du dépôt GitHub"
       },

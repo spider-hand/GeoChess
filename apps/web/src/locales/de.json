@@ -57,13 +57,18 @@
       }
     },
     "shared": {
+      "HowToPlayButton": {
+        "triggerLabel": "Spielanleitung",
+        "descriptionLine1": "Beanspruche in jedem Zug ein benachbartes Land.",
+        "descriptionLine2": "Keine legalen Züge? Du verlierst.",
+        "descriptionLine3": "Das ist alles. Viel Spaß!"
+      },
       "LanguageSelector": {
         "triggerLabel": "Spracheinstellungen",
         "supportedLanguagesLabel": "Unterstützte Sprachen. Aktuelle Auswahl: {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "Hauptnavigation",
-        "howToPlay": "Spielanleitung",
         "signUp": "Registrieren",
         "githubRepositoryLink": "GitHub-Repository-Link"
       },

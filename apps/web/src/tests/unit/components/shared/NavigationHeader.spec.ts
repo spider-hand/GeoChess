@@ -30,7 +30,6 @@ test("renders the product name and controls", async () => {
 
 test("emits branch events for each action", async () => {
   const onBrandClick = vi.fn();
-  const onHowToPlayClick = vi.fn();
   const onGithubClick = vi.fn();
   const onLanguageSelect = vi.fn();
   const onSignUpClick = vi.fn();
@@ -38,7 +37,6 @@ test("emits branch events for each action", async () => {
   const { getByRole } = render(NavigationHeader, {
     props: {
       onBrandClick,
-      onHowToPlayClick,
       onGithubClick,
       onLanguageSelect,
       onSignUpClick,
@@ -56,7 +54,6 @@ test("emits branch events for each action", async () => {
   await getByRole("menuitemradio", { name: /日本語/ }).click();
 
   expect(onBrandClick).toHaveBeenCalledTimes(1);
-  expect(onHowToPlayClick).toHaveBeenCalledTimes(1);
   expect(onGithubClick).toHaveBeenCalledTimes(1);
   expect(onLanguageSelect).toHaveBeenCalledWith("ja");
   expect(onSignUpClick).toHaveBeenCalledTimes(1);

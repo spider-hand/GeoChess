@@ -57,13 +57,18 @@
       }
     },
     "shared": {
+      "HowToPlayButton": {
+        "triggerLabel": "Como jogar",
+        "descriptionLine1": "Reivindique um país vizinho a cada turno.",
+        "descriptionLine2": "Sem jogadas legais? Você perde.",
+        "descriptionLine3": "É isso. Divirta-se!"
+      },
       "LanguageSelector": {
         "triggerLabel": "Configurações de idioma",
         "supportedLanguagesLabel": "Idiomas compatíveis. Seleção atual: {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "Navegação principal",
-        "howToPlay": "Como jogar",
         "signUp": "Cadastre-se",
         "githubRepositoryLink": "Link do repositório do GitHub"
       },

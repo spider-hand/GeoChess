@@ -57,13 +57,18 @@
       }
     },
     "shared": {
+      "HowToPlayButton": {
+        "triggerLabel": "Cómo jugar",
+        "descriptionLine1": "Reclama un país vecino en cada turno.",
+        "descriptionLine2": "¿No hay movimientos legales? Pierdes.",
+        "descriptionLine3": "Eso es todo. ¡Disfruta!"
+      },
       "LanguageSelector": {
         "triggerLabel": "Configuración de idioma",
         "supportedLanguagesLabel": "Idiomas compatibles. Selección actual: {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "Navegación principal",
-        "howToPlay": "Cómo jugar",
         "signUp": "Registrarse",
         "githubRepositoryLink": "Enlace al repositorio de GitHub"
       },

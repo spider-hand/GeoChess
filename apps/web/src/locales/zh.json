@@ -57,13 +57,18 @@
       }
     },
     "shared": {
+      "HowToPlayButton": {
+        "triggerLabel": "玩法说明",
+        "descriptionLine1": "每回合占领一个相邻国家。",
+        "descriptionLine2": "没有合法走法？ 你输了。",
+        "descriptionLine3": "就这样。祝你玩得开心！"
+      },
       "LanguageSelector": {
         "triggerLabel": "语言设置",
         "supportedLanguagesLabel": "支持的语言。当前选择：{language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "主导航",
-        "howToPlay": "玩法说明",
         "signUp": "注册",
         "githubRepositoryLink": "GitHub 仓库链接"
       },

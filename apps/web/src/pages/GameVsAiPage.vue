@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
+import CountdownTimer from "@/components/pages/Game/CountdownTimer.vue";
 import GameMap from "@/components/pages/Game/GameMap.vue";
 import PathHistoryCard from "@/components/pages/Game/PathHistoryCard.vue";
 import PathResultCard from "@/components/pages/Game/PathResultCard.vue";
@@ -19,6 +20,7 @@ defineOptions({
 
     <section class="game-page__content">
       <TurnStatusStrip :current-turn="10" :is-your-turn="true" />
+      <CountdownTimer />
 
       <div class="game-page__map-card-row">
         <GameMap class="game-page__map" />

@@ -25,6 +25,7 @@ test("renders the game vs ai page route", async () => {
   await expect
     .element(getByRole("heading", { name: "Available Moves" }))
     .toBeInTheDocument();
+  await expect.element(getByRole("timer")).toBeInTheDocument();
   expect(container.querySelectorAll(".game-page__map-card-row")).toHaveLength(
     2,
   );

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import heroImage from "@/assets/hero.png";
 import PlayVsAiCard from "@/components/pages/Home/PlayVsAiCard.vue";
 import PlayWithFriendsCard from "@/components/pages/Home/PlayWithFriendsCard.vue";
 import RandomMatchCard from "@/components/pages/Home/RandomMatchCard.vue";
@@ -11,9 +12,15 @@ import NavigationHeader from "@/components/shared/NavigationHeader.vue";
     <NavigationHeader />
 
     <section class="home-page__content">
-      <PlayVsAiCard />
-      <PlayWithFriendsCard />
-      <RandomMatchCard :online-players="40" />
+      <div class="home-page__hero">
+        <img class="home-page__hero-image" :src="heroImage" alt="Hero Image" />
+      </div>
+
+      <div class="home-page__cards">
+        <PlayVsAiCard />
+        <PlayWithFriendsCard />
+        <RandomMatchCard :online-players="40" />
+      </div>
     </section>
 
     <NavigationFooter />
@@ -31,8 +38,66 @@ import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 .home-page__content {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 440px));
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 440px);
+  align-items: stretch;
   gap: var(--spacing-lg);
+  width: min(100%, 1440px);
+  margin: 0 auto;
   padding: var(--spacing-xl);
+}
+
+.home-page__hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.home-page__hero-image {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  object-fit: contain;
+}
+
+.home-page__cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  align-self: center;
+}
+
+@media (max-width: 960px) {
+  .home-page__content {
+    grid-template-columns: 1fr;
+  }
+
+  .home-page__hero {
+    min-height: 200px;
+  }
+
+  .home-page__hero-image {
+    max-height: 200px;
+    margin: 0 auto;
+  }
+
+  .home-page__cards {
+    align-self: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-page__content {
+    padding: var(--spacing-lg);
+  }
+
+  .home-page__hero {
+    min-height: 200px;
+  }
+
+  .home-page__hero-image {
+    max-height: 200px;
+  }
 }
 </style>

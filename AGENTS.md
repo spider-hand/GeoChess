@@ -34,6 +34,7 @@ Key paths are below:
 - Always use the `@` alias instead of relative paths for imports within `apps/web/src/`
 - Always use `@lucide/vue` for icons
 - Always update entries in locale files for all supported languages accordingly as we add, update or remove any user-facing text in `apps/web/src/`
+- Always make Vue props required whenever possible, and avoid defining default values unless they are truly needed
 - Always run `pnpm lint`, `pnpm format:check`, `pnpm test:browser` and `pnpm exec vue-tsc --noEmit` and make sure to resolve all errors before finishing work
 
 ### Backend

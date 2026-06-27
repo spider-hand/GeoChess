@@ -1,10 +1,35 @@
 <script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
 import heroImage from "@/assets/hero.png";
+import { useAuth } from "@/composables/useAuth";
 import PlayVsAiCard from "@/components/pages/Home/PlayVsAiCard.vue";
 import PlayWithFriendsCard from "@/components/pages/Home/PlayWithFriendsCard.vue";
 import RandomMatchCard from "@/components/pages/Home/RandomMatchCard.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
+
+const router = useRouter();
+const { signInAnonymously } = useAuth();
+const isStartingAiGame = ref(false);
+
+async function handleStartAiMatch() {
+  if (isStartingAiGame.value) {
+    return;
+  }
+
+  isStartingAiGame.value = true;
+
+  try {
+    await signInAnonymously();
+    await router.push("/game/vs-ai");
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isStartingAiGame.value = false;
+  }
+}
 </script>
 
 <template>
@@ -17,7 +42,10 @@ import NavigationHeader from "@/components/shared/NavigationHeader.vue";
       </div>
 
       <div class="home-page__cards">
-        <PlayVsAiCard />
+        <PlayVsAiCard
+          :is-starting-game="isStartingAiGame"
+          @start-ai-match="handleStartAiMatch"
+        />
         <PlayWithFriendsCard />
         <RandomMatchCard :online-players="40" />
       </div>

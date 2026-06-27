@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { LoaderCircle } from "@lucide/vue";
 import { computed } from "vue";
 
 type ButtonVariant =
@@ -19,6 +20,7 @@ const props = withDefaults(
     size?: ButtonSize;
     pill?: boolean;
     disabled?: boolean;
+    loading?: boolean;
     type?: "button" | "submit" | "reset";
   }>(),
   {
@@ -26,6 +28,7 @@ const props = withDefaults(
     size: "md",
     pill: false,
     disabled: false,
+    loading: false,
     type: "button",
   },
 );
@@ -41,11 +44,12 @@ const classNames = computed(() => [
   {
     "button--pill": props.pill,
     "button--disabled": props.disabled,
+    "button--loading": props.loading,
   },
 ]);
 
 function handleClick(event: MouseEvent) {
-  if (props.disabled) {
+  if (props.disabled || props.loading) {
     event.preventDefault();
     event.stopPropagation();
     return;
@@ -57,11 +61,13 @@ function handleClick(event: MouseEvent) {
 
 <template>
   <button
+    :aria-busy="loading"
     :class="classNames"
-    :disabled="disabled"
+    :disabled="disabled || loading"
     :type="type"
     @click="handleClick"
   >
+    <LoaderCircle v-if="loading" class="button__loader" :size="16" />
     <slot />
   </button>
 </template>
@@ -85,6 +91,10 @@ function handleClick(event: MouseEvent) {
     border-color 160ms ease,
     color 160ms ease,
     opacity 160ms ease;
+}
+
+.button__loader {
+  animation: button-spin 1s linear infinite;
 }
 
 .button:focus-visible {
@@ -156,6 +166,10 @@ function handleClick(event: MouseEvent) {
   cursor: not-allowed;
 }
 
+.button--loading {
+  cursor: wait;
+}
+
 .button--primary.button--disabled {
   background-color: var(--primary-disabled);
   color: var(--muted);
@@ -174,5 +188,15 @@ function handleClick(event: MouseEvent) {
 .button--success.button--disabled,
 .button--danger.button--disabled {
   opacity: 0.48;
+}
+
+@keyframes button-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

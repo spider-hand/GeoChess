@@ -78,3 +78,24 @@ test("emits the selected difficulty when starting an ai match", async () => {
   expect(onStartAiMatch).toHaveBeenNthCalledWith(1, "easy");
   expect(onStartAiMatch).toHaveBeenNthCalledWith(2, "hard");
 });
+
+test("applies the loading branch while starting a game", async () => {
+  const { getByRole } = render(PlayVsAiCard, {
+    props: {
+      isStartingGame: true,
+    },
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
+
+  await expect
+    .element(getByRole("button", { name: "Start Game" }))
+    .toBeDisabled();
+  await expect
+    .element(getByRole("button", { name: "Start Game" }))
+    .toHaveAttribute("aria-busy", "true");
+  await expect.element(getByRole("button", { name: "Easy" })).toBeDisabled();
+  await expect.element(getByRole("button", { name: "Medium" })).toBeDisabled();
+  await expect.element(getByRole("button", { name: "Hard" })).toBeDisabled();
+});

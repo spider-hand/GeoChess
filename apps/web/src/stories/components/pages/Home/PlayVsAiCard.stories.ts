@@ -38,3 +38,9 @@ export const HardSelected: Story = {
     );
   },
 };
+
+export const Loading: Story = {
+  args: {
+    isStartingGame: true,
+  },
+};

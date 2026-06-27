@@ -1,5 +1,19 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
+
+vi.mock("@/composables/useAuth", () => ({
+  signInAnonymouslyIfNeeded: vi.fn().mockResolvedValue({ isAnonymous: true }),
+  useAuth: () => ({
+    authenticatedUserName: null,
+    currentUser: { value: null },
+    isAnonymousUser: false,
+    isAuthenticatedUser: false,
+    isCurrentUserLoaded: true,
+    signInAnonymously: vi.fn().mockResolvedValue({ isAnonymous: true }),
+    signInWithGoogle: vi.fn(),
+    signOutUser: vi.fn(),
+  }),
+}));
 
 import App from "@/App.vue";
 import { createAppI18n } from "@/i18n";
@@ -23,9 +37,6 @@ test("renders the home page for the root route", async () => {
     .toBeInTheDocument();
   await expect
     .element(getByRole("button", { name: "Language settings" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "Sign Up" }))
     .toBeInTheDocument();
   await expect
     .element(

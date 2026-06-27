@@ -13,6 +13,15 @@ defineOptions({
 
 const { t } = useI18n();
 
+const props = withDefaults(
+  defineProps<{
+    isStartingGame?: boolean;
+  }>(),
+  {
+    isStartingGame: false,
+  },
+);
+
 const selectedDifficulty = ref<Difficulty>("medium");
 
 const emit = defineEmits<{
@@ -65,6 +74,7 @@ function emitStartAiMatch() {
             selectedDifficulty === option.value,
         }"
         type="button"
+        :disabled="props.isStartingGame"
         :aria-pressed="selectedDifficulty === option.value"
         @click="selectDifficulty(option.value)"
       >
@@ -73,7 +83,11 @@ function emitStartAiMatch() {
       </button>
     </div>
 
-    <Button class="play-vs-ai-card__start-button" @click="emitStartAiMatch">
+    <Button
+      class="play-vs-ai-card__start-button"
+      :loading="props.isStartingGame"
+      @click="emitStartAiMatch"
+    >
       {{ t("components.pages.Home.PlayVsAiCard.startGame") }}
     </Button>
   </section>
@@ -151,6 +165,11 @@ function emitStartAiMatch() {
 .play-vs-ai-card__difficulty-button:hover,
 .play-vs-ai-card__difficulty-button:focus-visible {
   color: var(--on-dark);
+}
+
+.play-vs-ai-card__difficulty-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
 }
 
 .play-vs-ai-card__difficulty-button:focus-visible {

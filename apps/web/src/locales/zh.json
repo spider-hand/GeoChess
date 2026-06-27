@@ -72,6 +72,12 @@
         "signUp": "注册",
         "githubRepositoryLink": "GitHub 仓库链接"
       },
+      "UserAvatarMenu": {
+        "triggerLabel": "账户菜单",
+        "menuLabel": "账户菜单",
+        "nameLabel": "名称",
+        "signOut": "退出登录"
+      },
       "NavigationFooter": {
         "navigationLabel": "页脚导航",
         "credit": "© {year} GeoChess 版权所有。",

@@ -89,3 +89,9 @@ export const Disabled: Story = {
     disabled: true,
   },
 };
+
+export const Loading: Story = {
+  args: {
+    loading: true,
+  },
+};

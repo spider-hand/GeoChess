@@ -1,6 +1,20 @@
 import { expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
+vi.mock("@/composables/useAuth", () => ({
+  signInAnonymouslyIfNeeded: vi.fn().mockResolvedValue({ isAnonymous: true }),
+  useAuth: () => ({
+    authenticatedUserName: null,
+    currentUser: { value: null },
+    isAnonymousUser: false,
+    isAuthenticatedUser: false,
+    isCurrentUserLoaded: true,
+    signInAnonymously: vi.fn().mockResolvedValue({ isAnonymous: true }),
+    signInWithGoogle: vi.fn(),
+    signOutUser: vi.fn(),
+  }),
+}));
+
 vi.mock("@/components/pages/Game/GameMap.vue", () => ({
   default: {
     name: "GameMap",

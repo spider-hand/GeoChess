@@ -93,3 +93,21 @@ test("applies the disabled branch", async () => {
   await expect.element(button).toBeDisabled();
   await expect.element(button).toHaveClass("button--disabled");
 });
+
+test("applies the loading branch", async () => {
+  const onClick = vi.fn();
+  const { getByRole } = render(Button, {
+    props: {
+      loading: true,
+      onClick,
+    },
+    slots: { default: "Loading" },
+  });
+
+  const button = getByRole("button", { name: "Loading" });
+
+  await expect.element(button).toBeDisabled();
+  await expect.element(button).toHaveAttribute("aria-busy", "true");
+  await expect.element(button).toHaveClass("button--loading");
+  expect(onClick).not.toHaveBeenCalled();
+});

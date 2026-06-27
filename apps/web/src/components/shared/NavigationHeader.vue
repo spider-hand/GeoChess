@@ -1,22 +1,34 @@
 <script setup lang="ts">
+import { ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 
+import { useAuth } from "@/composables/useAuth";
 import Button from "@/components/shared/Button.vue";
 import HowToPlayButton from "@/components/shared/HowToPlayButton.vue";
 import IconButton from "@/components/shared/IconButton.vue";
 import LanguageSelector from "@/components/shared/LanguageSelector.vue";
+import UserAvatarMenu from "@/components/shared/UserAvatarMenu.vue";
 
 defineOptions({
   name: "SharedNavigationHeader",
 });
 
 const { t } = useI18n();
+const router = useRouter();
+const {
+  authenticatedUserName: authUserName,
+  isAuthenticatedUser: authIsAuthenticatedUser,
+  isCurrentUserLoaded: authIsCurrentUserLoaded,
+  signInWithGoogle,
+  signOutUser,
+} = useAuth();
+const isSigningUpInternal = ref(false);
 
 const emit = defineEmits<{
   brandClick: [event: MouseEvent];
   githubClick: [event: MouseEvent];
   languageSelect: [language: string];
-  signUpClick: [event: MouseEvent];
 }>();
 
 function emitBrandClick(event: MouseEvent) {
@@ -31,8 +43,30 @@ function emitLanguageSelect(language: string) {
   emit("languageSelect", language);
 }
 
-function emitSignUpClick(event: MouseEvent) {
-  emit("signUpClick", event);
+async function handleSignUp() {
+  if (isSigningUpInternal.value) {
+    return;
+  }
+
+  isSigningUpInternal.value = true;
+
+  try {
+    await signInWithGoogle();
+    await router.push("/");
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isSigningUpInternal.value = false;
+  }
+}
+
+async function handleSignOut() {
+  try {
+    await signOutUser();
+    await router.push("/");
+  } catch (error) {
+    console.error(error);
+  }
 }
 </script>
 
@@ -89,8 +123,22 @@ function emitSignUpClick(event: MouseEvent) {
           <LanguageSelector @select="emitLanguageSelect" />
         </div>
 
-        <div class="navigation-header__cta-actions">
-          <Button pill @click="emitSignUpClick">
+        <div
+          v-if="unref(authIsCurrentUserLoaded)"
+          class="navigation-header__cta-actions"
+        >
+          <UserAvatarMenu
+            v-if="unref(authIsAuthenticatedUser)"
+            :display-name="unref(authUserName)"
+            @sign-out-click="handleSignOut"
+          />
+
+          <Button
+            v-else
+            pill
+            :loading="isSigningUpInternal"
+            @click="handleSignUp"
+          >
             {{ t("components.shared.NavigationHeader.signUp") }}
           </Button>
         </div>

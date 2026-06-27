@@ -72,6 +72,12 @@
         "signUp": "S'inscrire",
         "githubRepositoryLink": "Lien du dépôt GitHub"
       },
+      "UserAvatarMenu": {
+        "triggerLabel": "Menu du compte",
+        "menuLabel": "Menu du compte",
+        "nameLabel": "Nom",
+        "signOut": "Se déconnecter"
+      },
       "NavigationFooter": {
         "navigationLabel": "Navigation de pied de page",
         "credit": "© {year} GeoChess Tous droits réservés.",

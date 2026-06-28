@@ -24,3 +24,12 @@ This starts:
 - SST local development environment
 
 Refer to the server setup guide for AWS SSO authentication and profile configuration.
+
+## Tech Stack
+
+- Frontend: Vue
+- Backend: AWS Lambda
+- Authentication: Firebase Authentication
+- DB: Firebase Realtime Database, PostgreSQL
+- Hosting: Cloudflare
+- Infrastructure: SST

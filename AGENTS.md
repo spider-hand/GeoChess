@@ -81,9 +81,3 @@ Execute commands below at `server/`:
 - `pnpm db:new <migration_name>` - Create a new migration
 - `pnpm db:rollback` - Rollback the latest migration
 - `pnpm db:status` - Check migration status
-
-## Agent skills
-
-### Domain docs
-
-This repo uses a single-context domain-doc layout. See `docs/agents/domain.md`.

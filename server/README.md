@@ -89,6 +89,12 @@ uv run ruff check . --fix
 
 ##### Manage database migrations:
 
+Set the connection string for the current shell:
+
+```sh
+export DATABASE_URL='postgresql://...'
+```
+
 Apply pending migrations:
 
 ```sh

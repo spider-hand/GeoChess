@@ -14,6 +14,7 @@ Key paths are below:
   - `src/stories/` - Stories for Storybook; the subdirectory structure mirrors `apps/web/src/` (e.g. `stories/components/shared/`, `stories/pages/`)
   - `src/tests/unit/` - Unit tests; the subdirectory structure mirrors `apps/web/src/` (e.g. `unit/components/`, `unit/composables/`, `unit/pages/`)
 - `server/` - Backend (AWS Lambda + SST)
+  - `db/` - Migration files
   - `openapi/` - OpenAPI spec
   - `src/` - Anything which should be included in the build artifact
     - `api/` - Handler; the subdirectory structure mirrors the endpoint structure (e.g. `api/v1/health/`)
@@ -22,6 +23,17 @@ Key paths are below:
     - `features/` - Feature-oriented business modules, such as repositories, services, models and domain logic
 
 ## Coding Guidelines
+
+### General
+
+#### Simplicity
+- Do not introduce new abstraction layers, helper functions, wrapper composables, factories, adapters, or indirection unless at least one of these is true:
+  - the same logic is already used in 2 or more concrete call sites
+  - the abstraction removes real duplciation that already exists
+  - the abstraction is required by a framework, library, or testability constraint
+- Do not add speculative branches for future use cases that are not currently required
+- Do not create optional code paths for scenarios that are not exerised by the current product requirements
+- Avoid 'helper-first' design. Always start from the most direct implementation, then extract only after duplication or repeated branching is visible in the codebase
 
 ### Frontend
 
@@ -40,6 +52,7 @@ Key paths are below:
 ### Backend
 
 - Always keep API handlers, OpenAPI spec, and SST infrastructure definitions in sync
+- Always create a new migration file when modifying the database schema. Name migration files as `{currentDate}_{title}.sql`. Every migration file must contain both `-- migrate:up` and `-- migrate:down` sections.
 - Always run `pnpm generate:api` at `apps/web/` after updating API endpoint and OpenAPI spec inside `server/openapi/`
 - Always run `uv run ruff check .` and `uv run pytest` and make sure to resolve all errors before finishing work
 
@@ -64,6 +77,10 @@ Execute commands below at `server/`:
 - `uv run ruff check .` - Run linter
 - `uv run ruff check . --fix` - Automatically fix lint issues
 - `uv run pytest` - Run unit test
+- `pnpm db:migrate` - Apply pending migration
+- `pnpm db:new <migration_name>` - Create a new migration
+- `pnpm db:rollback` - Rollback the latest migration
+- `pnpm db:status` - Check migration status
 
 ## Agent skills
 

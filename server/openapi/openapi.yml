@@ -1,14 +1,29 @@
 openapi: 3.1.0
 info:
-  title: Geo Chess Server API
+  title: GeoChess Server API
   version: 1.0.0
-  description: API specification for the Geo Chess server.
+  description: API specification for the GeoChess server.
 servers:
   - url: /
 paths:
   /api/v1/health:
     $ref: ./paths/api/v1/health.yml
+  /api/v1/users/{userId}:
+    $ref: ./paths/api/v1/users/user-by-id.yml
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     HealthResponse:
       $ref: ./components/schemas/health-response.yml
+    User:
+      $ref: ./components/schemas/user.yml
+    CreateUserRequest:
+      $ref: ./components/schemas/create-user-request.yml
+    UpdateUserRequest:
+      $ref: ./components/schemas/update-user-request.yml
+    ErrorResponse:
+      $ref: ./components/schemas/error-response.yml

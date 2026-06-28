@@ -6,6 +6,7 @@ import {
   useIsCurrentUserLoaded,
 } from "vuefire";
 
+import useUserQuery from "@/composables/useUserQuery";
 import { firebaseAuth, googleAuthProvider } from "@/lib/firebase";
 
 export async function signInAnonymouslyIfNeeded() {
@@ -21,6 +22,7 @@ export async function signInAnonymouslyIfNeeded() {
 export function useAuth() {
   const currentUser = useCurrentUser();
   const isCurrentUserLoaded = useIsCurrentUserLoaded();
+  const { createUserAsync, isCreatingUser } = useUserQuery();
 
   const isAuthenticatedUser = computed(
     () => !!currentUser.value && !currentUser.value.isAnonymous,
@@ -33,7 +35,37 @@ export function useAuth() {
   );
 
   async function signInWithGoogle() {
-    return signInWithPopup(firebaseAuth, googleAuthProvider);
+    const currentFirebaseUser = await getCurrentUser();
+
+    if (currentFirebaseUser?.isAnonymous) {
+      await signOut(firebaseAuth);
+    }
+
+    const credential = await signInWithPopup(firebaseAuth, googleAuthProvider);
+    const displayName = credential.user.displayName?.trim();
+
+    if (!displayName) {
+      await signOut(firebaseAuth);
+      throw new Error("Authenticated user must have a display name.");
+    }
+
+    try {
+      const idToken = await credential.user.getIdToken();
+
+      // Create a new user if the user record does not exist. Otherwise, return the existing user record.
+      await createUserAsync({
+        userId: credential.user.uid,
+        createUserRequest: {
+          displayName,
+        },
+        idToken,
+      });
+    } catch (error) {
+      await signOut(firebaseAuth);
+      throw error;
+    }
+
+    return credential;
   }
 
   async function signInAnonymously() {
@@ -49,6 +81,7 @@ export function useAuth() {
     currentUser,
     isAnonymousUser,
     isAuthenticatedUser,
+    isCreatingUser,
     isCurrentUserLoaded,
     signInAnonymously,
     signInWithGoogle,

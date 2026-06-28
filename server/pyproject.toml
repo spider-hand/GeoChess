@@ -4,7 +4,13 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = ["aws-lambda-powertools>=3.29.0", "pydantic>=2.13.4"]
+dependencies = [
+    "aws-lambda-powertools>=3.29.0",
+    "boto3>=1.40.0",
+    "firebase-admin>=7.1.0",
+    "psycopg[binary]>=3.2.10",
+    "pydantic>=2.13.4",
+]
 
 [dependency-groups]
 dev = ["pytest>=9.0.3", "ruff>=0.15.15"]

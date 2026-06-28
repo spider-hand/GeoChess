@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Geo Chess Server API
- * API specification for the Geo Chess server.
+ * GeoChess Server API
+ * API specification for the GeoChess server.
  *
  * The version of the OpenAPI document: 1.0.0
  *

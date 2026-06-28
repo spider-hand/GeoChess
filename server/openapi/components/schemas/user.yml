@@ -1,0 +1,17 @@
+type: object
+required:
+  - userId
+  - displayName
+  - createdAt
+  - updatedAt
+properties:
+  userId:
+    type: string
+  displayName:
+    type: string
+  createdAt:
+    type: string
+    format: date-time
+  updatedAt:
+    type: string
+    format: date-time

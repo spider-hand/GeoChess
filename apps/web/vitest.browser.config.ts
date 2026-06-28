@@ -5,6 +5,9 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [vue()],
+  optimizeDeps: {
+    include: ["@tanstack/vue-query"],
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

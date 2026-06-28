@@ -16,49 +16,55 @@ import { mapValues } from "../runtime";
 /**
  *
  * @export
- * @interface HealthResponse
+ * @interface ErrorResponse
  */
-export interface HealthResponse {
+export interface ErrorResponse {
   /**
-   * Health status message.
+   *
    * @type {string}
-   * @memberof HealthResponse
+   * @memberof ErrorResponse
+   */
+  code: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ErrorResponse
    */
   message: string;
 }
 
 /**
- * Check if a given object implements the HealthResponse interface.
+ * Check if a given object implements the ErrorResponse interface.
  */
-export function instanceOfHealthResponse(
-  value: object,
-): value is HealthResponse {
+export function instanceOfErrorResponse(value: object): value is ErrorResponse {
+  if (!("code" in value) || value["code"] === undefined) return false;
   if (!("message" in value) || value["message"] === undefined) return false;
   return true;
 }
 
-export function HealthResponseFromJSON(json: any): HealthResponse {
-  return HealthResponseFromJSONTyped(json, false);
+export function ErrorResponseFromJSON(json: any): ErrorResponse {
+  return ErrorResponseFromJSONTyped(json, false);
 }
 
-export function HealthResponseFromJSONTyped(
+export function ErrorResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): HealthResponse {
+): ErrorResponse {
   if (json == null) {
     return json;
   }
   return {
+    code: json["code"],
     message: json["message"],
   };
 }
 
-export function HealthResponseToJSON(json: any): HealthResponse {
-  return HealthResponseToJSONTyped(json, false);
+export function ErrorResponseToJSON(json: any): ErrorResponse {
+  return ErrorResponseToJSONTyped(json, false);
 }
 
-export function HealthResponseToJSONTyped(
-  value?: HealthResponse | null,
+export function ErrorResponseToJSONTyped(
+  value?: ErrorResponse | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {
@@ -66,6 +72,7 @@ export function HealthResponseToJSONTyped(
   }
 
   return {
+    code: value["code"],
     message: value["message"],
   };
 }

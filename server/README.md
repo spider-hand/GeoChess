@@ -86,3 +86,61 @@ uv run ruff check .
 ```sh
 uv run ruff check . --fix
 ```
+
+##### Manage database migrations:
+
+Apply pending migrations:
+
+```sh
+pnpm db:migrate
+```
+
+Create a new migration:
+
+```sh
+pnpm db:new <migration_name>
+```
+
+Rollback the latest migration:
+
+```sh
+pnpm db:rollback
+```
+
+Check migration status:
+
+```sh
+pnpm db:status
+```
+
+##### Manage resources:
+
+List deployed stages:
+
+```sh
+pnpm state:list
+```
+
+Show deployed resources for `dev`:
+
+```sh
+pnpm state:dev
+```
+
+Show deployed resources for `prod`:
+
+```sh
+pnpm state:prod
+```
+
+Remove deployed `dev` resources:
+
+```sh
+pnpm remove:dev
+```
+
+Remove deployed `prod` resources:
+
+```sh
+pnpm remove:prod
+```

@@ -1,8 +1,14 @@
-.openapi-generator-ignore
+apis/DefaultApi.ts
 apis/HealthApi.ts
 apis/index.ts
 index.ts
+models/CreateUserRequest.ts
+models/ErrorResponse.ts
 models/GetHealth200Response.ts
+models/GetUser200Response.ts
+models/GetUser401Response.ts
 models/HealthResponse.ts
+models/UpdateUserRequest.ts
+models/User.ts
 models/index.ts
 runtime.ts

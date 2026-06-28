@@ -4,9 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "db:migrate": "dbmate --migrations-dir db/migrations up",
+    "db:new": "dbmate --migrations-dir db/migrations new",
+    "db:rollback": "dbmate --migrations-dir db/migrations down",
+    "db:status": "dbmate --migrations-dir db/migrations status",
     "dev": "sst dev --stage dev",
     "deploy:dev": "sst deploy --stage dev",
     "deploy:prod": "sst deploy --stage prod",
+    "state:list": "sst state list",
+    "state:dev": "sst state export --stage dev",
+    "state:prod": "sst state export --stage prod",
     "remove:dev": "sst remove --stage dev",
     "remove:prod": "sst remove --stage prod"
   },
@@ -18,6 +25,7 @@
     "sst": "4.15.2"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.161"
+    "@types/aws-lambda": "8.10.161",
+    "dbmate": "^2.33.0"
   }
 }

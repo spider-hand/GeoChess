@@ -55,6 +55,40 @@ export default $config({
     });
 
     api.route(
+      "POST /api/v1/ai-games",
+      {
+        runtime: "python3.14",
+        handler: "src/api/v1/ai_games/handler.create_ai_game",
+        environment: {
+          ENVIRONMENT: $app.stage,
+        },
+        permissions: databasePermissions,
+      },
+      {
+        auth: {
+          lambda: firebaseAuthorizer.id,
+        },
+      },
+    );
+
+    api.route(
+      "GET /api/v1/ai-games/{gameId}",
+      {
+        runtime: "python3.14",
+        handler: "src/api/v1/ai_games/handler.get_ai_game",
+        environment: {
+          ENVIRONMENT: $app.stage,
+        },
+        permissions: databasePermissions,
+      },
+      {
+        auth: {
+          lambda: firebaseAuthorizer.id,
+        },
+      },
+    );
+
+    api.route(
       "GET /api/v1/users/{userId}",
       {
         runtime: "python3.14",

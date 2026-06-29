@@ -1,0 +1,36 @@
+parameters:
+  - name: gameId
+    in: path
+    required: true
+    schema:
+      type: string
+get:
+  operationId: getAiGame
+  summary: Get ai game
+  security:
+    - BearerAuth: []
+  responses:
+    '200':
+      description: Ai game found
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/ai-game.yml
+    '400':
+      description: Missing game id
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '401':
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '404':
+      description: Ai game not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml

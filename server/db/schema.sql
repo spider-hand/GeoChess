@@ -20,6 +20,22 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: ai_games; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ai_games (
+    id text NOT NULL,
+    user_id text NOT NULL,
+    difficulty text NOT NULL,
+    result text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT ai_games_difficulty_check CHECK ((difficulty = ANY (ARRAY['easy'::text, 'medium'::text, 'hard'::text]))),
+    CONSTRAINT ai_games_result_check CHECK (((result IS NULL) OR (result = ANY (ARRAY['win'::text, 'lose'::text, 'cancelled'::text]))))
+);
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -42,6 +58,14 @@ CREATE TABLE public.users (
 
 
 --
+-- Name: ai_games ai_games_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ai_games
+    ADD CONSTRAINT ai_games_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -58,6 +82,14 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: ai_games ai_games_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ai_games
+    ADD CONSTRAINT ai_games_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -69,4 +101,5 @@ ALTER TABLE ONLY public.users
 --
 
 INSERT INTO public.schema_migrations (version) VALUES
-    ('20260628013427');
+    ('20260628013427'),
+    ('20260629000000');

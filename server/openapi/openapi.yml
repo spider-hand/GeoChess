@@ -8,6 +8,10 @@ servers:
 paths:
   /api/v1/health:
     $ref: ./paths/api/v1/health.yml
+  /api/v1/ai-games:
+    $ref: ./paths/api/v1/ai-games/index.yml
+  /api/v1/ai-games/{gameId}:
+    $ref: ./paths/api/v1/ai-games/game-by-id.yml
   /api/v1/users/{userId}:
     $ref: ./paths/api/v1/users/user-by-id.yml
 components:
@@ -19,6 +23,10 @@ components:
   schemas:
     HealthResponse:
       $ref: ./components/schemas/health-response.yml
+    AiGame:
+      $ref: ./components/schemas/ai-game.yml
+    CreateAiGameRequest:
+      $ref: ./components/schemas/create-ai-game-request.yml
     User:
       $ref: ./components/schemas/user.yml
     CreateUserRequest:

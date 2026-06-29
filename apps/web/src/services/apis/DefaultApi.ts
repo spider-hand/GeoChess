@@ -14,18 +14,28 @@
 
 import * as runtime from "../runtime";
 import type {
+  CreateAiGame201Response,
+  CreateAiGame400Response,
+  CreateAiGameRequest,
   CreateUserRequest,
   GetUser200Response,
-  GetUser401Response,
 } from "../models/index";
 import {
+  CreateAiGame201ResponseFromJSON,
+  CreateAiGame201ResponseToJSON,
+  CreateAiGame400ResponseFromJSON,
+  CreateAiGame400ResponseToJSON,
+  CreateAiGameRequestFromJSON,
+  CreateAiGameRequestToJSON,
   CreateUserRequestFromJSON,
   CreateUserRequestToJSON,
   GetUser200ResponseFromJSON,
   GetUser200ResponseToJSON,
-  GetUser401ResponseFromJSON,
-  GetUser401ResponseToJSON,
 } from "../models/index";
+
+export interface CreateAiGameOperationRequest {
+  createAiGameRequest: CreateAiGameRequest;
+}
 
 export interface CreateUserOperationRequest {
   userId: string;
@@ -34,6 +44,10 @@ export interface CreateUserOperationRequest {
 
 export interface DeleteUserRequest {
   userId: string;
+}
+
+export interface GetAiGameRequest {
+  gameId: string;
 }
 
 export interface GetUserRequest {
@@ -49,6 +63,69 @@ export interface UpdateUserRequest {
  *
  */
 export class DefaultApi extends runtime.BaseAPI {
+  /**
+   * Create ai game
+   */
+  async createAiGameRaw(
+    requestParameters: CreateAiGameOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<CreateAiGame201Response>> {
+    if (requestParameters["createAiGameRequest"] == null) {
+      throw new runtime.RequiredError(
+        "createAiGameRequest",
+        'Required parameter "createAiGameRequest" was null or undefined when calling createAiGame().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/ai-games`;
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+        body: CreateAiGameRequestToJSON(
+          requestParameters["createAiGameRequest"],
+        ),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      CreateAiGame201ResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Create ai game
+   */
+  async createAiGame(
+    requestParameters: CreateAiGameOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<CreateAiGame201Response> {
+    const response = await this.createAiGameRaw(
+      requestParameters,
+      initOverrides,
+    );
+    return await response.value();
+  }
+
   /**
    * Create user
    */
@@ -165,6 +242,65 @@ export class DefaultApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.deleteUserRaw(requestParameters, initOverrides);
+  }
+
+  /**
+   * Get ai game
+   */
+  async getAiGameRaw(
+    requestParameters: GetAiGameRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<CreateAiGame201Response>> {
+    if (requestParameters["gameId"] == null) {
+      throw new runtime.RequiredError(
+        "gameId",
+        'Required parameter "gameId" was null or undefined when calling getAiGame().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/ai-games/{gameId}`;
+    urlPath = urlPath.replace(
+      `{${"gameId"}}`,
+      encodeURIComponent(String(requestParameters["gameId"])),
+    );
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "GET",
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      CreateAiGame201ResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Get ai game
+   */
+  async getAiGame(
+    requestParameters: GetAiGameRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<CreateAiGame201Response> {
+    const response = await this.getAiGameRaw(requestParameters, initOverrides);
+    return await response.value();
   }
 
   /**

@@ -1,0 +1,36 @@
+post:
+  operationId: createAiGame
+  summary: Create ai game
+  security:
+    - BearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../../../components/schemas/create-ai-game-request.yml
+  responses:
+    '201':
+      description: Ai game created
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/ai-game.yml
+    '400':
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '401':
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '404':
+      description: User not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml

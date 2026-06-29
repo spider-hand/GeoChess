@@ -1,0 +1,11 @@
+type: object
+required:
+  - difficulty
+properties:
+  difficulty:
+    type: string
+    enum:
+      - easy
+      - medium
+      - hard
+additionalProperties: false

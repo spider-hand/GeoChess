@@ -56,6 +56,9 @@ test("renders the product name and controls", async () => {
     .element(getByRole("button", { name: "Github repository link" }))
     .toBeInTheDocument();
   await expect
+    .element(getByRole("button", { name: "Discord server link" }))
+    .toBeInTheDocument();
+  await expect
     .element(getByRole("button", { name: "Language settings" }))
     .toBeInTheDocument();
   await expect
@@ -67,12 +70,14 @@ test("emits branch events for non-auth actions", async () => {
   resetAuthState();
   const onBrandClick = vi.fn();
   const onGithubClick = vi.fn();
+  const onDiscordClick = vi.fn();
   const onLanguageSelect = vi.fn();
 
   const { getByRole } = render(NavigationHeader, {
     props: {
       onBrandClick,
       onGithubClick,
+      onDiscordClick,
       onLanguageSelect,
     },
     global: {
@@ -83,11 +88,13 @@ test("emits branch events for non-auth actions", async () => {
   await getByRole("button", { name: "GeoChess" }).click();
   await getByRole("button", { name: "How to play" }).click();
   await getByRole("button", { name: "Github repository link" }).click();
+  await getByRole("button", { name: "Discord server link" }).click();
   await getByRole("button", { name: "Language settings" }).click();
   await getByRole("menuitemradio", { name: /日本語/ }).click();
 
   expect(onBrandClick).toHaveBeenCalledTimes(1);
   expect(onGithubClick).toHaveBeenCalledTimes(1);
+  expect(onDiscordClick).toHaveBeenCalledTimes(1);
   expect(onLanguageSelect).toHaveBeenCalledWith("ja");
 });
 

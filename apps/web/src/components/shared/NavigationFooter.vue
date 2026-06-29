@@ -9,6 +9,7 @@ const { t } = useI18n();
 
 const emit = defineEmits<{
   githubClick: [event: MouseEvent];
+  discordClick: [event: MouseEvent];
   privacyClick: [event: MouseEvent];
   termsClick: [event: MouseEvent];
   contactClick: [event: MouseEvent];
@@ -18,6 +19,10 @@ const year = new Date().getFullYear();
 
 function emitGithubClick(event: MouseEvent) {
   emit("githubClick", event);
+}
+
+function emitDiscordClick(event: MouseEvent) {
+  emit("discordClick", event);
 }
 
 function emitPrivacyClick(event: MouseEvent) {
@@ -50,6 +55,13 @@ function emitContactClick(event: MouseEvent) {
           @click="emitGithubClick"
         >
           {{ t("components.shared.NavigationFooter.github") }}
+        </button>
+        <button
+          class="navigation-footer__action"
+          type="button"
+          @click="emitDiscordClick"
+        >
+          {{ t("components.shared.NavigationFooter.discord") }}
         </button>
         <button
           class="navigation-footer__action"

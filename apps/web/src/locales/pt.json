@@ -70,7 +70,8 @@
       "NavigationHeader": {
         "primaryNavigationLabel": "Navegação principal",
         "signUp": "Cadastre-se",
-        "githubRepositoryLink": "Link do repositório do GitHub"
+        "githubRepositoryLink": "Link do repositório do GitHub",
+        "discordServerLink": "Link do servidor do Discord"
       },
       "UserAvatarMenu": {
         "triggerLabel": "Menu da conta",
@@ -82,6 +83,7 @@
         "navigationLabel": "Navegação do rodapé",
         "credit": "© {year} GeoChess Todos os direitos reservados.",
         "github": "GitHub",
+        "discord": "Discord",
         "privacy": "Privacidade",
         "terms": "Termos",
         "contact": "Contato"

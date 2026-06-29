@@ -70,7 +70,8 @@
       "NavigationHeader": {
         "primaryNavigationLabel": "主导航",
         "signUp": "注册",
-        "githubRepositoryLink": "GitHub 仓库链接"
+        "githubRepositoryLink": "GitHub 仓库链接",
+        "discordServerLink": "Discord 服务器链接"
       },
       "UserAvatarMenu": {
         "triggerLabel": "账户菜单",
@@ -82,6 +83,7 @@
         "navigationLabel": "页脚导航",
         "credit": "© {year} GeoChess 版权所有。",
         "github": "GitHub",
+        "discord": "Discord",
         "privacy": "隐私",
         "terms": "条款",
         "contact": "联系"

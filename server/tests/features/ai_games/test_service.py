@@ -71,3 +71,14 @@ def test_create_ai_game_cancels_existing_incomplete_games_before_create():
     assert result == ai_games_repository.create_after_cancelling_incomplete_games.return_value
     assert status_code == 201
     ai_games_repository.create_after_cancelling_incomplete_games.assert_called_once()
+
+
+def test_delete_expired_ai_games_returns_deleted_count():
+    ai_games_repository = MagicMock()
+    ai_games_repository.delete_expired_games.return_value = 5
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+
+    deleted_count = service.delete_expired_ai_games()
+
+    assert deleted_count == 5
+    ai_games_repository.delete_expired_games.assert_called_once_with()

@@ -156,6 +156,18 @@ export default $config({
       },
     );
 
+    new sst.aws.CronV2("DeleteExpiredAiGames", {
+      schedule: "cron(0 0 * * ? *)",
+      function: {
+        runtime: "python3.14",
+        handler: "src/jobs/cleanup_expired_ai_games.cleanup_expired_ai_games",
+        environment: {
+          ENVIRONMENT: $app.stage,
+        },
+        permissions: databasePermissions,
+      },
+    });
+
     return {
       api: api.url,
     };

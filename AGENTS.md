@@ -21,6 +21,7 @@ Key paths are below:
     - `core/` - Shared infrastructure and cross-cutting concerns, such as logging, authentication, configuration and utilities
     - `data/` - Static application data bundled with Lambda
     - `features/` - Feature-oriented business modules, such as repositories, services, models and domain logic
+    - `jobs/` - Scheduled functions
 
 ## Coding Guidelines
 

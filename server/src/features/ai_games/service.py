@@ -53,3 +53,6 @@ class AiGamesService:
             str(uuid4()), user_id, create_ai_game_input.difficulty
         )
         return created_ai_game, HTTPStatus.CREATED
+
+    def delete_expired_ai_games(self) -> int:
+        return self.ai_games_repository.delete_expired_games()

@@ -8,9 +8,11 @@ models/CreateAiGame400Response.ts
 models/CreateAiGameRequest.ts
 models/CreateUserRequest.ts
 models/ErrorResponse.ts
+models/GetAiGame200Response.ts
 models/GetHealth200Response.ts
 models/GetUser200Response.ts
 models/HealthResponse.ts
+models/RealtimeAiGame.ts
 models/UpdateUserRequest.ts
 models/User.ts
 models/index.ts

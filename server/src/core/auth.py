@@ -1,8 +1,8 @@
 from http import HTTPStatus
 from typing import Any
 
+from core.firebase import get_firebase_app
 from core.http import ApiError
-from core.secret import get_secrets
 
 CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
@@ -11,19 +11,9 @@ CORS_HEADERS = {
 }
 
 
-def get_firebase_app():
-    import firebase_admin
-    from firebase_admin import credentials
-
-    service_account = get_secrets()["firebase_service_account"]
-
-    try:
-        return firebase_admin.get_app()
-    except ValueError:
-        return firebase_admin.initialize_app(credentials.Certificate(service_account))
-
-
-def verify_firebase_token(headers: dict[str, str] | None) -> dict[str, Any]:
+def verify_firebase_token(
+    headers: dict[str, str] | None, *, allow_anonymous: bool = False
+) -> dict[str, Any]:
     from firebase_admin import auth as firebase_auth
 
     authorization_header = None
@@ -58,7 +48,7 @@ def verify_firebase_token(headers: dict[str, str] | None) -> dict[str, Any]:
         ) from error
 
     sign_in_provider = decoded_token.get("firebase", {}).get("sign_in_provider")
-    if sign_in_provider == "anonymous":
+    if sign_in_provider == "anonymous" and not allow_anonymous:
         raise ApiError(
             status_code=HTTPStatus.UNAUTHORIZED,
             code="anonymous_user_not_allowed",
@@ -91,9 +81,21 @@ def get_authorized_uid(event: dict[str, Any]) -> str:
     return uid
 
 
+def _allow_anonymous_user(event: dict[str, Any]) -> bool:
+    raw_path = event.get("rawPath")
+
+    if not isinstance(raw_path, str):
+        return False
+
+    return raw_path == "/api/v1/ai-games" or raw_path.startswith("/api/v1/ai-games/")
+
+
 def lambda_handler(event: dict[str, Any], context: Any):
     try:
-        decoded_token = verify_firebase_token(event.get("headers"))
+        decoded_token = verify_firebase_token(
+            event.get("headers"),
+            allow_anonymous=_allow_anonymous_user(event),
+        )
     except ApiError:
         return {
             "isAuthorized": False,

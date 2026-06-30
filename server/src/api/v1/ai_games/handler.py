@@ -49,6 +49,7 @@ def create_ai_game(event: dict, context: LambdaContext):
         ai_game, status_code = _ai_games_service.create_ai_game(
             get_authorized_uid(event), payload
         )
+
         return json_response(
             status_code, ai_game.model_dump(by_alias=True, mode="json"), CORS_HEADERS
         )

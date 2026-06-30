@@ -20,7 +20,7 @@ const router = createRouter({
       component: HomePage,
     },
     {
-      path: "/game/vs-ai",
+      path: "/game/vs-ai/:gameId",
       component: GameVsAiPage,
       meta: {
         requiresVsAiAuth: true,

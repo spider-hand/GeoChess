@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 import heroImage from "@/assets/hero.png";
+import useAiGameQuery from "@/composables/useAiGameQuery";
 import { useAuth } from "@/composables/useAuth";
 import PlayVsAiCard from "@/components/pages/Home/PlayVsAiCard.vue";
 import PlayWithFriendsCard from "@/components/pages/Home/PlayWithFriendsCard.vue";
@@ -10,11 +11,14 @@ import RandomMatchCard from "@/components/pages/Home/RandomMatchCard.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 
+type Difficulty = "easy" | "medium" | "hard";
+
 const router = useRouter();
 const { signInAnonymously } = useAuth();
+const { createAiGame } = useAiGameQuery();
 const isStartingAiGame = ref(false);
 
-async function handleStartAiMatch() {
+async function handleStartAiMatch(difficulty: Difficulty) {
   if (isStartingAiGame.value) {
     return;
   }
@@ -23,7 +27,8 @@ async function handleStartAiMatch() {
 
   try {
     await signInAnonymously();
-    await router.push("/game/vs-ai");
+    const aiGame = await createAiGame({ difficulty });
+    await router.push(`/game/vs-ai/${aiGame.id}`);
   } catch (error) {
     console.error(error);
   } finally {

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+
+import useRealtimeAiGame from "@/composables/useRealtimeAiGame";
 import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
 import CountdownTimer from "@/components/pages/Game/CountdownTimer.vue";
 import GameMap from "@/components/pages/Game/GameMap.vue";
@@ -12,10 +16,32 @@ import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 defineOptions({
   name: "GameVsAiPage",
 });
+
+const route = useRoute();
+const router = useRouter();
+const gameId = computed(() =>
+  typeof route.params.gameId === "string" ? route.params.gameId : null,
+);
+const { realtimeAiGame, realtimeAiGameError, isLoadingRealtimeAiGame } =
+  useRealtimeAiGame(gameId);
+
+watch(
+  [gameId, isLoadingRealtimeAiGame, realtimeAiGame, realtimeAiGameError],
+  ([currentGameId, isLoading, gameSession, loadError]) => {
+    if (isLoading) {
+      return;
+    }
+
+    if (!currentGameId || loadError || !gameSession) {
+      void router.replace("/");
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
-  <main class="game-page">
+  <main v-if="realtimeAiGame" class="game-page">
     <NavigationHeader />
 
     <section class="game-page__content">

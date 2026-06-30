@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 from api.v1.ai_games import handler
 from core.http import ApiError
-from features.ai_games.models import AiGameRecord
+from features.ai_games.models import AiGameRecord, RealtimeAiGameRecord
 
 
 def make_event(body=None, game_id="game-123", authenticated_uid="user-123"):
@@ -33,6 +33,23 @@ def make_ai_game(result=None):
     )
 
 
+def make_realtime_ai_game():
+    return RealtimeAiGameRecord.model_validate(
+        {
+            "id": "game-123",
+            "userId": "user-123",
+            "difficulty": "medium",
+            "turn": 1,
+            "country": "BB",
+            "borders": ["CC"],
+            "usedCountries": ["BB"],
+            "moves": [],
+            "createdAt": "2026-06-29T00:00:00Z",
+            "updatedAt": "2026-06-29T00:00:00Z",
+        }
+    )
+
+
 def test_get_ai_game_returns_200_for_owner():
     with patch.object(handler._ai_games_service, "get_ai_game", return_value=make_ai_game()):
         response = handler.get_ai_game(make_event(), MagicMock())
@@ -44,7 +61,7 @@ def test_get_ai_game_returns_200_for_owner():
 
 def test_create_ai_game_returns_201():
     with patch.object(
-        handler._ai_games_service, "create_ai_game", return_value=(make_ai_game(), 201)
+        handler._ai_games_service, "create_ai_game", return_value=(make_realtime_ai_game(), 201)
     ):
         response = handler.create_ai_game(
             make_event(body={"difficulty": "medium"}), MagicMock()
@@ -53,7 +70,9 @@ def test_create_ai_game_returns_201():
     assert response["statusCode"] == 201
     body = json.loads(response["body"])
     assert body["difficulty"] == "medium"
-    assert body["result"] is None
+    assert body["turn"] == 1
+    assert body["country"] == "BB"
+    assert body["usedCountries"] == ["BB"]
 
 
 def test_get_ai_game_returns_404_for_other_users_game():

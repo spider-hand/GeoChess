@@ -28,10 +28,10 @@ test("allows entry to the vs ai route after auth is ensured", async () => {
 
   await router.push("/");
   await router.isReady();
-  await router.push("/game/vs-ai");
+  await router.push("/game/vs-ai/game-123");
 
   expect(mockEnsureVsAiAccess).toHaveBeenCalledTimes(1);
-  expect(router.currentRoute.value.path).toBe("/game/vs-ai");
+  expect(router.currentRoute.value.path).toBe("/game/vs-ai/game-123");
 });
 
 test("redirects to home when the vs ai auth guard fails", async () => {
@@ -41,7 +41,7 @@ test("redirects to home when the vs ai auth guard fails", async () => {
 
   await router.push("/");
   await router.isReady();
-  await router.push("/game/vs-ai");
+  await router.push("/game/vs-ai/game-123");
 
   expect(mockEnsureVsAiAccess).toHaveBeenCalledTimes(1);
   expect(router.currentRoute.value.path).toBe("/");

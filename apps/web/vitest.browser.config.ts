@@ -6,7 +6,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [vue()],
   optimizeDeps: {
-    include: ["@tanstack/vue-query"],
+    include: ["@tanstack/vue-query", "firebase/database"],
   },
   resolve: {
     alias: {

@@ -10,7 +10,7 @@ const useApi = () => {
     accessToken: async () => {
       const authenticatedUser = firebaseAuth.currentUser ?? currentUser.value;
 
-      if (!authenticatedUser || authenticatedUser.isAnonymous) {
+      if (!authenticatedUser) {
         return "";
       }
 

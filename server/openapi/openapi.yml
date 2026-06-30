@@ -25,6 +25,8 @@ components:
       $ref: ./components/schemas/health-response.yml
     AiGame:
       $ref: ./components/schemas/ai-game.yml
+    RealtimeAiGame:
+      $ref: ./components/schemas/realtime-ai-game.yml
     CreateAiGameRequest:
       $ref: ./components/schemas/create-ai-game-request.yml
     User:

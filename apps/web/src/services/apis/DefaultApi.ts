@@ -18,6 +18,7 @@ import type {
   CreateAiGame400Response,
   CreateAiGameRequest,
   CreateUserRequest,
+  GetAiGame200Response,
   GetUser200Response,
 } from "../models/index";
 import {
@@ -29,6 +30,8 @@ import {
   CreateAiGameRequestToJSON,
   CreateUserRequestFromJSON,
   CreateUserRequestToJSON,
+  GetAiGame200ResponseFromJSON,
+  GetAiGame200ResponseToJSON,
   GetUser200ResponseFromJSON,
   GetUser200ResponseToJSON,
 } from "../models/index";
@@ -250,7 +253,7 @@ export class DefaultApi extends runtime.BaseAPI {
   async getAiGameRaw(
     requestParameters: GetAiGameRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<CreateAiGame201Response>> {
+  ): Promise<runtime.ApiResponse<GetAiGame200Response>> {
     if (requestParameters["gameId"] == null) {
       throw new runtime.RequiredError(
         "gameId",
@@ -288,7 +291,7 @@ export class DefaultApi extends runtime.BaseAPI {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      CreateAiGame201ResponseFromJSON(jsonValue),
+      GetAiGame200ResponseFromJSON(jsonValue),
     );
   }
 
@@ -298,7 +301,7 @@ export class DefaultApi extends runtime.BaseAPI {
   async getAiGame(
     requestParameters: GetAiGameRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<CreateAiGame201Response> {
+  ): Promise<GetAiGame200Response> {
     const response = await this.getAiGameRaw(requestParameters, initOverrides);
     return await response.value();
   }

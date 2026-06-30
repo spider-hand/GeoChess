@@ -44,7 +44,7 @@ test("returns the current user token by default", async () => {
   expect(getIdToken).toHaveBeenCalledTimes(1);
 });
 
-test("returns an empty access token for anonymous users", async () => {
+test("returns an access token for anonymous users", async () => {
   const getIdToken = vi.fn().mockResolvedValue("firebase-token");
   currentUser.value = { getIdToken, isAnonymous: true };
 
@@ -52,8 +52,8 @@ test("returns an empty access token for anonymous users", async () => {
 
   const { apiConfig } = useApi();
 
-  await expect(apiConfig.accessToken?.()).resolves.toBe("");
-  expect(getIdToken).not.toHaveBeenCalled();
+  await expect(apiConfig.accessToken?.()).resolves.toBe("firebase-token");
+  expect(getIdToken).toHaveBeenCalledTimes(1);
 });
 
 test("prefers firebase auth current user when it is available", async () => {

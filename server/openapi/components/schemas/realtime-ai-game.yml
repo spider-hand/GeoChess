@@ -1,0 +1,49 @@
+type: object
+required:
+  - id
+  - userId
+  - difficulty
+  - turn
+  - country
+  - borders
+  - usedCountries
+  - moves
+  - createdAt
+  - updatedAt
+properties:
+  id:
+    type: string
+  userId:
+    type: string
+  difficulty:
+    type: string
+    enum:
+      - easy
+      - medium
+      - hard
+  turn:
+    type: integer
+    enum:
+      - 0
+      - 1
+  country:
+    type: string
+  borders:
+    type: array
+    items:
+      type: string
+  usedCountries:
+    type: array
+    items:
+      type: string
+  moves:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+  createdAt:
+    type: string
+    format: date-time
+  updatedAt:
+    type: string
+    format: date-time

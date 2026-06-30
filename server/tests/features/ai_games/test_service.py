@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from core.http import ApiError
-from features.ai_games.models import AiGameRecord
+from features.ai_games.models import AiGameRecord, RealtimeAiGameRecord
 from features.ai_games.service import AiGamesService
 
 
@@ -14,6 +14,23 @@ def make_ai_game(user_id="user-123", result=None):
             "userId": user_id,
             "difficulty": "medium",
             "result": result,
+            "createdAt": "2026-06-29T00:00:00Z",
+            "updatedAt": "2026-06-29T00:00:00Z",
+        }
+    )
+
+
+def make_realtime_ai_game():
+    return RealtimeAiGameRecord.model_validate(
+        {
+            "id": "game-123",
+            "userId": "user-123",
+            "difficulty": "medium",
+            "turn": 1,
+            "country": "BB",
+            "borders": ["CC"],
+            "usedCountries": ["BB"],
+            "moves": [],
             "createdAt": "2026-06-29T00:00:00Z",
             "updatedAt": "2026-06-29T00:00:00Z",
         }
@@ -66,11 +83,39 @@ def test_create_ai_game_cancels_existing_incomplete_games_before_create():
         users_repository=users_repository,
     )
 
-    result, status_code = service.create_ai_game("user-123", {"difficulty": "medium"})
+    root_ref = MagicMock()
+    game_ref = MagicMock()
+    root_ref.child.return_value = game_ref
 
-    assert result == ai_games_repository.create_after_cancelling_incomplete_games.return_value
+    with (
+        pytest.MonkeyPatch.context() as monkeypatch,
+        ):
+        monkeypatch.setattr(
+            "features.ai_games.service.get_countries",
+            lambda: {"AA": {"borders": []}, "BB": {"borders": ["CC"]}},
+        )
+        choice_values = iter(["BB", 1])
+        monkeypatch.setattr(
+            "features.ai_games.service.get_countries_with_borders",
+            lambda: ("BB",),
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.random.choice",
+            lambda values: next(choice_values),
+        )
+        monkeypatch.setattr("features.ai_games.service.get_firebase_app", lambda: MagicMock())
+        monkeypatch.setattr(
+            "features.ai_games.service.firebase_db.reference",
+            lambda path, app: root_ref,
+        )
+
+        result, status_code = service.create_ai_game("user-123", {"difficulty": "medium"})
+
+    assert result == make_realtime_ai_game()
     assert status_code == 201
     ai_games_repository.create_after_cancelling_incomplete_games.assert_called_once()
+    root_ref.child.assert_called_once_with("game-123")
+    game_ref.set.assert_called_once_with(result.model_dump(by_alias=True, mode="json"))
 
 
 def test_delete_expired_ai_games_returns_deleted_count():

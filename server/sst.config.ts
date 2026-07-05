@@ -16,6 +16,14 @@ export default $config({
   },
   async run() {
     const api = new sst.aws.ApiGatewayV2("Api");
+    const aiGameMoveDlq = new sst.aws.Queue("AiGameMoveDLQ");
+    const aiGameMoveQueue = new sst.aws.Queue("AiGameMoveQueue", {
+      delay: "5 seconds",
+      dlq: {
+        queue: aiGameMoveDlq.arn,
+        retry: 3,
+      },
+    });
     const appSecretArn = `arn:aws:secretsmanager:*:*:secret:geochess-${$app.stage}*`;
     const databasePermissions = [
       sst.aws.permission({
@@ -23,6 +31,10 @@ export default $config({
         resources: [appSecretArn],
       }),
     ];
+    const aiGameMoveQueueSendPermission = sst.aws.permission({
+      actions: ["sqs:SendMessage"],
+      resources: [aiGameMoveQueue.arn],
+    });
     const firebaseAuthorizer = api.addAuthorizer({
       name: "firebaseAuthorizer",
       lambda: {
@@ -61,8 +73,9 @@ export default $config({
         handler: "src/api/v1/ai_games/handler.create_ai_game",
         environment: {
           ENVIRONMENT: $app.stage,
+          AI_GAME_MOVE_QUEUE_URL: aiGameMoveQueue.url,
         },
-        permissions: databasePermissions,
+        permissions: [...databasePermissions, aiGameMoveQueueSendPermission],
       },
       {
         auth: {
@@ -80,6 +93,24 @@ export default $config({
           ENVIRONMENT: $app.stage,
         },
         permissions: databasePermissions,
+      },
+      {
+        auth: {
+          lambda: firebaseAuthorizer.id,
+        },
+      },
+    );
+
+    api.route(
+      "POST /api/v1/ai-games/{gameId}/moves",
+      {
+        runtime: "python3.14",
+        handler: "src/api/v1/ai_games/moves/handler.create_ai_game_move",
+        environment: {
+          ENVIRONMENT: $app.stage,
+          AI_GAME_MOVE_QUEUE_URL: aiGameMoveQueue.url,
+        },
+        permissions: [...databasePermissions, aiGameMoveQueueSendPermission],
       },
       {
         auth: {
@@ -166,6 +197,15 @@ export default $config({
         },
         permissions: databasePermissions,
       },
+    });
+
+    aiGameMoveQueue.subscribe({
+      handler: "src/jobs/process_ai_game_move.process_ai_game_move",
+      runtime: "python3.14",
+      environment: {
+        ENVIRONMENT: $app.stage,
+      },
+      permissions: databasePermissions,
     });
 
     return {

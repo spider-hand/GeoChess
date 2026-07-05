@@ -2,6 +2,8 @@ from typing import Any
 
 from core.secret import get_secrets
 
+FIREBASE_SERVER_TIMESTAMP = {".sv": "timestamp"}
+
 
 def get_firebase_database_url() -> str:
     service_account = get_secrets()["firebase_service_account"]

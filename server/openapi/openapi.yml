@@ -12,6 +12,8 @@ paths:
     $ref: ./paths/api/v1/ai-games/index.yml
   /api/v1/ai-games/{gameId}:
     $ref: ./paths/api/v1/ai-games/game-by-id.yml
+  /api/v1/ai-games/{gameId}/moves:
+    $ref: ./paths/api/v1/ai-games/moves.yml
   /api/v1/users/{userId}:
     $ref: ./paths/api/v1/users/user-by-id.yml
 components:
@@ -29,6 +31,10 @@ components:
       $ref: ./components/schemas/realtime-ai-game.yml
     CreateAiGameRequest:
       $ref: ./components/schemas/create-ai-game-request.yml
+    AiGameMove:
+      $ref: ./components/schemas/ai-game-move.yml
+    CreateAiGameMoveRequest:
+      $ref: ./components/schemas/create-ai-game-move-request.yml
     User:
       $ref: ./components/schemas/user.yml
     CreateUserRequest:

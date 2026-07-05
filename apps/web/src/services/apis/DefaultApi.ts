@@ -16,6 +16,7 @@ import * as runtime from "../runtime";
 import type {
   CreateAiGame201Response,
   CreateAiGame400Response,
+  CreateAiGameMoveRequest,
   CreateAiGameRequest,
   CreateUserRequest,
   GetAiGame200Response,
@@ -26,6 +27,8 @@ import {
   CreateAiGame201ResponseToJSON,
   CreateAiGame400ResponseFromJSON,
   CreateAiGame400ResponseToJSON,
+  CreateAiGameMoveRequestFromJSON,
+  CreateAiGameMoveRequestToJSON,
   CreateAiGameRequestFromJSON,
   CreateAiGameRequestToJSON,
   CreateUserRequestFromJSON,
@@ -38,6 +41,11 @@ import {
 
 export interface CreateAiGameOperationRequest {
   createAiGameRequest: CreateAiGameRequest;
+}
+
+export interface CreateAiGameMoveOperationRequest {
+  gameId: string;
+  createAiGameMoveRequest: CreateAiGameMoveRequest;
 }
 
 export interface CreateUserOperationRequest {
@@ -127,6 +135,74 @@ export class DefaultApi extends runtime.BaseAPI {
       initOverrides,
     );
     return await response.value();
+  }
+
+  /**
+   * Create ai game move
+   */
+  async createAiGameMoveRaw(
+    requestParameters: CreateAiGameMoveOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters["gameId"] == null) {
+      throw new runtime.RequiredError(
+        "gameId",
+        'Required parameter "gameId" was null or undefined when calling createAiGameMove().',
+      );
+    }
+
+    if (requestParameters["createAiGameMoveRequest"] == null) {
+      throw new runtime.RequiredError(
+        "createAiGameMoveRequest",
+        'Required parameter "createAiGameMoveRequest" was null or undefined when calling createAiGameMove().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/ai-games/{gameId}/moves`;
+    urlPath = urlPath.replace(
+      `{${"gameId"}}`,
+      encodeURIComponent(String(requestParameters["gameId"])),
+    );
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+        body: CreateAiGameMoveRequestToJSON(
+          requestParameters["createAiGameMoveRequest"],
+        ),
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Create ai game move
+   */
+  async createAiGameMove(
+    requestParameters: CreateAiGameMoveOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.createAiGameMoveRaw(requestParameters, initOverrides);
   }
 
   /**

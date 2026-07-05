@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from "../runtime";
+import type { CreateAiGame201ResponseMovesValue } from "./CreateAiGame201ResponseMovesValue";
+import {
+  CreateAiGame201ResponseMovesValueFromJSON,
+  CreateAiGame201ResponseMovesValueFromJSONTyped,
+  CreateAiGame201ResponseMovesValueToJSON,
+  CreateAiGame201ResponseMovesValueToJSONTyped,
+} from "./CreateAiGame201ResponseMovesValue";
+
 /**
  *
  * @export
@@ -39,10 +47,16 @@ export interface CreateAiGame201Response {
   difficulty: CreateAiGame201ResponseDifficultyEnum;
   /**
    *
-   * @type {number}
+   * @type {string}
    * @memberof CreateAiGame201Response
    */
   turn: CreateAiGame201ResponseTurnEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateAiGame201Response
+   */
+  start: string;
   /**
    *
    * @type {string}
@@ -54,7 +68,7 @@ export interface CreateAiGame201Response {
    * @type {Array<string>}
    * @memberof CreateAiGame201Response
    */
-  borders: Array<string>;
+  availableMoves: Array<string>;
   /**
    *
    * @type {Array<string>}
@@ -63,22 +77,22 @@ export interface CreateAiGame201Response {
   usedCountries: Array<string>;
   /**
    *
-   * @type {Array<object>}
+   * @type {{ [key: string]: CreateAiGame201ResponseMovesValue; }}
    * @memberof CreateAiGame201Response
    */
-  moves: Array<object>;
+  moves: { [key: string]: CreateAiGame201ResponseMovesValue };
   /**
    *
-   * @type {Date}
+   * @type {number}
    * @memberof CreateAiGame201Response
    */
-  createdAt: Date;
+  createdAt: number;
   /**
    *
-   * @type {Date}
+   * @type {number}
    * @memberof CreateAiGame201Response
    */
-  updatedAt: Date;
+  updatedAt: number;
 }
 
 /**
@@ -96,8 +110,8 @@ export type CreateAiGame201ResponseDifficultyEnum =
  * @export
  */
 export const CreateAiGame201ResponseTurnEnum = {
-  NUMBER_0: 0,
-  NUMBER_1: 1,
+  Player: "player",
+  Ai: "ai",
 } as const;
 export type CreateAiGame201ResponseTurnEnum =
   (typeof CreateAiGame201ResponseTurnEnum)[keyof typeof CreateAiGame201ResponseTurnEnum];
@@ -113,8 +127,10 @@ export function instanceOfCreateAiGame201Response(
   if (!("difficulty" in value) || value["difficulty"] === undefined)
     return false;
   if (!("turn" in value) || value["turn"] === undefined) return false;
+  if (!("start" in value) || value["start"] === undefined) return false;
   if (!("country" in value) || value["country"] === undefined) return false;
-  if (!("borders" in value) || value["borders"] === undefined) return false;
+  if (!("availableMoves" in value) || value["availableMoves"] === undefined)
+    return false;
   if (!("usedCountries" in value) || value["usedCountries"] === undefined)
     return false;
   if (!("moves" in value) || value["moves"] === undefined) return false;
@@ -141,12 +157,13 @@ export function CreateAiGame201ResponseFromJSONTyped(
     userId: json["userId"],
     difficulty: json["difficulty"],
     turn: json["turn"],
+    start: json["start"],
     country: json["country"],
-    borders: json["borders"],
+    availableMoves: json["availableMoves"],
     usedCountries: json["usedCountries"],
-    moves: json["moves"],
-    createdAt: new Date(json["createdAt"]),
-    updatedAt: new Date(json["updatedAt"]),
+    moves: mapValues(json["moves"], CreateAiGame201ResponseMovesValueFromJSON),
+    createdAt: json["createdAt"],
+    updatedAt: json["updatedAt"],
   };
 }
 
@@ -169,11 +186,12 @@ export function CreateAiGame201ResponseToJSONTyped(
     userId: value["userId"],
     difficulty: value["difficulty"],
     turn: value["turn"],
+    start: value["start"],
     country: value["country"],
-    borders: value["borders"],
+    availableMoves: value["availableMoves"],
     usedCountries: value["usedCountries"],
-    moves: value["moves"],
-    createdAt: value["createdAt"].toISOString(),
-    updatedAt: value["updatedAt"].toISOString(),
+    moves: mapValues(value["moves"], CreateAiGame201ResponseMovesValueToJSON),
+    createdAt: value["createdAt"],
+    updatedAt: value["updatedAt"],
   };
 }

@@ -39,13 +39,14 @@ def make_realtime_ai_game():
             "id": "game-123",
             "userId": "user-123",
             "difficulty": "medium",
-            "turn": 1,
+            "turn": "player",
+            "start": "BB",
             "country": "BB",
-            "borders": ["CC"],
+            "availableMoves": ["CC"],
             "usedCountries": ["BB"],
-            "moves": [],
-            "createdAt": "2026-06-29T00:00:00Z",
-            "updatedAt": "2026-06-29T00:00:00Z",
+            "moves": {},
+            "createdAt": 1751155200000,
+            "updatedAt": 1751155200000,
         }
     )
 
@@ -70,9 +71,9 @@ def test_create_ai_game_returns_201():
     assert response["statusCode"] == 201
     body = json.loads(response["body"])
     assert body["difficulty"] == "medium"
-    assert body["turn"] == 1
-    assert body["country"] == "BB"
-    assert body["usedCountries"] == ["BB"]
+    assert body["turn"] == "player"
+    assert body["start"] == "BB"
+    assert body["availableMoves"] == ["CC"]
 
 
 def test_get_ai_game_returns_404_for_other_users_game():

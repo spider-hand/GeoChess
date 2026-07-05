@@ -3,8 +3,11 @@ apis/HealthApi.ts
 apis/index.ts
 index.ts
 models/AiGame.ts
+models/AiGameMove.ts
 models/CreateAiGame201Response.ts
+models/CreateAiGame201ResponseMovesValue.ts
 models/CreateAiGame400Response.ts
+models/CreateAiGameMoveRequest.ts
 models/CreateAiGameRequest.ts
 models/CreateUserRequest.ts
 models/ErrorResponse.ts

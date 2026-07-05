@@ -1,7 +1,7 @@
 from typing import Any
 
 from core.db import get_connection
-from features.ai_games.models import AiGameRecord, Difficulty
+from features.ai_games.models import AiGameRecord, AiGameResult, Difficulty
 
 
 def _map_ai_game_row(row: dict[str, Any]) -> AiGameRecord:
@@ -61,13 +61,23 @@ class AiGamesRepository:
 
         return _map_ai_game_row(row)
 
-    def delete_expired_games(self) -> int:
+    def finish_game(self, game_id: str, result: AiGameResult) -> None:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute(
                 """
+                UPDATE ai_games
+                SET result = %s,
+                    updated_at = NOW()
+                WHERE id = %s
+                """,
+                (result, game_id),
+            )
+
+    def delete_expired_games(self) -> int:
+        with get_connection() as connection, connection.cursor() as cursor:
+            cursor.execute("""
                 DELETE FROM ai_games
                 WHERE created_at < NOW() - INTERVAL '30 days'
-                """
-            )
+                """)
 
             return cursor.rowcount

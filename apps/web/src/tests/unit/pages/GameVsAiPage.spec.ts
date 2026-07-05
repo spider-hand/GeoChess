@@ -6,13 +6,14 @@ const realtimeAiGame = ref({
   id: "game-123",
   userId: "user-123",
   difficulty: "medium",
-  turn: 1,
+  turn: "player",
+  start: "BB",
   country: "BB",
-  borders: ["CC"],
+  availableMoves: ["CC"],
   usedCountries: ["BB"],
-  moves: [],
-  createdAt: new Date("2026-06-29T00:00:00Z"),
-  updatedAt: new Date("2026-06-29T00:00:00Z"),
+  moves: {},
+  createdAt: 1751155200000,
+  updatedAt: 1751155200000,
 });
 const realtimeAiGameError = ref<Error | null>(null);
 const isLoadingRealtimeAiGame = ref(false);
@@ -61,13 +62,14 @@ beforeEach(() => {
     id: "game-123",
     userId: "user-123",
     difficulty: "medium",
-    turn: 1,
+    turn: "player",
+    start: "BB",
     country: "BB",
-    borders: ["CC"],
+    availableMoves: ["CC"],
     usedCountries: ["BB"],
-    moves: [],
-    createdAt: new Date("2026-06-29T00:00:00Z"),
-    updatedAt: new Date("2026-06-29T00:00:00Z"),
+    moves: {},
+    createdAt: 1751155200000,
+    updatedAt: 1751155200000,
   };
   realtimeAiGameError.value = null;
   isLoadingRealtimeAiGame.value = false;

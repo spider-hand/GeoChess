@@ -4,6 +4,12 @@
 from typing import Any
 
 class Resource:
+    class AiGameMoveDLQ:
+        type: str
+        url: str
+    class AiGameMoveQueue:
+        type: str
+        url: str
     class Api:
         type: str
         url: str

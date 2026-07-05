@@ -15,7 +15,9 @@
     "state:dev": "sst state export --stage dev",
     "state:prod": "sst state export --stage prod",
     "remove:dev": "sst remove --stage dev",
-    "remove:prod": "sst remove --stage prod"
+    "remove:prod": "sst remove --stage prod",
+    "unlock:dev": "sst unlock --stage dev",
+    "unlock:prod": "sst unlock --stage prod"
   },
   "keywords": [],
   "author": "",

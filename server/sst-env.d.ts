@@ -6,6 +6,14 @@
 
 declare module "sst" {
   export interface Resource {
+    "AiGameMoveDLQ": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
+    "AiGameMoveQueue": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
     "Api": {
       "type": "sst.aws.ApiGatewayV2"
       "url": string

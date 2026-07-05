@@ -1,6 +1,12 @@
+parameters:
+  - name: gameId
+    in: path
+    required: true
+    schema:
+      type: string
 post:
-  operationId: createAiGame
-  summary: Create ai game
+  operationId: createAiGameMove
+  summary: Create ai game move
   security:
     - BearerAuth: []
   requestBody:
@@ -8,14 +14,10 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../../../../components/schemas/create-ai-game-request.yml
+          $ref: ../../../../components/schemas/create-ai-game-move-request.yml
   responses:
-    '201':
-      description: Ai game created
-      content:
-        application/json:
-          schema:
-            $ref: ../../../../components/schemas/realtime-ai-game.yml
+    '202':
+      description: Ai game move accepted
     '400':
       description: Invalid request
       content:
@@ -24,6 +26,12 @@ post:
             $ref: ../../../../components/schemas/error-response.yml
     '401':
       description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '404':
+      description: Ai game not found
       content:
         application/json:
           schema:

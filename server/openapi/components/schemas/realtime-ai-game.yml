@@ -4,8 +4,9 @@ required:
   - userId
   - difficulty
   - turn
+  - start
   - country
-  - borders
+  - availableMoves
   - usedCountries
   - moves
   - createdAt
@@ -22,13 +23,15 @@ properties:
       - medium
       - hard
   turn:
-    type: integer
+    type: string
     enum:
-      - 0
-      - 1
+      - player
+      - ai
+  start:
+    type: string
   country:
     type: string
-  borders:
+  availableMoves:
     type: array
     items:
       type: string
@@ -37,13 +40,12 @@ properties:
     items:
       type: string
   moves:
-    type: array
-    items:
-      type: object
-      additionalProperties: true
+    type: object
+    additionalProperties:
+      $ref: ./ai-game-move.yml
   createdAt:
-    type: string
-    format: date-time
+    type: integer
+    format: int64
   updatedAt:
-    type: string
-    format: date-time
+    type: integer
+    format: int64

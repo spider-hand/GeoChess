@@ -3,7 +3,7 @@ from http import HTTPStatus
 from typing import Any
 
 
-def json_response(status_code: int, body: dict[str, Any], headers: dict[str, str]):
+def json_response(status_code: int, body: Any, headers: dict[str, str]):
     return {
         "statusCode": status_code,
         "headers": headers,

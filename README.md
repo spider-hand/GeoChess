@@ -31,5 +31,6 @@ Refer to the server setup guide for AWS SSO authentication and profile configura
 - Backend: AWS Lambda
 - Authentication: Firebase Authentication
 - DB: Firebase Realtime Database, PostgreSQL
+- Message Queue: AWS SQS
 - Hosting: Cloudflare
 - Infrastructure: SST

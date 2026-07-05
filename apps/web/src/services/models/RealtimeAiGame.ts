@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from "../runtime";
+import type { CreateAiGame201ResponseMovesValue } from "./CreateAiGame201ResponseMovesValue";
+import {
+  CreateAiGame201ResponseMovesValueFromJSON,
+  CreateAiGame201ResponseMovesValueFromJSONTyped,
+  CreateAiGame201ResponseMovesValueToJSON,
+  CreateAiGame201ResponseMovesValueToJSONTyped,
+} from "./CreateAiGame201ResponseMovesValue";
+
 /**
  *
  * @export
@@ -39,10 +47,16 @@ export interface RealtimeAiGame {
   difficulty: RealtimeAiGameDifficultyEnum;
   /**
    *
-   * @type {number}
+   * @type {string}
    * @memberof RealtimeAiGame
    */
   turn: RealtimeAiGameTurnEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof RealtimeAiGame
+   */
+  start: string;
   /**
    *
    * @type {string}
@@ -54,7 +68,7 @@ export interface RealtimeAiGame {
    * @type {Array<string>}
    * @memberof RealtimeAiGame
    */
-  borders: Array<string>;
+  availableMoves: Array<string>;
   /**
    *
    * @type {Array<string>}
@@ -63,22 +77,22 @@ export interface RealtimeAiGame {
   usedCountries: Array<string>;
   /**
    *
-   * @type {Array<object>}
+   * @type {{ [key: string]: CreateAiGame201ResponseMovesValue; }}
    * @memberof RealtimeAiGame
    */
-  moves: Array<object>;
+  moves: { [key: string]: CreateAiGame201ResponseMovesValue };
   /**
    *
-   * @type {Date}
+   * @type {number}
    * @memberof RealtimeAiGame
    */
-  createdAt: Date;
+  createdAt: number;
   /**
    *
-   * @type {Date}
+   * @type {number}
    * @memberof RealtimeAiGame
    */
-  updatedAt: Date;
+  updatedAt: number;
 }
 
 /**
@@ -96,8 +110,8 @@ export type RealtimeAiGameDifficultyEnum =
  * @export
  */
 export const RealtimeAiGameTurnEnum = {
-  NUMBER_0: 0,
-  NUMBER_1: 1,
+  Player: "player",
+  Ai: "ai",
 } as const;
 export type RealtimeAiGameTurnEnum =
   (typeof RealtimeAiGameTurnEnum)[keyof typeof RealtimeAiGameTurnEnum];
@@ -113,8 +127,10 @@ export function instanceOfRealtimeAiGame(
   if (!("difficulty" in value) || value["difficulty"] === undefined)
     return false;
   if (!("turn" in value) || value["turn"] === undefined) return false;
+  if (!("start" in value) || value["start"] === undefined) return false;
   if (!("country" in value) || value["country"] === undefined) return false;
-  if (!("borders" in value) || value["borders"] === undefined) return false;
+  if (!("availableMoves" in value) || value["availableMoves"] === undefined)
+    return false;
   if (!("usedCountries" in value) || value["usedCountries"] === undefined)
     return false;
   if (!("moves" in value) || value["moves"] === undefined) return false;
@@ -139,12 +155,13 @@ export function RealtimeAiGameFromJSONTyped(
     userId: json["userId"],
     difficulty: json["difficulty"],
     turn: json["turn"],
+    start: json["start"],
     country: json["country"],
-    borders: json["borders"],
+    availableMoves: json["availableMoves"],
     usedCountries: json["usedCountries"],
-    moves: json["moves"],
-    createdAt: new Date(json["createdAt"]),
-    updatedAt: new Date(json["updatedAt"]),
+    moves: mapValues(json["moves"], CreateAiGame201ResponseMovesValueFromJSON),
+    createdAt: json["createdAt"],
+    updatedAt: json["updatedAt"],
   };
 }
 
@@ -165,11 +182,12 @@ export function RealtimeAiGameToJSONTyped(
     userId: value["userId"],
     difficulty: value["difficulty"],
     turn: value["turn"],
+    start: value["start"],
     country: value["country"],
-    borders: value["borders"],
+    availableMoves: value["availableMoves"],
     usedCountries: value["usedCountries"],
-    moves: value["moves"],
-    createdAt: value["createdAt"].toISOString(),
-    updatedAt: value["updatedAt"].toISOString(),
+    moves: mapValues(value["moves"], CreateAiGame201ResponseMovesValueToJSON),
+    createdAt: value["createdAt"],
+    updatedAt: value["updatedAt"],
   };
 }

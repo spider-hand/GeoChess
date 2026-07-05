@@ -1,0 +1,16 @@
+type: object
+required:
+  - country
+  - actor
+  - createdAt
+properties:
+  country:
+    type: string
+  actor:
+    type: string
+    enum:
+      - player
+      - ai
+  createdAt:
+    type: integer
+    format: int64

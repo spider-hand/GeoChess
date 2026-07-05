@@ -1,6 +1,10 @@
+/* tslint:disable */
 export * from "./AiGame";
+export * from "./AiGameMove";
 export * from "./CreateAiGame201Response";
+export * from "./CreateAiGame201ResponseMovesValue";
 export * from "./CreateAiGame400Response";
+export * from "./CreateAiGameMoveRequest";
 export * from "./CreateAiGameRequest";
 export * from "./CreateUserRequest";
 export * from "./ErrorResponse";

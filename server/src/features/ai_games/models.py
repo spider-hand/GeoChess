@@ -51,6 +51,6 @@ class RealtimeAiGameRecord(BaseModel):
     country: str
     available_moves: list[str] = Field(alias="availableMoves")
     used_countries: list[str] = Field(alias="usedCountries")
-    moves: dict[str, RealtimeAiGameMoveRecord]
+    moves: dict[str, RealtimeAiGameMoveRecord] = Field(default_factory=dict)
     created_at: int = Field(alias="createdAt")
     updated_at: int = Field(alias="updatedAt")

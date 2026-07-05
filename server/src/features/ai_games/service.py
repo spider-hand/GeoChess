@@ -187,9 +187,7 @@ class AiGamesService:
             ) from error
 
         game_ref = self._get_game_ref(game_id)
-        move_key = game_ref.child("moves").push().key
-        if move_key is None:
-            raise RuntimeError("Failed to generate move key.")
+        move_key = uuid4().hex
 
         terminal_result: AiGameResult | None = None
 
@@ -241,9 +239,7 @@ class AiGamesService:
             return
 
         game_ref = self._get_game_ref(game_id)
-        move_key = game_ref.child("moves").push().key
-        if move_key is None:
-            raise RuntimeError("Failed to generate move key.")
+        move_key = uuid4().hex
 
         terminal_result: AiGameResult | None = None
 

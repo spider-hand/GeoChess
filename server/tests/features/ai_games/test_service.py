@@ -29,7 +29,9 @@ def make_realtime_ai_game(turn="player", available_moves=None, moves=None):
             "turn": turn,
             "start": "BB",
             "country": "BB",
-            "availableMoves": available_moves if available_moves is not None else ["CC"],
+            "availableMoves": (
+                available_moves if available_moves is not None else ["CC"]
+            ),
             "usedCountries": ["BB"],
             "moves": moves or {},
             "createdAt": 1751155200000,
@@ -52,7 +54,9 @@ def test_get_ai_game_returns_404_when_game_belongs_to_other_user():
 
 def test_create_ai_game_creates_guest_user_when_user_does_not_exist():
     ai_games_repository = MagicMock()
-    ai_games_repository.create_after_cancelling_incomplete_games.return_value = make_ai_game()
+    ai_games_repository.create_after_cancelling_incomplete_games.return_value = (
+        make_ai_game()
+    )
     users_repository = MagicMock()
     users_repository.get_by_id.return_value = None
     service = AiGamesService(
@@ -64,7 +68,11 @@ def test_create_ai_game_creates_guest_user_when_user_does_not_exist():
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
             "features.ai_games.service.get_countries",
-            lambda: {"BB": {"borders": ["CC", "DD"]}, "CC": {"borders": ["BB"]}, "DD": {"borders": ["BB"]}},
+            lambda: {
+                "BB": {"borders": ["CC", "DD"]},
+                "CC": {"borders": ["BB"]},
+                "DD": {"borders": ["BB"]},
+            },
         )
         monkeypatch.setattr(
             "features.ai_games.service.get_countries_with_borders",
@@ -75,18 +83,24 @@ def test_create_ai_game_creates_guest_user_when_user_does_not_exist():
             "features.ai_games.service.random.choice",
             lambda values: next(choice_values),
         )
-        game_ref.get.return_value = make_realtime_ai_game(turn="ai", available_moves=["CC", "DD"]).model_dump(
-            by_alias=True, mode="json"
+        game_ref.get.return_value = make_realtime_ai_game(
+            turn="ai", available_moves=["CC", "DD"]
+        ).model_dump(by_alias=True, mode="json")
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
-        monkeypatch.setattr("features.ai_games.service.get_firebase_app", lambda: MagicMock())
         monkeypatch.setattr(
             "features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         enqueue_mock = MagicMock()
-        monkeypatch.setattr("features.ai_games.service.enqueue_ai_game_move", enqueue_mock)
+        monkeypatch.setattr(
+            "features.ai_games.service.enqueue_ai_game_move", enqueue_mock
+        )
 
-        result, status_code = service.create_ai_game("user-123", {"difficulty": "medium"})
+        result, status_code = service.create_ai_game(
+            "user-123", {"difficulty": "medium"}
+        )
 
     assert status_code == 201
     assert result.turn == "ai"
@@ -103,7 +117,9 @@ def test_create_ai_game_returns_400_for_unexpected_fields():
     service = AiGamesService(users_repository=users_repository)
 
     with pytest.raises(ApiError) as error:
-        service.create_ai_game("user-123", {"difficulty": "medium", "result": "cancelled"})
+        service.create_ai_game(
+            "user-123", {"difficulty": "medium", "result": "cancelled"}
+        )
 
     assert error.value.status_code == 400
     assert error.value.code == "invalid_request_body"
@@ -113,7 +129,9 @@ def test_create_ai_game_returns_400_for_unexpected_fields():
 
 def test_create_ai_game_does_not_create_user_when_user_exists():
     ai_games_repository = MagicMock()
-    ai_games_repository.create_after_cancelling_incomplete_games.return_value = make_ai_game()
+    ai_games_repository.create_after_cancelling_incomplete_games.return_value = (
+        make_ai_game()
+    )
     users_repository = MagicMock()
     users_repository.get_by_id.return_value = MagicMock()
     service = AiGamesService(
@@ -125,7 +143,11 @@ def test_create_ai_game_does_not_create_user_when_user_exists():
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
             "features.ai_games.service.get_countries",
-            lambda: {"BB": {"borders": ["CC", "DD"]}, "CC": {"borders": ["BB"]}, "DD": {"borders": ["BB"]}},
+            lambda: {
+                "BB": {"borders": ["CC", "DD"]},
+                "CC": {"borders": ["BB"]},
+                "DD": {"borders": ["BB"]},
+            },
         )
         monkeypatch.setattr(
             "features.ai_games.service.get_countries_with_borders",
@@ -136,18 +158,24 @@ def test_create_ai_game_does_not_create_user_when_user_exists():
             "features.ai_games.service.random.choice",
             lambda values: next(choice_values),
         )
-        game_ref.get.return_value = make_realtime_ai_game(turn="player", available_moves=["CC", "DD"]).model_dump(
-            by_alias=True, mode="json"
+        game_ref.get.return_value = make_realtime_ai_game(
+            turn="player", available_moves=["CC", "DD"]
+        ).model_dump(by_alias=True, mode="json")
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
-        monkeypatch.setattr("features.ai_games.service.get_firebase_app", lambda: MagicMock())
         monkeypatch.setattr(
             "features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         enqueue_mock = MagicMock()
-        monkeypatch.setattr("features.ai_games.service.enqueue_ai_game_move", enqueue_mock)
+        monkeypatch.setattr(
+            "features.ai_games.service.enqueue_ai_game_move", enqueue_mock
+        )
 
-        result, status_code = service.create_ai_game("user-123", {"difficulty": "medium"})
+        result, status_code = service.create_ai_game(
+            "user-123", {"difficulty": "medium"}
+        )
 
     assert status_code == 201
     assert result.turn == "player"
@@ -157,7 +185,9 @@ def test_create_ai_game_does_not_create_user_when_user_exists():
 
 def test_create_ai_game_saves_realtime_game_and_enqueues_when_ai_starts():
     ai_games_repository = MagicMock()
-    ai_games_repository.create_after_cancelling_incomplete_games.return_value = make_ai_game()
+    ai_games_repository.create_after_cancelling_incomplete_games.return_value = (
+        make_ai_game()
+    )
     users_repository = MagicMock()
     users_repository.get_by_id.return_value = MagicMock()
     service = AiGamesService(
@@ -169,7 +199,11 @@ def test_create_ai_game_saves_realtime_game_and_enqueues_when_ai_starts():
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
             "features.ai_games.service.get_countries",
-            lambda: {"BB": {"borders": ["CC", "DD"]}, "CC": {"borders": ["BB"]}, "DD": {"borders": ["BB"]}},
+            lambda: {
+                "BB": {"borders": ["CC", "DD"]},
+                "CC": {"borders": ["BB"]},
+                "DD": {"borders": ["BB"]},
+            },
         )
         monkeypatch.setattr(
             "features.ai_games.service.get_countries_with_borders",
@@ -180,18 +214,24 @@ def test_create_ai_game_saves_realtime_game_and_enqueues_when_ai_starts():
             "features.ai_games.service.random.choice",
             lambda values: next(choice_values),
         )
-        game_ref.get.return_value = make_realtime_ai_game(turn="ai", available_moves=["CC", "DD"]).model_dump(
-            by_alias=True, mode="json"
+        game_ref.get.return_value = make_realtime_ai_game(
+            turn="ai", available_moves=["CC", "DD"]
+        ).model_dump(by_alias=True, mode="json")
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
-        monkeypatch.setattr("features.ai_games.service.get_firebase_app", lambda: MagicMock())
         monkeypatch.setattr(
             "features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         enqueue_mock = MagicMock()
-        monkeypatch.setattr("features.ai_games.service.enqueue_ai_game_move", enqueue_mock)
+        monkeypatch.setattr(
+            "features.ai_games.service.enqueue_ai_game_move", enqueue_mock
+        )
 
-        result, status_code = service.create_ai_game("user-123", {"difficulty": "medium"})
+        result, status_code = service.create_ai_game(
+            "user-123", {"difficulty": "medium"}
+        )
 
     assert status_code == 201
     assert result.turn == "ai"
@@ -215,42 +255,46 @@ def test_create_ai_game_saves_realtime_game_and_enqueues_when_ai_starts():
     )
     enqueue_mock.assert_called_once_with("game-123")
 
+
 def test_create_ai_game_move_updates_realtime_state_and_enqueues_ai():
     ai_games_repository = MagicMock()
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)
     game_ref = MagicMock()
-    moves_ref = MagicMock()
-    push_ref = MagicMock(key="move-1")
-    moves_ref.push.return_value = push_ref
     updated_state = {}
 
-    def child(name: str):
-        if name == "moves":
-            return moves_ref
-        return game_ref
-
     def transaction(callback):
-        current = make_realtime_ai_game(turn="player", available_moves=["CC"]).model_dump(
-            by_alias=True, mode="json"
-        )
+        current = make_realtime_ai_game(
+            turn="player", available_moves=["CC"]
+        ).model_dump(by_alias=True, mode="json")
         updated_state["value"] = callback(current)
 
-    game_ref.child.side_effect = child
     game_ref.transaction.side_effect = transaction
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
             "features.ai_games.service.get_countries",
-            lambda: {"BB": {"borders": ["CC"]}, "CC": {"borders": ["BB", "DD"]}, "DD": {"borders": ["CC"]}},
+            lambda: {
+                "BB": {"borders": ["CC"]},
+                "CC": {"borders": ["BB", "DD"]},
+                "DD": {"borders": ["CC"]},
+            },
         )
-        monkeypatch.setattr("features.ai_games.service.get_firebase_app", lambda: MagicMock())
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
         monkeypatch.setattr(
             "features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
+        monkeypatch.setattr(
+            "features.ai_games.service.uuid4",
+            lambda: MagicMock(hex="move-1"),
+        )
         enqueue_mock = MagicMock()
-        monkeypatch.setattr("features.ai_games.service.enqueue_ai_game_move", enqueue_mock)
+        monkeypatch.setattr(
+            "features.ai_games.service.enqueue_ai_game_move", enqueue_mock
+        )
 
         service.create_ai_game_move("user-123", "game-123", {"countryCode": "CC"})
 
@@ -268,17 +312,10 @@ def test_create_ai_game_move_finishes_game_without_enqueuing():
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)
     game_ref = MagicMock()
-    moves_ref = MagicMock()
-    moves_ref.push.return_value = MagicMock(key="move-1")
-
-    def child(name: str):
-        if name == "moves":
-            return moves_ref
-        return game_ref
-
-    game_ref.child.side_effect = child
     game_ref.transaction.side_effect = lambda callback: callback(
-        make_realtime_ai_game(turn="player", available_moves=["CC"]).model_dump(by_alias=True, mode="json")
+        make_realtime_ai_game(turn="player", available_moves=["CC"]).model_dump(
+            by_alias=True, mode="json"
+        )
     )
 
     with pytest.MonkeyPatch.context() as monkeypatch:
@@ -286,13 +323,21 @@ def test_create_ai_game_move_finishes_game_without_enqueuing():
             "features.ai_games.service.get_countries",
             lambda: {"BB": {"borders": ["CC"]}, "CC": {"borders": ["BB"]}},
         )
-        monkeypatch.setattr("features.ai_games.service.get_firebase_app", lambda: MagicMock())
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
         monkeypatch.setattr(
             "features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
+        monkeypatch.setattr(
+            "features.ai_games.service.uuid4",
+            lambda: MagicMock(hex="move-1"),
+        )
         enqueue_mock = MagicMock()
-        monkeypatch.setattr("features.ai_games.service.enqueue_ai_game_move", enqueue_mock)
+        monkeypatch.setattr(
+            "features.ai_games.service.enqueue_ai_game_move", enqueue_mock
+        )
 
         service.create_ai_game_move("user-123", "game-123", {"countryCode": "CC"})
 
@@ -305,14 +350,7 @@ def test_process_ai_game_move_applies_ai_move():
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)
     game_ref = MagicMock()
-    moves_ref = MagicMock()
-    moves_ref.push.return_value = MagicMock(key="move-2")
     updated_state = {}
-
-    def child(name: str):
-        if name == "moves":
-            return moves_ref
-        return game_ref
 
     def transaction(callback):
         current = make_realtime_ai_game(turn="ai", available_moves=["CC"]).model_dump(
@@ -320,20 +358,31 @@ def test_process_ai_game_move_applies_ai_move():
         )
         updated_state["value"] = callback(current)
 
-    game_ref.child.side_effect = child
     game_ref.transaction.side_effect = transaction
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
             "features.ai_games.service.get_countries",
-            lambda: {"BB": {"borders": ["CC"]}, "CC": {"borders": ["BB", "DD"]}, "DD": {"borders": ["CC"]}},
+            lambda: {
+                "BB": {"borders": ["CC"]},
+                "CC": {"borders": ["BB", "DD"]},
+                "DD": {"borders": ["CC"]},
+            },
         )
-        monkeypatch.setattr("features.ai_games.service.get_firebase_app", lambda: MagicMock())
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
         monkeypatch.setattr(
             "features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
-        monkeypatch.setattr("features.ai_games.service.choose_ai_move", lambda game: "CC")
+        monkeypatch.setattr(
+            "features.ai_games.service.uuid4",
+            lambda: MagicMock(hex="move-2"),
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.choose_ai_move", lambda game: "CC"
+        )
 
         service.process_ai_game_move("game-123")
 
@@ -348,24 +397,23 @@ def test_process_ai_game_move_finishes_game_when_ai_has_no_available_moves():
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)
     game_ref = MagicMock()
-    moves_ref = MagicMock()
-    moves_ref.push.return_value = MagicMock(key="move-2")
-
-    def child(name: str):
-        if name == "moves":
-            return moves_ref
-        return game_ref
-
-    game_ref.child.side_effect = child
     game_ref.transaction.side_effect = lambda callback: callback(
-        make_realtime_ai_game(turn="ai", available_moves=[]).model_dump(by_alias=True, mode="json")
+        make_realtime_ai_game(turn="ai", available_moves=[]).model_dump(
+            by_alias=True, mode="json"
+        )
     )
 
     with pytest.MonkeyPatch.context() as monkeypatch:
-        monkeypatch.setattr("features.ai_games.service.get_firebase_app", lambda: MagicMock())
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
         monkeypatch.setattr(
             "features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.uuid4",
+            lambda: MagicMock(hex="move-2"),
         )
 
         service.process_ai_game_move("game-123")

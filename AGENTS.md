@@ -28,13 +28,13 @@ Key paths are below:
 ### General
 
 #### Simplicity
-- Do not introduce new abstraction layers, helper functions, wrapper composables, factories, adapters, or indirection unless at least one of these is true:
-  - the same logic is already used in 2 or more concrete call sites
-  - the abstraction removes real duplciation that already exists
-  - the abstraction is required by a framework, library, or testability constraint
-- Do not add speculative branches for future use cases that are not currently required
-- Do not create optional code paths for scenarios that are not exerised by the current product requirements
-- Avoid 'helper-first' design. Always start from the most direct implementation, then extract only after duplication or repeated branching is visible in the codebase
+
+- Always start with the most direct implementation that satisfies the current requirement
+- Do not introduce new abstraction layers, helper functions, wrapper composables, factories, adapters, or other indirection unless duplication, repeated branching, or a framework constraint already exists in the current code
+- Do not add speculative branches, optional code paths, or abstractions for scenarios that are not exercised by the current product requirements
+- Do not add fallback branches, compatibility shims, or defensive conditionals unless a concrete runtime case in this repository requires them
+- Do not accept mixed or overly broad input types when one concrete type is sufficient
+- Do not preserve invalid states unless an existing runtime contract or test in this repository requires them
 
 ### Frontend
 

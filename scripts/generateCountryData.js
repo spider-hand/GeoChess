@@ -1,69 +1,73 @@
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const OUTPUT_PATH = path.resolve("server", "src", "data", "countries.json");
+const API_URL = "https://api.restcountries.com/countries/v5";
+const OUTPUT_PATH = path.resolve("scripts", "output", "countries.raw.json");
+const PAGE_SIZE = 100;
 
-/**
- * Fetch country data with specific fields from REST Countries API
- */
-const fetchCountries = async () => {
-  const response = await fetch(
-    "https://restcountries.com/v3.1/all?fields=borders,name,translations,cca2",
-  );
+function getApiKey() {
+  const apiKey = process.env.RESTCOUNTRIES_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("RESTCOUNTRIES_API_KEY is required.");
+  }
+
+  return apiKey;
+}
+
+async function fetchPage(apiKey, offset) {
+  const url = new URL(API_URL);
+  url.searchParams.set("limit", String(PAGE_SIZE));
+  url.searchParams.set("offset", String(offset));
+  url.searchParams.set("pretty", "1");
+
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  });
 
   if (!response.ok) {
     throw new Error(
-      `Failed to fetch country data: ${response.status} ${response.statusText}`,
+      `Failed to fetch countries at offset ${offset}: ${response.status} ${response.statusText}`,
     );
   }
 
-  const countries = await response.json();
+  const page = await response.json();
+  const countries = page?.data?.objects;
 
-  return countries;
-};
+  return {
+    countries,
+    hasMore: page?.data?.meta?.more !== false && countries.length === PAGE_SIZE,
+  };
+}
 
-/**
- * Transform the fetched country data into a mapping of cca2 codes to other details
- */
-const transformCountries = (countries) => {
-  const result = {};
+async function fetchAllCountries(apiKey) {
+  const countries = [];
 
-  for (const country of countries) {
-    if (!country || typeof country !== "object") {
-      throw new TypeError("Encountered an invalid country entry");
+  for (let offset = 0; ; offset += PAGE_SIZE) {
+    const page = await fetchPage(apiKey, offset);
+    console.log(`Fetched offset=${offset} count=${page.countries.length}`);
+    countries.push(...page.countries);
+
+    if (!page.hasMore) {
+      return countries;
     }
-
-    const { cca2, ...countryData } = country;
-
-    if (typeof cca2 !== "string" || cca2.length === 0) {
-      throw new TypeError(
-        "Encountered a country entry without a valid cca2 code",
-      );
-    }
-
-    result[cca2] = countryData;
   }
+}
 
-  const sortedResult = Object.fromEntries(
-    Object.entries(result).sort(([codeA], [codeB]) =>
-      codeA.localeCompare(codeB),
-    ),
+async function writeCountries(countries) {
+  await mkdir(path.dirname(OUTPUT_PATH), { recursive: true });
+  await writeFile(
+    OUTPUT_PATH,
+    `${JSON.stringify(countries, null, 2)}\n`,
+    "utf8",
   );
+}
 
-  return sortedResult;
-};
-
-const main = async () => {
-  const countries = await fetchCountries();
-  const transformedCountries = transformCountries(countries);
-  const output = `${JSON.stringify(transformedCountries, null, 2)}\n`;
-
-  await writeFile(OUTPUT_PATH, output, "utf8");
-
-  console.log(
-    `Saved ${Object.keys(transformedCountries).length} countries to ${OUTPUT_PATH}`,
-  );
-};
+async function main() {
+  const countries = await fetchAllCountries(getApiKey());
+  await writeCountries(countries);
+  console.log(`Saved ${countries.length} countries to ${OUTPUT_PATH}`);
+}
 
 try {
   await main();

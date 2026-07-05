@@ -17,7 +17,7 @@ dev = ["pytest>=9.0.3", "ruff>=0.15.15"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 
 [tool.ruff]
 line-length = 120

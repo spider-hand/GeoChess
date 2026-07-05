@@ -1,6 +1,10 @@
 from http import HTTPStatus
 from typing import Any
 
+from aws_lambda_powertools.utilities.parser import event_parser
+from aws_lambda_powertools.utilities.typing import LambdaContext
+
+from core.events import CustomApiGatewayEvent, CustomAuthorizerEvent
 from core.firebase import get_firebase_app
 from core.http import ApiError
 
@@ -67,12 +71,11 @@ def verify_user_access(uid: str, expected_user_id: str) -> None:
         )
 
 
-def get_authorized_uid(event: dict[str, Any]) -> str:
+def get_authorized_uid(event: CustomApiGatewayEvent) -> str:
     uid = (
-        event.get("requestContext", {})
-        .get("authorizer", {})
-        .get("lambda", {})
-        .get("uid")
+        event.requestContext.authorizer.lambda_.uid
+        if event.requestContext.authorizer and event.requestContext.authorizer.lambda_
+        else None
     )
 
     if not isinstance(uid, str) or not uid:
@@ -81,19 +84,17 @@ def get_authorized_uid(event: dict[str, Any]) -> str:
     return uid
 
 
-def _allow_anonymous_user(event: dict[str, Any]) -> bool:
-    raw_path = event.get("rawPath")
-
-    if not isinstance(raw_path, str):
-        return False
-
-    return raw_path == "/api/v1/ai-games" or raw_path.startswith("/api/v1/ai-games/")
+def _allow_anonymous_user(event: CustomAuthorizerEvent) -> bool:
+    return event.rawPath == "/api/v1/ai-games" or event.rawPath.startswith(
+        "/api/v1/ai-games/"
+    )
 
 
-def lambda_handler(event: dict[str, Any], context: Any):
+@event_parser(model=CustomAuthorizerEvent)
+def lambda_handler(event: CustomAuthorizerEvent, context: LambdaContext | Any):
     try:
         decoded_token = verify_firebase_token(
-            event.get("headers"),
+            event.headers,
             allow_anonymous=_allow_anonymous_user(event),
         )
     except ApiError:

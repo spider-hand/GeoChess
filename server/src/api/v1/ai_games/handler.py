@@ -1,6 +1,8 @@
+from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from core.auth import CORS_HEADERS, get_authorized_uid
+from core.events import CustomApiGatewayEvent
 from core.http import ApiError, error_response, json_response, parse_json_body
 from core.logger import dynamic_inject_lambda_context
 from features.ai_games import AiGamesService
@@ -8,8 +10,8 @@ from features.ai_games import AiGamesService
 _ai_games_service = AiGamesService()
 
 
-def _get_game_id(event: dict) -> str:
-    game_id = (event.get("pathParameters") or {}).get("gameId")
+def _get_game_id(event: CustomApiGatewayEvent) -> str:
+    game_id = (event.pathParameters or {}).get("gameId")
 
     if not game_id:
         raise ApiError(
@@ -31,12 +33,11 @@ def _handle_api_error(error: Exception):
 
 
 @dynamic_inject_lambda_context
-def create_ai_game(event: dict, context: LambdaContext):
+@event_parser(model=CustomApiGatewayEvent)
+def create_ai_game(event: CustomApiGatewayEvent, context: LambdaContext):
     try:
         payload = parse_json_body(event)
-        ai_game, status_code = _ai_games_service.create_ai_game(
-            get_authorized_uid(event), payload
-        )
+        ai_game, status_code = _ai_games_service.create_ai_game(get_authorized_uid(event), payload)
 
         return json_response(
             status_code, ai_game.model_dump(by_alias=True, mode="json"), CORS_HEADERS

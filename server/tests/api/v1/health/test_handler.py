@@ -2,10 +2,15 @@ import json
 from unittest.mock import MagicMock
 
 from api.v1.health.handler import handler
+from tests.factories.http_events import make_api_gateway_event
 
 
 def test_returns_200_with_alive_message():
-    event = MagicMock()
+    event = make_api_gateway_event(
+        route_key="GET /api/v1/health",
+        raw_path="/api/v1/health",
+        method="GET",
+    )
     context = MagicMock()
 
     resp = handler(event, context)

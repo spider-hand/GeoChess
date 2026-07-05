@@ -3,20 +3,18 @@ from unittest.mock import MagicMock, patch
 
 from api.v1.ai_games import handler
 from features.ai_games.models import RealtimeAiGameRecord
+from tests.factories.http_events import make_api_gateway_event
 
 
 def make_event(body=None, game_id="game-123", authenticated_uid="user-123"):
-    return {
-        "pathParameters": {"gameId": game_id},
-        "requestContext": {
-            "authorizer": {
-                "lambda": {
-                    "uid": authenticated_uid,
-                }
-            }
-        },
-        "body": json.dumps(body) if body is not None else None,
-    }
+    return make_api_gateway_event(
+        route_key="POST /api/v1/ai-games",
+        raw_path="/api/v1/ai-games",
+        method="POST",
+        body=body,
+        path_parameters={"gameId": game_id},
+        authenticated_uid=authenticated_uid,
+    )
 
 
 def make_realtime_ai_game():
@@ -35,6 +33,7 @@ def make_realtime_ai_game():
             "updatedAt": 1751155200000,
         }
     )
+
 
 def test_create_ai_game_returns_201():
     with patch.object(

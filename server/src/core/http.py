@@ -2,6 +2,8 @@ import json
 from http import HTTPStatus
 from typing import Any
 
+from core.events import CustomApiGatewayEvent
+
 
 def json_response(status_code: int, body: Any, headers: dict[str, str]):
     return {
@@ -38,8 +40,8 @@ def error_response(status_code: int, code: str, message: str, headers: dict[str,
     )
 
 
-def parse_json_body(event: dict[str, Any]) -> dict[str, Any]:
-    body = event.get("body")
+def parse_json_body(event: CustomApiGatewayEvent) -> dict[str, Any]:
+    body = event.body
 
     if body in (None, ""):
         return {}

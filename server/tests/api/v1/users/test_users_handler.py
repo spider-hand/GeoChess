@@ -4,20 +4,18 @@ from unittest.mock import MagicMock, patch
 from api.v1.users import handler
 from core.http import ApiError
 from features.users.models import UserRecord
+from tests.factories.http_events import make_api_gateway_event
 
 
 def make_event(body=None, user_id="user-123", authenticated_uid="user-123"):
-    return {
-        "pathParameters": {"userId": user_id},
-        "requestContext": {
-            "authorizer": {
-                "lambda": {
-                    "uid": authenticated_uid,
-                }
-            }
-        },
-        "body": json.dumps(body) if body is not None else None,
-    }
+    return make_api_gateway_event(
+        route_key="GET /api/v1/users/{userId}",
+        raw_path=f"/api/v1/users/{user_id}",
+        method="GET",
+        body=body,
+        path_parameters={"userId": user_id},
+        authenticated_uid=authenticated_uid,
+    )
 
 
 def make_user(display_name="Taylor Swift"):
@@ -115,10 +113,13 @@ def test_handler_returns_403_when_authorized_uid_targets_different_user():
 def test_handler_returns_500_when_authorizer_context_uid_is_missing():
     try:
         handler.get_user(
-            {
-                "pathParameters": {"userId": "user-123"},
-                "requestContext": {"authorizer": {"lambda": {}}},
-            },
+            make_api_gateway_event(
+                route_key="GET /api/v1/users/{userId}",
+                raw_path="/api/v1/users/user-123",
+                method="GET",
+                path_parameters={"userId": "user-123"},
+                authenticated_uid=None,
+            ),
             MagicMock(),
         )
     except RuntimeError as error:

@@ -1,8 +1,10 @@
 from http import HTTPStatus
 
+from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from core.auth import CORS_HEADERS, get_authorized_uid, verify_user_access
+from core.events import CustomApiGatewayEvent
 from core.http import (
     ApiError,
     empty_response,
@@ -16,8 +18,8 @@ from features.users import UsersService
 _users_service = UsersService()
 
 
-def _get_user_id(event: dict) -> str:
-    user_id = (event.get("pathParameters") or {}).get("userId")
+def _get_user_id(event: CustomApiGatewayEvent) -> str:
+    user_id = (event.pathParameters or {}).get("userId")
 
     if not user_id:
         raise ApiError(
@@ -39,7 +41,8 @@ def _handle_api_error(error: Exception):
 
 
 @dynamic_inject_lambda_context
-def get_user(event: dict, context: LambdaContext):
+@event_parser(model=CustomApiGatewayEvent)
+def get_user(event: CustomApiGatewayEvent, context: LambdaContext):
     try:
         user_id = _get_user_id(event)
         verify_user_access(get_authorized_uid(event), user_id)
@@ -53,7 +56,8 @@ def get_user(event: dict, context: LambdaContext):
 
 
 @dynamic_inject_lambda_context
-def create_user(event: dict, context: LambdaContext):
+@event_parser(model=CustomApiGatewayEvent)
+def create_user(event: CustomApiGatewayEvent, context: LambdaContext):
     try:
         user_id = _get_user_id(event)
         verify_user_access(get_authorized_uid(event), user_id)
@@ -67,7 +71,8 @@ def create_user(event: dict, context: LambdaContext):
 
 
 @dynamic_inject_lambda_context
-def update_user(event: dict, context: LambdaContext):
+@event_parser(model=CustomApiGatewayEvent)
+def update_user(event: CustomApiGatewayEvent, context: LambdaContext):
     try:
         user_id = _get_user_id(event)
         verify_user_access(get_authorized_uid(event), user_id)
@@ -81,7 +86,8 @@ def update_user(event: dict, context: LambdaContext):
 
 
 @dynamic_inject_lambda_context
-def delete_user(event: dict, context: LambdaContext):
+@event_parser(model=CustomApiGatewayEvent)
+def delete_user(event: CustomApiGatewayEvent, context: LambdaContext):
     try:
         user_id = _get_user_id(event)
         verify_user_access(get_authorized_uid(event), user_id)

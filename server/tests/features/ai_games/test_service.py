@@ -39,37 +39,6 @@ def make_realtime_ai_game(turn="player", available_moves=None, moves=None):
         }
     )
 
-
-def test_get_ai_game_returns_record_for_owner():
-    ai_games_repository = MagicMock()
-    ai_games_repository.get_by_id.return_value = make_ai_game()
-    service = AiGamesService(ai_games_repository=ai_games_repository)
-
-    result = service.get_ai_game("user-123", "game-123")
-
-    assert result.id == "game-123"
-    ai_games_repository.get_by_id.assert_called_once_with("game-123")
-
-
-@pytest.mark.parametrize(
-    ("stored_game", "test_id"),
-    [
-        pytest.param(None, "missing", id="missing"),
-        pytest.param(make_ai_game(user_id="other-user"), "other-user", id="other-user"),
-    ],
-)
-def test_get_ai_game_returns_404_for_missing_or_other_users_game(stored_game, test_id):
-    ai_games_repository = MagicMock()
-    ai_games_repository.get_by_id.return_value = stored_game
-    service = AiGamesService(ai_games_repository=ai_games_repository)
-
-    with pytest.raises(ApiError) as error:
-        service.get_ai_game("user-123", test_id)
-
-    assert error.value.status_code == 404
-    assert error.value.code == "ai_game_not_found"
-
-
 def test_create_ai_game_returns_400_for_invalid_payload():
     users_repository = MagicMock()
     users_repository.get_by_id.return_value = MagicMock()
@@ -84,6 +53,31 @@ def test_create_ai_game_returns_400_for_invalid_payload():
     assert error.value.code == "invalid_request_body"
     users_repository.get_by_id.assert_not_called()
     users_repository.create.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("stored_game", "test_id"),
+    [
+        pytest.param(None, "missing", id="missing"),
+        pytest.param(make_ai_game(user_id="other-user"), "other-user", id="other-user"),
+    ],
+)
+def test_create_ai_game_move_returns_404_for_missing_or_other_users_game(
+    stored_game, test_id
+):
+    ai_games_repository = MagicMock()
+    ai_games_repository.get_by_id.return_value = stored_game
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+
+    with pytest.raises(ApiError) as error:
+        service.create_ai_game_move(
+            "user-123",
+            test_id,
+            {"countryCode": "CC"},
+        )
+
+    assert error.value.status_code == 404
+    assert error.value.code == "ai_game_not_found"
 
 
 def test_create_ai_game_creates_guest_user_and_enqueues_when_ai_starts():

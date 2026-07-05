@@ -15,7 +15,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../../../components/schemas/realtime-ai-game.yml
+            $ref: ../../../../components/schemas/create-ai-game-response.yml
     '400':
       description: Invalid request
       content:

@@ -1,8 +1,8 @@
 import useApi from "@/composables/useApi";
 import {
   DefaultApi,
+  type CreateAiGame201Response,
   type CreateAiGameRequest,
-  type RealtimeAiGame,
 } from "@/services";
 
 const useAiGameQuery = () => {
@@ -11,7 +11,7 @@ const useAiGameQuery = () => {
 
   async function createAiGame(
     createAiGameRequest: CreateAiGameRequest,
-  ): Promise<RealtimeAiGame> {
+  ): Promise<CreateAiGame201Response> {
     return aiGameApi.createAiGame({ createAiGameRequest });
   }
 

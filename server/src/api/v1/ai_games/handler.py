@@ -31,18 +31,6 @@ def _handle_api_error(error: Exception):
 
 
 @dynamic_inject_lambda_context
-def get_ai_game(event: dict, context: LambdaContext):
-    try:
-        game_id = _get_game_id(event)
-        ai_game = _ai_games_service.get_ai_game(get_authorized_uid(event), game_id)
-        return json_response(
-            200, ai_game.model_dump(by_alias=True, mode="json"), CORS_HEADERS
-        )
-    except Exception as error:
-        return _handle_api_error(error)
-
-
-@dynamic_inject_lambda_context
 def create_ai_game(event: dict, context: LambdaContext):
     try:
         payload = parse_json_body(event)

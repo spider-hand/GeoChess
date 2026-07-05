@@ -8,7 +8,26 @@ import {
 } from "vue";
 
 import { getFirebaseDatabase } from "@/lib/firebase";
-import { RealtimeAiGameFromJSON, type RealtimeAiGame } from "@/services";
+
+type RealtimeAiGameMove = {
+  country: string;
+  actor: "player" | "ai";
+  createdAt: number;
+};
+
+export type RealtimeAiGame = {
+  id: string;
+  userId: string;
+  difficulty: "easy" | "medium" | "hard";
+  turn: "player" | "ai";
+  start: string;
+  country: string;
+  availableMoves: Array<string>;
+  usedCountries: Array<string>;
+  moves?: Record<string, RealtimeAiGameMove>;
+  createdAt: number;
+  updatedAt: number;
+};
 
 const useRealtimeAiGame = (gameId: MaybeRefOrGetter<string | null>) => {
   const realtimeAiGame = ref<RealtimeAiGame | null>(null);
@@ -41,9 +60,7 @@ const useRealtimeAiGame = (gameId: MaybeRefOrGetter<string | null>) => {
             return;
           }
 
-          realtimeAiGame.value = RealtimeAiGameFromJSON(
-            snapshot.val(),
-          ) as RealtimeAiGame;
+          realtimeAiGame.value = snapshot.val() as RealtimeAiGame;
           realtimeAiGameError.value = null;
           isLoadingRealtimeAiGame.value = false;
         },

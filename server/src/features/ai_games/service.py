@@ -93,7 +93,7 @@ class AiGamesService:
             terminal_result,
         )
 
-    def get_ai_game(self, user_id: str, game_id: str) -> AiGameRecord:
+    def _require_owned_ai_game(self, user_id: str, game_id: str) -> None:
         ai_game = self.ai_games_repository.get_by_id(game_id)
         if ai_game is None or ai_game.user_id != user_id:
             raise ApiError(
@@ -101,8 +101,6 @@ class AiGamesService:
                 code="ai_game_not_found",
                 message="Ai game was not found.",
             )
-
-        return ai_game
 
     def _build_initial_realtime_ai_game(
         self, ai_game: AiGameRecord
@@ -175,7 +173,7 @@ class AiGamesService:
     def create_ai_game_move(
         self, user_id: str, game_id: str, payload: dict[str, object]
     ) -> None:
-        self.get_ai_game(user_id, game_id)
+        self._require_owned_ai_game(user_id, game_id)
 
         try:
             create_move_input = CreateAiGameMoveInput.model_validate(payload)

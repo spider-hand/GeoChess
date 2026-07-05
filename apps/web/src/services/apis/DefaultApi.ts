@@ -19,7 +19,6 @@ import type {
   CreateAiGameMoveRequest,
   CreateAiGameRequest,
   CreateUserRequest,
-  GetAiGame200Response,
   GetUser200Response,
 } from "../models/index";
 import {
@@ -33,8 +32,6 @@ import {
   CreateAiGameRequestToJSON,
   CreateUserRequestFromJSON,
   CreateUserRequestToJSON,
-  GetAiGame200ResponseFromJSON,
-  GetAiGame200ResponseToJSON,
   GetUser200ResponseFromJSON,
   GetUser200ResponseToJSON,
 } from "../models/index";
@@ -55,10 +52,6 @@ export interface CreateUserOperationRequest {
 
 export interface DeleteUserRequest {
   userId: string;
-}
-
-export interface GetAiGameRequest {
-  gameId: string;
 }
 
 export interface GetUserRequest {
@@ -321,65 +314,6 @@ export class DefaultApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.deleteUserRaw(requestParameters, initOverrides);
-  }
-
-  /**
-   * Get ai game
-   */
-  async getAiGameRaw(
-    requestParameters: GetAiGameRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetAiGame200Response>> {
-    if (requestParameters["gameId"] == null) {
-      throw new runtime.RequiredError(
-        "gameId",
-        'Required parameter "gameId" was null or undefined when calling getAiGame().',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    if (this.configuration && this.configuration.accessToken) {
-      const token = this.configuration.accessToken;
-      const tokenString = await token("BearerAuth", []);
-
-      if (tokenString) {
-        headerParameters["Authorization"] = `Bearer ${tokenString}`;
-      }
-    }
-
-    let urlPath = `/api/v1/ai-games/{gameId}`;
-    urlPath = urlPath.replace(
-      `{${"gameId"}}`,
-      encodeURIComponent(String(requestParameters["gameId"])),
-    );
-
-    const response = await this.request(
-      {
-        path: urlPath,
-        method: "GET",
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetAiGame200ResponseFromJSON(jsonValue),
-    );
-  }
-
-  /**
-   * Get ai game
-   */
-  async getAiGame(
-    requestParameters: GetAiGameRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetAiGame200Response> {
-    const response = await this.getAiGameRaw(requestParameters, initOverrides);
-    return await response.value();
   }
 
   /**

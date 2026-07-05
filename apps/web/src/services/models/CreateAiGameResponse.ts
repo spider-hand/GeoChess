@@ -24,73 +24,73 @@ import {
 /**
  *
  * @export
- * @interface RealtimeAiGame
+ * @interface CreateAiGameResponse
  */
-export interface RealtimeAiGame {
+export interface CreateAiGameResponse {
   /**
    *
    * @type {string}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
   id: string;
   /**
    *
    * @type {string}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
   userId: string;
   /**
    *
    * @type {string}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
-  difficulty: RealtimeAiGameDifficultyEnum;
+  difficulty: CreateAiGameResponseDifficultyEnum;
   /**
    *
    * @type {string}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
-  turn: RealtimeAiGameTurnEnum;
+  turn: CreateAiGameResponseTurnEnum;
   /**
    *
    * @type {string}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
   start: string;
   /**
    *
    * @type {string}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
   country: string;
   /**
    *
    * @type {Array<string>}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
   availableMoves: Array<string>;
   /**
    *
    * @type {Array<string>}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
   usedCountries: Array<string>;
   /**
    *
    * @type {{ [key: string]: CreateAiGame201ResponseMovesValue; }}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
   moves: { [key: string]: CreateAiGame201ResponseMovesValue };
   /**
    *
    * @type {number}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
   createdAt: number;
   /**
    *
    * @type {number}
-   * @memberof RealtimeAiGame
+   * @memberof CreateAiGameResponse
    */
   updatedAt: number;
 }
@@ -98,30 +98,30 @@ export interface RealtimeAiGame {
 /**
  * @export
  */
-export const RealtimeAiGameDifficultyEnum = {
+export const CreateAiGameResponseDifficultyEnum = {
   Easy: "easy",
   Medium: "medium",
   Hard: "hard",
 } as const;
-export type RealtimeAiGameDifficultyEnum =
-  (typeof RealtimeAiGameDifficultyEnum)[keyof typeof RealtimeAiGameDifficultyEnum];
+export type CreateAiGameResponseDifficultyEnum =
+  (typeof CreateAiGameResponseDifficultyEnum)[keyof typeof CreateAiGameResponseDifficultyEnum];
 
 /**
  * @export
  */
-export const RealtimeAiGameTurnEnum = {
+export const CreateAiGameResponseTurnEnum = {
   Player: "player",
   Ai: "ai",
 } as const;
-export type RealtimeAiGameTurnEnum =
-  (typeof RealtimeAiGameTurnEnum)[keyof typeof RealtimeAiGameTurnEnum];
+export type CreateAiGameResponseTurnEnum =
+  (typeof CreateAiGameResponseTurnEnum)[keyof typeof CreateAiGameResponseTurnEnum];
 
 /**
- * Check if a given object implements the RealtimeAiGame interface.
+ * Check if a given object implements the CreateAiGameResponse interface.
  */
-export function instanceOfRealtimeAiGame(
+export function instanceOfCreateAiGameResponse(
   value: object,
-): value is RealtimeAiGame {
+): value is CreateAiGameResponse {
   if (!("id" in value) || value["id"] === undefined) return false;
   if (!("userId" in value) || value["userId"] === undefined) return false;
   if (!("difficulty" in value) || value["difficulty"] === undefined)
@@ -139,14 +139,14 @@ export function instanceOfRealtimeAiGame(
   return true;
 }
 
-export function RealtimeAiGameFromJSON(json: any): RealtimeAiGame {
-  return RealtimeAiGameFromJSONTyped(json, false);
+export function CreateAiGameResponseFromJSON(json: any): CreateAiGameResponse {
+  return CreateAiGameResponseFromJSONTyped(json, false);
 }
 
-export function RealtimeAiGameFromJSONTyped(
+export function CreateAiGameResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): RealtimeAiGame {
+): CreateAiGameResponse {
   if (json == null) {
     return json;
   }
@@ -165,12 +165,12 @@ export function RealtimeAiGameFromJSONTyped(
   };
 }
 
-export function RealtimeAiGameToJSON(json: any): RealtimeAiGame {
-  return RealtimeAiGameToJSONTyped(json, false);
+export function CreateAiGameResponseToJSON(json: any): CreateAiGameResponse {
+  return CreateAiGameResponseToJSONTyped(json, false);
 }
 
-export function RealtimeAiGameToJSONTyped(
-  value?: RealtimeAiGame | null,
+export function CreateAiGameResponseToJSONTyped(
+  value?: CreateAiGameResponse | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

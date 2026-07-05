@@ -10,8 +10,6 @@ paths:
     $ref: ./paths/api/v1/health.yml
   /api/v1/ai-games:
     $ref: ./paths/api/v1/ai-games/index.yml
-  /api/v1/ai-games/{gameId}:
-    $ref: ./paths/api/v1/ai-games/game-by-id.yml
   /api/v1/ai-games/{gameId}/moves:
     $ref: ./paths/api/v1/ai-games/moves.yml
   /api/v1/users/{userId}:
@@ -25,10 +23,8 @@ components:
   schemas:
     HealthResponse:
       $ref: ./components/schemas/health-response.yml
-    AiGame:
-      $ref: ./components/schemas/ai-game.yml
-    RealtimeAiGame:
-      $ref: ./components/schemas/realtime-ai-game.yml
+    CreateAiGameResponse:
+      $ref: ./components/schemas/create-ai-game-response.yml
     CreateAiGameRequest:
       $ref: ./components/schemas/create-ai-game-request.yml
     AiGameMove:

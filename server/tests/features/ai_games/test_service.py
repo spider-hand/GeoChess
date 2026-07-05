@@ -40,19 +40,53 @@ def make_realtime_ai_game(turn="player", available_moves=None, moves=None):
     )
 
 
-def test_get_ai_game_returns_404_when_game_belongs_to_other_user():
+def test_get_ai_game_returns_record_for_owner():
     ai_games_repository = MagicMock()
-    ai_games_repository.get_by_id.return_value = make_ai_game(user_id="other-user")
+    ai_games_repository.get_by_id.return_value = make_ai_game()
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+
+    result = service.get_ai_game("user-123", "game-123")
+
+    assert result.id == "game-123"
+    ai_games_repository.get_by_id.assert_called_once_with("game-123")
+
+
+@pytest.mark.parametrize(
+    ("stored_game", "test_id"),
+    [
+        pytest.param(None, "missing", id="missing"),
+        pytest.param(make_ai_game(user_id="other-user"), "other-user", id="other-user"),
+    ],
+)
+def test_get_ai_game_returns_404_for_missing_or_other_users_game(stored_game, test_id):
+    ai_games_repository = MagicMock()
+    ai_games_repository.get_by_id.return_value = stored_game
     service = AiGamesService(ai_games_repository=ai_games_repository)
 
     with pytest.raises(ApiError) as error:
-        service.get_ai_game("user-123", "game-123")
+        service.get_ai_game("user-123", test_id)
 
     assert error.value.status_code == 404
     assert error.value.code == "ai_game_not_found"
 
 
-def test_create_ai_game_creates_guest_user_when_user_does_not_exist():
+def test_create_ai_game_returns_400_for_invalid_payload():
+    users_repository = MagicMock()
+    users_repository.get_by_id.return_value = MagicMock()
+    service = AiGamesService(users_repository=users_repository)
+
+    with pytest.raises(ApiError) as error:
+        service.create_ai_game(
+            "user-123", {"difficulty": "medium", "result": "cancelled"}
+        )
+
+    assert error.value.status_code == 400
+    assert error.value.code == "invalid_request_body"
+    users_repository.get_by_id.assert_not_called()
+    users_repository.create.assert_not_called()
+
+
+def test_create_ai_game_creates_guest_user_and_enqueues_when_ai_starts():
     ai_games_repository = MagicMock()
     ai_games_repository.create_after_cancelling_incomplete_games.return_value = (
         make_ai_game()
@@ -83,9 +117,6 @@ def test_create_ai_game_creates_guest_user_when_user_does_not_exist():
             "features.ai_games.service.random.choice",
             lambda values: next(choice_values),
         )
-        game_ref.get.return_value = make_realtime_ai_game(
-            turn="ai", available_moves=["CC", "DD"]
-        ).model_dump(by_alias=True, mode="json")
         monkeypatch.setattr(
             "features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
@@ -104,30 +135,32 @@ def test_create_ai_game_creates_guest_user_when_user_does_not_exist():
 
     assert status_code == 201
     assert result.turn == "ai"
+    assert result.start == "BB"
+    assert result.available_moves == ["CC", "DD"]
+    assert result.moves == {}
     users_repository.create.assert_called_once_with("user-123", "Guest")
     ai_games_repository.create_after_cancelling_incomplete_games.assert_called_once_with(
         ANY, "user-123", "medium"
     )
+    game_ref.set.assert_called_once_with(
+        {
+            "id": "game-123",
+            "userId": "user-123",
+            "difficulty": "medium",
+            "turn": "ai",
+            "start": "BB",
+            "country": "BB",
+            "availableMoves": ["CC", "DD"],
+            "usedCountries": ["BB"],
+            "moves": {},
+            "createdAt": {".sv": "timestamp"},
+            "updatedAt": {".sv": "timestamp"},
+        }
+    )
     enqueue_mock.assert_called_once_with("game-123")
 
 
-def test_create_ai_game_returns_400_for_unexpected_fields():
-    users_repository = MagicMock()
-    users_repository.get_by_id.return_value = MagicMock()
-    service = AiGamesService(users_repository=users_repository)
-
-    with pytest.raises(ApiError) as error:
-        service.create_ai_game(
-            "user-123", {"difficulty": "medium", "result": "cancelled"}
-        )
-
-    assert error.value.status_code == 400
-    assert error.value.code == "invalid_request_body"
-    users_repository.get_by_id.assert_not_called()
-    users_repository.create.assert_not_called()
-
-
-def test_create_ai_game_does_not_create_user_when_user_exists():
+def test_create_ai_game_skips_guest_creation_and_enqueue_when_player_starts():
     ai_games_repository = MagicMock()
     ai_games_repository.create_after_cancelling_incomplete_games.return_value = (
         make_ai_game()
@@ -158,9 +191,6 @@ def test_create_ai_game_does_not_create_user_when_user_exists():
             "features.ai_games.service.random.choice",
             lambda values: next(choice_values),
         )
-        game_ref.get.return_value = make_realtime_ai_game(
-            turn="player", available_moves=["CC", "DD"]
-        ).model_dump(by_alias=True, mode="json")
         monkeypatch.setattr(
             "features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
@@ -183,40 +213,26 @@ def test_create_ai_game_does_not_create_user_when_user_exists():
     enqueue_mock.assert_not_called()
 
 
-def test_create_ai_game_saves_realtime_game_and_enqueues_when_ai_starts():
+def test_create_ai_game_move_returns_400_for_invalid_payload():
     ai_games_repository = MagicMock()
-    ai_games_repository.create_after_cancelling_incomplete_games.return_value = (
-        make_ai_game()
-    )
-    users_repository = MagicMock()
-    users_repository.get_by_id.return_value = MagicMock()
-    service = AiGamesService(
-        ai_games_repository=ai_games_repository,
-        users_repository=users_repository,
-    )
+    ai_games_repository.get_by_id.return_value = make_ai_game()
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+
+    with pytest.raises(ApiError) as error:
+        service.create_ai_game_move("user-123", "game-123", {})
+
+    assert error.value.status_code == 400
+    assert error.value.code == "invalid_request_body"
+
+
+def test_create_ai_game_move_returns_404_when_realtime_game_is_missing():
+    ai_games_repository = MagicMock()
+    ai_games_repository.get_by_id.return_value = make_ai_game()
+    service = AiGamesService(ai_games_repository=ai_games_repository)
     game_ref = MagicMock()
+    game_ref.transaction.side_effect = lambda callback: callback(None)
 
     with pytest.MonkeyPatch.context() as monkeypatch:
-        monkeypatch.setattr(
-            "features.ai_games.service.get_countries",
-            lambda: {
-                "BB": {"borders": ["CC", "DD"]},
-                "CC": {"borders": ["BB"]},
-                "DD": {"borders": ["BB"]},
-            },
-        )
-        monkeypatch.setattr(
-            "features.ai_games.service.get_countries_with_borders",
-            lambda: ("BB",),
-        )
-        choice_values = iter(["BB", "ai"])
-        monkeypatch.setattr(
-            "features.ai_games.service.random.choice",
-            lambda values: next(choice_values),
-        )
-        game_ref.get.return_value = make_realtime_ai_game(
-            turn="ai", available_moves=["CC", "DD"]
-        ).model_dump(by_alias=True, mode="json")
         monkeypatch.setattr(
             "features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
@@ -224,39 +240,75 @@ def test_create_ai_game_saves_realtime_game_and_enqueues_when_ai_starts():
             "features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
-        enqueue_mock = MagicMock()
-        monkeypatch.setattr(
-            "features.ai_games.service.enqueue_ai_game_move", enqueue_mock
-        )
 
-        result, status_code = service.create_ai_game(
-            "user-123", {"difficulty": "medium"}
-        )
+        with pytest.raises(ApiError) as error:
+            service.create_ai_game_move(
+                "user-123", "game-123", {"countryCode": "CC"}
+            )
 
-    assert status_code == 201
-    assert result.turn == "ai"
-    assert result.start == "BB"
-    assert result.available_moves == ["CC", "DD"]
-    assert result.moves == {}
-    game_ref.set.assert_called_once_with(
-        {
-            "id": "game-123",
-            "userId": "user-123",
-            "difficulty": "medium",
-            "turn": "ai",
-            "start": "BB",
-            "country": "BB",
-            "availableMoves": ["CC", "DD"],
-            "usedCountries": ["BB"],
-            "moves": {},
-            "createdAt": {".sv": "timestamp"},
-            "updatedAt": {".sv": "timestamp"},
-        }
+    assert error.value.status_code == 404
+    assert error.value.code == "ai_game_not_found"
+
+
+def test_create_ai_game_move_returns_400_when_it_is_not_players_turn():
+    ai_games_repository = MagicMock()
+    ai_games_repository.get_by_id.return_value = make_ai_game()
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+    game_ref = MagicMock()
+    game_ref.transaction.side_effect = lambda callback: callback(
+        make_realtime_ai_game(turn="ai", available_moves=["CC"]).model_dump(
+            by_alias=True, mode="json"
+        )
     )
-    enqueue_mock.assert_called_once_with("game-123")
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.firebase_db.reference",
+            lambda path, app: MagicMock(child=lambda game_id: game_ref),
+        )
+
+        with pytest.raises(ApiError) as error:
+            service.create_ai_game_move(
+                "user-123", "game-123", {"countryCode": "CC"}
+            )
+
+    assert error.value.status_code == 400
+    assert error.value.code == "invalid_request_body"
 
 
-def test_create_ai_game_move_updates_realtime_state_and_enqueues_ai():
+def test_create_ai_game_move_returns_400_for_unavailable_country():
+    ai_games_repository = MagicMock()
+    ai_games_repository.get_by_id.return_value = make_ai_game()
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+    game_ref = MagicMock()
+    game_ref.transaction.side_effect = lambda callback: callback(
+        make_realtime_ai_game(turn="player", available_moves=["DD"]).model_dump(
+            by_alias=True, mode="json"
+        )
+    )
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.firebase_db.reference",
+            lambda path, app: MagicMock(child=lambda game_id: game_ref),
+        )
+
+        with pytest.raises(ApiError) as error:
+            service.create_ai_game_move(
+                "user-123", "game-123", {"countryCode": "CC"}
+            )
+
+    assert error.value.status_code == 400
+    assert error.value.code == "invalid_request_body"
+
+
+def test_create_ai_game_move_enqueues_ai_for_non_terminal_player_move():
     ai_games_repository = MagicMock()
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)
@@ -307,7 +359,7 @@ def test_create_ai_game_move_updates_realtime_state_and_enqueues_ai():
     enqueue_mock.assert_called_once_with("game-123")
 
 
-def test_create_ai_game_move_finishes_game_without_enqueuing():
+def test_create_ai_game_move_finishes_game_for_terminal_player_move():
     ai_games_repository = MagicMock()
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)
@@ -345,7 +397,62 @@ def test_create_ai_game_move_finishes_game_without_enqueuing():
     enqueue_mock.assert_not_called()
 
 
-def test_process_ai_game_move_applies_ai_move():
+@pytest.mark.parametrize(
+    "stored_game",
+    [None, make_ai_game(result="win")],
+    ids=["missing-game", "finished-game"],
+)
+def test_process_ai_game_move_returns_early_for_missing_or_finished_game(stored_game):
+    ai_games_repository = MagicMock()
+    ai_games_repository.get_by_id.return_value = stored_game
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+
+    service.process_ai_game_move("game-123")
+
+    ai_games_repository.finish_game.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("realtime_game", "test_id"),
+    [
+        pytest.param(None, "missing-realtime", id="missing-realtime"),
+        pytest.param(
+            make_realtime_ai_game(turn="player").model_dump(by_alias=True, mode="json"),
+            "player-turn",
+            id="player-turn",
+        ),
+    ],
+)
+def test_process_ai_game_move_leaves_state_unchanged_for_noop_branches(
+    realtime_game, test_id
+):
+    ai_games_repository = MagicMock()
+    ai_games_repository.get_by_id.return_value = make_ai_game()
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+    game_ref = MagicMock()
+    updated_state = {}
+
+    def transaction(callback):
+        updated_state["value"] = callback(realtime_game)
+
+    game_ref.transaction.side_effect = transaction
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.firebase_db.reference",
+            lambda path, app: MagicMock(child=lambda game_id: game_ref),
+        )
+
+        service.process_ai_game_move(test_id)
+
+    assert updated_state["value"] == realtime_game
+    ai_games_repository.finish_game.assert_not_called()
+
+
+def test_process_ai_game_move_applies_available_ai_move():
     ai_games_repository = MagicMock()
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)

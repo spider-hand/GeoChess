@@ -21,21 +21,25 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    HealthResponse:
-      $ref: ./components/schemas/health-response.yml
+    GetHealthResponse:
+      $ref: ./components/schemas/get-health-response.yml
     CreateAiGameResponse:
       $ref: ./components/schemas/create-ai-game-response.yml
     CreateAiGameRequest:
       $ref: ./components/schemas/create-ai-game-request.yml
-    AiGameMove:
-      $ref: ./components/schemas/ai-game-move.yml
+    CreateAiGameResponseMove:
+      $ref: ./components/schemas/create-ai-game-response-move.yml
     CreateAiGameMoveRequest:
       $ref: ./components/schemas/create-ai-game-move-request.yml
-    User:
-      $ref: ./components/schemas/user.yml
+    GetUserResponse:
+      $ref: ./components/schemas/get-user-response.yml
     CreateUserRequest:
       $ref: ./components/schemas/create-user-request.yml
+    CreateUserResponse:
+      $ref: ./components/schemas/create-user-response.yml
     UpdateUserRequest:
       $ref: ./components/schemas/update-user-request.yml
+    UpdateUserResponse:
+      $ref: ./components/schemas/update-user-response.yml
     ErrorResponse:
       $ref: ./components/schemas/error-response.yml

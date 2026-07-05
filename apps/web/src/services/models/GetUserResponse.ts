@@ -16,39 +16,41 @@ import { mapValues } from "../runtime";
 /**
  *
  * @export
- * @interface User
+ * @interface GetUserResponse
  */
-export interface User {
+export interface GetUserResponse {
   /**
    *
    * @type {string}
-   * @memberof User
+   * @memberof GetUserResponse
    */
   userId: string;
   /**
    *
    * @type {string}
-   * @memberof User
+   * @memberof GetUserResponse
    */
   displayName: string;
   /**
    *
    * @type {Date}
-   * @memberof User
+   * @memberof GetUserResponse
    */
   createdAt: Date;
   /**
    *
    * @type {Date}
-   * @memberof User
+   * @memberof GetUserResponse
    */
   updatedAt: Date;
 }
 
 /**
- * Check if a given object implements the User interface.
+ * Check if a given object implements the GetUserResponse interface.
  */
-export function instanceOfUser(value: object): value is User {
+export function instanceOfGetUserResponse(
+  value: object,
+): value is GetUserResponse {
   if (!("userId" in value) || value["userId"] === undefined) return false;
   if (!("displayName" in value) || value["displayName"] === undefined)
     return false;
@@ -57,14 +59,14 @@ export function instanceOfUser(value: object): value is User {
   return true;
 }
 
-export function UserFromJSON(json: any): User {
-  return UserFromJSONTyped(json, false);
+export function GetUserResponseFromJSON(json: any): GetUserResponse {
+  return GetUserResponseFromJSONTyped(json, false);
 }
 
-export function UserFromJSONTyped(
+export function GetUserResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): User {
+): GetUserResponse {
   if (json == null) {
     return json;
   }
@@ -76,12 +78,12 @@ export function UserFromJSONTyped(
   };
 }
 
-export function UserToJSON(json: any): User {
-  return UserToJSONTyped(json, false);
+export function GetUserResponseToJSON(json: any): GetUserResponse {
+  return GetUserResponseToJSONTyped(json, false);
 }
 
-export function UserToJSONTyped(
-  value?: User | null,
+export function GetUserResponseToJSONTyped(
+  value?: GetUserResponse | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

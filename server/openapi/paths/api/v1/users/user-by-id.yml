@@ -15,7 +15,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: ../../../../components/schemas/user.yml
+            $ref: ../../../../components/schemas/get-user-response.yml
     '401':
       description: Authentication failed
       content:
@@ -51,13 +51,13 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../../../components/schemas/user.yml
+            $ref: ../../../../components/schemas/create-user-response.yml
     '201':
       description: User created
       content:
         application/json:
           schema:
-            $ref: ../../../../components/schemas/user.yml
+            $ref: ../../../../components/schemas/create-user-response.yml
     '400':
       description: Invalid request
       content:
@@ -93,7 +93,7 @@ patch:
       content:
         application/json:
           schema:
-            $ref: ../../../../components/schemas/user.yml
+            $ref: ../../../../components/schemas/update-user-response.yml
     '400':
       description: Invalid request
       content:

@@ -42,7 +42,7 @@ properties:
   moves:
     type: object
     additionalProperties:
-      $ref: ./ai-game-move.yml
+      $ref: ./create-ai-game-response-move.yml
   createdAt:
     type: integer
     format: int64

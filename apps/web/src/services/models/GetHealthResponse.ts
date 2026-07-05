@@ -16,35 +16,35 @@ import { mapValues } from "../runtime";
 /**
  *
  * @export
- * @interface HealthResponse
+ * @interface GetHealthResponse
  */
-export interface HealthResponse {
+export interface GetHealthResponse {
   /**
    * Health status message.
    * @type {string}
-   * @memberof HealthResponse
+   * @memberof GetHealthResponse
    */
   message: string;
 }
 
 /**
- * Check if a given object implements the HealthResponse interface.
+ * Check if a given object implements the GetHealthResponse interface.
  */
-export function instanceOfHealthResponse(
+export function instanceOfGetHealthResponse(
   value: object,
-): value is HealthResponse {
+): value is GetHealthResponse {
   if (!("message" in value) || value["message"] === undefined) return false;
   return true;
 }
 
-export function HealthResponseFromJSON(json: any): HealthResponse {
-  return HealthResponseFromJSONTyped(json, false);
+export function GetHealthResponseFromJSON(json: any): GetHealthResponse {
+  return GetHealthResponseFromJSONTyped(json, false);
 }
 
-export function HealthResponseFromJSONTyped(
+export function GetHealthResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): HealthResponse {
+): GetHealthResponse {
   if (json == null) {
     return json;
   }
@@ -53,12 +53,12 @@ export function HealthResponseFromJSONTyped(
   };
 }
 
-export function HealthResponseToJSON(json: any): HealthResponse {
-  return HealthResponseToJSONTyped(json, false);
+export function GetHealthResponseToJSON(json: any): GetHealthResponse {
+  return GetHealthResponseToJSONTyped(json, false);
 }
 
-export function HealthResponseToJSONTyped(
-  value?: HealthResponse | null,
+export function GetHealthResponseToJSONTyped(
+  value?: GetHealthResponse | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

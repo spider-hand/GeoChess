@@ -16,25 +16,25 @@ import { mapValues } from "../runtime";
 /**
  *
  * @export
- * @interface AiGameMove
+ * @interface CreateAiGameResponseMove
  */
-export interface AiGameMove {
+export interface CreateAiGameResponseMove {
   /**
    *
    * @type {string}
-   * @memberof AiGameMove
+   * @memberof CreateAiGameResponseMove
    */
   country: string;
   /**
    *
    * @type {string}
-   * @memberof AiGameMove
+   * @memberof CreateAiGameResponseMove
    */
-  actor: AiGameMoveActorEnum;
+  actor: CreateAiGameResponseMoveActorEnum;
   /**
    *
    * @type {number}
-   * @memberof AiGameMove
+   * @memberof CreateAiGameResponseMove
    */
   createdAt: number;
 }
@@ -42,31 +42,35 @@ export interface AiGameMove {
 /**
  * @export
  */
-export const AiGameMoveActorEnum = {
+export const CreateAiGameResponseMoveActorEnum = {
   Player: "player",
   Ai: "ai",
 } as const;
-export type AiGameMoveActorEnum =
-  (typeof AiGameMoveActorEnum)[keyof typeof AiGameMoveActorEnum];
+export type CreateAiGameResponseMoveActorEnum =
+  (typeof CreateAiGameResponseMoveActorEnum)[keyof typeof CreateAiGameResponseMoveActorEnum];
 
 /**
- * Check if a given object implements the AiGameMove interface.
+ * Check if a given object implements the CreateAiGameResponseMove interface.
  */
-export function instanceOfAiGameMove(value: object): value is AiGameMove {
+export function instanceOfCreateAiGameResponseMove(
+  value: object,
+): value is CreateAiGameResponseMove {
   if (!("country" in value) || value["country"] === undefined) return false;
   if (!("actor" in value) || value["actor"] === undefined) return false;
   if (!("createdAt" in value) || value["createdAt"] === undefined) return false;
   return true;
 }
 
-export function AiGameMoveFromJSON(json: any): AiGameMove {
-  return AiGameMoveFromJSONTyped(json, false);
+export function CreateAiGameResponseMoveFromJSON(
+  json: any,
+): CreateAiGameResponseMove {
+  return CreateAiGameResponseMoveFromJSONTyped(json, false);
 }
 
-export function AiGameMoveFromJSONTyped(
+export function CreateAiGameResponseMoveFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): AiGameMove {
+): CreateAiGameResponseMove {
   if (json == null) {
     return json;
   }
@@ -77,12 +81,14 @@ export function AiGameMoveFromJSONTyped(
   };
 }
 
-export function AiGameMoveToJSON(json: any): AiGameMove {
-  return AiGameMoveToJSONTyped(json, false);
+export function CreateAiGameResponseMoveToJSON(
+  json: any,
+): CreateAiGameResponseMove {
+  return CreateAiGameResponseMoveToJSONTyped(json, false);
 }
 
-export function AiGameMoveToJSONTyped(
-  value?: AiGameMove | null,
+export function CreateAiGameResponseMoveToJSONTyped(
+  value?: CreateAiGameResponseMove | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

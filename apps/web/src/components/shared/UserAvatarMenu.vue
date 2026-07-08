@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onClickOutside } from "@vueuse/core";
-import { onBeforeUnmount, ref } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import useOnClickOutside from "@/composables/useOnClickOutside";
 import Avatar from "@/components/shared/Avatar.vue";
 
 defineOptions({
@@ -34,22 +34,9 @@ const emitSignOutClick = () => {
   closeMenu();
 };
 
-const handleDocumentKeydown = (event: KeyboardEvent) => {
-  if (event.key === "Escape") {
-    closeMenu();
-  }
-};
-
-onClickOutside(root, closeMenu);
-
-if (typeof document !== "undefined") {
-  document.addEventListener("keydown", handleDocumentKeydown);
-}
-
-onBeforeUnmount(() => {
-  if (typeof document !== "undefined") {
-    document.removeEventListener("keydown", handleDocumentKeydown);
-  }
+useOnClickOutside({
+  root,
+  close: closeMenu,
 });
 </script>
 

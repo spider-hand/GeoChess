@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onClickOutside } from "@vueuse/core";
-import { onBeforeUnmount, ref } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import useOnClickOutside from "@/composables/useOnClickOutside";
 import Button from "@/components/shared/Button.vue";
 
 defineOptions({
@@ -21,22 +21,9 @@ const toggleDialog = () => {
   isOpen.value = !isOpen.value;
 };
 
-const handleDocumentKeydown = (event: KeyboardEvent) => {
-  if (event.key === "Escape") {
-    closeDialog();
-  }
-};
-
-onClickOutside(root, closeDialog);
-
-if (typeof document !== "undefined") {
-  document.addEventListener("keydown", handleDocumentKeydown);
-}
-
-onBeforeUnmount(() => {
-  if (typeof document !== "undefined") {
-    document.removeEventListener("keydown", handleDocumentKeydown);
-  }
+useOnClickOutside({
+  root,
+  close: closeDialog,
 });
 </script>
 

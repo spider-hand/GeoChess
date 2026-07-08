@@ -27,7 +27,7 @@ const route = useRoute();
 const router = useRouter();
 const aiGameQuery = useAiGameQuery();
 const createAiGameMove = aiGameQuery.createAiGameMove;
-const timeoutAiGame = aiGameQuery.timeoutAiGame ?? (async () => {});
+const timeoutAiGame = aiGameQuery.timeoutAiGame;
 const { username } = useAuth();
 const gameId = computed(() =>
   typeof route.params.gameId === "string" ? route.params.gameId : null,
@@ -44,7 +44,7 @@ const pageState = computed<TurnStatus>(() => {
     return "player";
   }
 
-  if ((realtimeAiGame.value.availableMoves ?? []).length === 0) {
+  if (realtimeAiGame.value.availableMoves.length === 0) {
     return realtimeAiGame.value.turn === "player" ? "lost" : "won";
   }
 
@@ -90,7 +90,7 @@ const historySteps = computed<Array<PathStep>>(() => {
       turn: 1,
     },
   ];
-  const orderedMoves = Object.entries(realtimeAiGame.value.moves ?? {}).sort(
+  const orderedMoves = Object.entries(realtimeAiGame.value.moves).sort(
     (left, right) => left[1].createdAt - right[1].createdAt,
   );
 

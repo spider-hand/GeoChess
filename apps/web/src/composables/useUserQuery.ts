@@ -4,7 +4,7 @@ import {
   Configuration,
   DefaultApi,
   type CreateUserRequest,
-  type User,
+  type CreateUserResponse,
 } from "@/services";
 
 type CreateUserVariables = {
@@ -34,7 +34,7 @@ const useUserQuery = () => {
         createUserRequest,
       });
     },
-    onSuccess: (user: User, variables) => {
+    onSuccess: (user: CreateUserResponse, variables) => {
       queryClient.setQueryData(["user", variables.userId], user);
     },
   });

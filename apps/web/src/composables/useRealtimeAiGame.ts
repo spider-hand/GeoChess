@@ -6,6 +6,7 @@ import {
   watch,
   type MaybeRefOrGetter,
 } from "vue";
+import type { Difficulty } from "@/types/game";
 
 import { getFirebaseDatabase } from "@/lib/firebase";
 
@@ -15,10 +16,10 @@ type RealtimeAiGameMove = {
   createdAt: number;
 };
 
-export type RealtimeAiGame = {
+type RealtimeAiGameSnapshot = {
   id: string;
   userId: string;
-  difficulty: "easy" | "medium" | "hard";
+  difficulty: Difficulty;
   turn: "player" | "ai";
   start: string;
   country: string;
@@ -28,6 +29,24 @@ export type RealtimeAiGame = {
   createdAt: number;
   updatedAt: number;
 };
+
+export type RealtimeAiGame = Omit<
+  RealtimeAiGameSnapshot,
+  "availableMoves" | "moves"
+> & {
+  availableMoves: Array<string>;
+  moves: Record<string, RealtimeAiGameMove>;
+};
+
+// Firebase Realtime Database doesn't allow empty arrays and empty objects
+// so we normalize the data here to avoid repeated nullish checks outside this composable.
+const normalizeRealtimeAiGame = (
+  game: RealtimeAiGameSnapshot,
+): RealtimeAiGame => ({
+  ...game,
+  availableMoves: game.availableMoves ?? [],
+  moves: game.moves ?? {},
+});
 
 const useRealtimeAiGame = (gameId: MaybeRefOrGetter<string | null>) => {
   const realtimeAiGame = ref<RealtimeAiGame | null>(null);
@@ -60,7 +79,9 @@ const useRealtimeAiGame = (gameId: MaybeRefOrGetter<string | null>) => {
             return;
           }
 
-          realtimeAiGame.value = snapshot.val() as RealtimeAiGame;
+          realtimeAiGame.value = normalizeRealtimeAiGame(
+            snapshot.val() as RealtimeAiGameSnapshot,
+          );
           realtimeAiGameError.value = null;
           isLoadingRealtimeAiGame.value = false;
         },

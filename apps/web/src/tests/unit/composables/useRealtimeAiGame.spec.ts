@@ -18,7 +18,7 @@ afterEach(() => {
   mockDatabaseRef.mockReset();
 });
 
-test("accepts a realtime game payload when moves is missing", async () => {
+test("normalizes a realtime game payload when moves is missing", async () => {
   mockOnValue.mockImplementation((_, callback) => {
     callback({
       exists: () => true,
@@ -49,7 +49,7 @@ test("accepts a realtime game payload when moves is missing", async () => {
   expect(state?.realtimeAiGame.value).toMatchObject({
     id: "game-123",
   });
-  expect(state?.realtimeAiGame.value?.moves).toBeUndefined();
+  expect(state?.realtimeAiGame.value?.moves).toEqual({});
   expect(state?.realtimeAiGameError.value).toBeNull();
   expect(state?.isLoadingRealtimeAiGame.value).toBe(false);
   expect(mockDatabaseRef).toHaveBeenCalledWith(
@@ -60,7 +60,7 @@ test("accepts a realtime game payload when moves is missing", async () => {
   scope.stop();
 });
 
-test("accepts a realtime game payload when availableMoves is missing", async () => {
+test("normalizes a realtime game payload when availableMoves is missing", async () => {
   mockOnValue.mockImplementation((_, callback) => {
     callback({
       exists: () => true,
@@ -90,7 +90,7 @@ test("accepts a realtime game payload when availableMoves is missing", async () 
   expect(state?.realtimeAiGame.value).toMatchObject({
     id: "game-123",
   });
-  expect(state?.realtimeAiGame.value?.availableMoves).toBeUndefined();
+  expect(state?.realtimeAiGame.value?.availableMoves).toEqual([]);
   expect(state?.realtimeAiGameError.value).toBeNull();
   expect(state?.isLoadingRealtimeAiGame.value).toBe(false);
 

@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
+import type { Difficulty } from "@/types/game";
 import heroImage from "@/assets/hero.png";
 import useAiGameQuery from "@/composables/useAiGameQuery";
 import { useAuth } from "@/composables/useAuth";
@@ -10,8 +11,6 @@ import PlayWithFriendsCard from "@/components/pages/Home/PlayWithFriendsCard.vue
 import RandomMatchCard from "@/components/pages/Home/RandomMatchCard.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
-
-type Difficulty = "easy" | "medium" | "hard";
 
 const router = useRouter();
 const { signInAnonymously } = useAuth();

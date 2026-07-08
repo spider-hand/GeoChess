@@ -15,11 +15,7 @@ const mapElement = useTemplateRef("mapElement");
 let map: mapboxgl.Map | null = null;
 
 const syncPlaceLabels = () => {
-  if (map === null) {
-    return;
-  }
-
-  map.setConfigProperty("basemap", "showPlaceLabels", props.showPlaceLabels);
+  map?.setConfigProperty("basemap", "showPlaceLabels", props.showPlaceLabels);
 };
 
 onMounted(() => {

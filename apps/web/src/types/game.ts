@@ -1,3 +1,5 @@
+export type Difficulty = "easy" | "medium" | "hard";
+
 export type TurnStatus = "player" | "ai" | "won" | "lost";
 
 export type PathStepOwner = "player" | "ai" | "neutral";

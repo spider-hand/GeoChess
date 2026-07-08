@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onClickOutside } from "@vueuse/core";
-import { computed, onBeforeUnmount, ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import useOnClickOutside from "@/composables/useOnClickOutside";
 import IconButton from "@/components/shared/IconButton.vue";
 
 type SupportedLanguage = "zh" | "en" | "fr" | "de" | "ja" | "pt" | "es";
@@ -55,22 +55,9 @@ const selectLanguage = (language: SupportedLanguage) => {
   closeMenu();
 };
 
-const handleDocumentKeydown = (event: KeyboardEvent) => {
-  if (event.key === "Escape") {
-    closeMenu();
-  }
-};
-
-onClickOutside(root, closeMenu);
-
-if (typeof document !== "undefined") {
-  document.addEventListener("keydown", handleDocumentKeydown);
-}
-
-onBeforeUnmount(() => {
-  if (typeof document !== "undefined") {
-    document.removeEventListener("keydown", handleDocumentKeydown);
-  }
+useOnClickOutside({
+  root,
+  close: closeMenu,
 });
 </script>
 

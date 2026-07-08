@@ -4,8 +4,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Button from "@/components/shared/Button.vue";
-
-type Difficulty = "easy" | "medium" | "hard";
+import type { Difficulty } from "@/types/game";
 
 defineOptions({
   name: "HomePlayVsAiCard",

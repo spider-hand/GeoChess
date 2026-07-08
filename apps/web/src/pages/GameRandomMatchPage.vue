@@ -25,7 +25,7 @@ defineOptions({
       <div class="game-page__map-card-row">
         <GameMap class="game-page__map" :show-place-labels="false" />
         <AvailableMovesCard
-          :available-moves="[{ code: 'us' }, { code: 'jp' }]"
+          :available-moves="['us', 'jp']"
           :is-ai-turn="false"
           :is-selecting="false"
           :is-select-disabled="false"

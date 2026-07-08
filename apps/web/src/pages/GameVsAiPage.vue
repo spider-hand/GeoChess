@@ -66,11 +66,6 @@ const isMoveSelectionDisabled = computed(
     isSubmittingMove.value ||
     isSubmittingTimeout.value,
 );
-const availableMoves = computed(() =>
-  (realtimeAiGame.value?.availableMoves ?? []).map((countryCode) => ({
-    code: countryCode,
-  })),
-);
 const timerStartedAtMs = computed(() => realtimeAiGame.value?.updatedAt ?? 0);
 const timeoutWindowKey = computed(() =>
   realtimeAiGame.value === null
@@ -224,7 +219,7 @@ const handleTimeUp = async () => {
         <GameMap class="game-page__map" :show-place-labels="isFinished" />
         <AvailableMovesCard
           v-if="!isFinished"
-          :available-moves="availableMoves"
+          :available-moves="realtimeAiGame.availableMoves"
           :is-ai-turn="pageState === 'ai'"
           :is-selecting="isSubmittingMove"
           :is-select-disabled="isMoveSelectionDisabled"

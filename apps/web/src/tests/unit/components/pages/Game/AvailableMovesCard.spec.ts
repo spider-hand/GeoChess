@@ -5,7 +5,7 @@ import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
 import { createAppI18n } from "@/i18n";
 
 const defaultProps = {
-  availableMoves: [{ code: "us" }, { code: "jp" }, { code: "fr" }],
+  availableMoves: ["us", "jp", "fr"],
   isAiTurn: false,
   isSelecting: false,
   isSelectDisabled: false,

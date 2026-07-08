@@ -6,16 +6,12 @@ import { useI18n } from "vue-i18n";
 import { countryFlagSrc } from "@/utils/game";
 import Button from "@/components/shared/Button.vue";
 
-type AvailableMove = {
-  code: string;
-};
-
 defineOptions({
   name: "GameAvailableMovesCard",
 });
 
 const props = defineProps<{
-  availableMoves: Array<AvailableMove>;
+  availableMoves: Array<string>;
   isAiTurn: boolean;
   isSelecting: boolean;
   isSelectDisabled: boolean;
@@ -84,27 +80,27 @@ const emitSelect = () => {
       :aria-label="t('components.pages.Game.AvailableMovesCard.title')"
     >
       <button
-        v-for="country in props.availableMoves"
-        :key="country.code"
+        v-for="countryCode in props.availableMoves"
+        :key="countryCode"
         class="available-moves-card__option"
         :class="{
           'available-moves-card__option--selected':
-            selectedCountryCode === country.code,
+            selectedCountryCode === countryCode,
         }"
         type="button"
         role="option"
-        :aria-selected="selectedCountryCode === country.code"
-        @click="selectCountry(country.code)"
+        :aria-selected="selectedCountryCode === countryCode"
+        @click="selectCountry(countryCode)"
       >
         <img
           class="available-moves-card__flag"
-          :src="countryFlagSrc(country.code)"
-          :alt="`${country.code} flag`"
+          :src="countryFlagSrc(countryCode)"
+          :alt="`${countryCode} flag`"
           width="24"
           height="18"
         />
         <span class="available-moves-card__option-label">{{
-          country.code
+          countryCode
         }}</span>
       </button>
     </div>

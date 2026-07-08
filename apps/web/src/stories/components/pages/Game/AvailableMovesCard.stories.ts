@@ -8,7 +8,7 @@ const meta = {
   component: AvailableMovesCard,
   tags: ["autodocs"],
   args: {
-    availableMoves: [{ code: "us" }, { code: "jp" }, { code: "fr" }],
+    availableMoves: ["us", "jp", "fr"],
     isAiTurn: false,
     isSelecting: false,
     isSelectDisabled: false,

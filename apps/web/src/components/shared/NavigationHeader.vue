@@ -32,23 +32,23 @@ const emit = defineEmits<{
   languageSelect: [language: string];
 }>();
 
-function emitBrandClick(event: MouseEvent) {
+const emitBrandClick = (event: MouseEvent) => {
   emit("brandClick", event);
-}
+};
 
-function emitGithubClick(event: MouseEvent) {
+const emitGithubClick = (event: MouseEvent) => {
   emit("githubClick", event);
-}
+};
 
-function emitDiscordClick(event: MouseEvent) {
+const emitDiscordClick = (event: MouseEvent) => {
   emit("discordClick", event);
-}
+};
 
-function emitLanguageSelect(language: string) {
+const emitLanguageSelect = (language: string) => {
   emit("languageSelect", language);
-}
+};
 
-async function handleSignUp() {
+const handleSignUp = async () => {
   if (isSigningUpInternal.value) {
     return;
   }
@@ -63,16 +63,16 @@ async function handleSignUp() {
   } finally {
     isSigningUpInternal.value = false;
   }
-}
+};
 
-async function handleSignOut() {
+const handleSignOut = async () => {
   try {
     await signOutUser();
     await router.push("/");
   } catch (error) {
     console.error(error);
   }
-}
+};
 </script>
 
 <template>

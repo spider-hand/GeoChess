@@ -1,3 +1,3 @@
-export function countryFlagSrc(countryCode: string) {
+export const countryFlagSrc = (countryCode: string) => {
   return `/flags/${countryCode.toLowerCase()}.webp`;
-}
+};

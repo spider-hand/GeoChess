@@ -46,13 +46,13 @@ const difficultyOptions = computed(() => [
   },
 ]);
 
-function selectDifficulty(difficulty: Difficulty) {
+const selectDifficulty = (difficulty: Difficulty) => {
   selectedDifficulty.value = difficulty;
-}
+};
 
-function emitStartAiMatch() {
+const emitStartAiMatch = () => {
   emit("startAiMatch", selectedDifficulty.value);
-}
+};
 </script>
 
 <template>

@@ -10,22 +10,22 @@ const useAiGameQuery = () => {
   const { apiConfig } = useApi();
   const aiGameApi = new DefaultApi(apiConfig);
 
-  async function createAiGame(
+  const createAiGame = async (
     createAiGameRequest: CreateAiGameRequest,
-  ): Promise<CreateAiGame201Response> {
+  ): Promise<CreateAiGame201Response> => {
     return aiGameApi.createAiGame({ createAiGameRequest });
-  }
+  };
 
-  async function createAiGameMove(
+  const createAiGameMove = async (
     gameId: string,
     createAiGameMoveRequest: CreateAiGameMoveRequest,
-  ): Promise<void> {
+  ): Promise<void> => {
     await aiGameApi.createAiGameMove({ gameId, createAiGameMoveRequest });
-  }
+  };
 
-  async function timeoutAiGame(gameId: string): Promise<void> {
+  const timeoutAiGame = async (gameId: string): Promise<void> => {
     await aiGameApi.timeoutAiGame({ gameId });
-  }
+  };
 
   return {
     createAiGame,

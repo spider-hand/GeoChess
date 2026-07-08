@@ -22,13 +22,13 @@ export const messages = {
 
 export type AppLocale = keyof typeof messages;
 
-export function createAppI18n(locale: AppLocale = DEFAULT_LOCALE) {
+export const createAppI18n = (locale: AppLocale = DEFAULT_LOCALE) => {
   return createI18n({
     legacy: false,
     locale,
     fallbackLocale: DEFAULT_LOCALE,
     messages,
   });
-}
+};
 
 export const appI18n = createAppI18n();

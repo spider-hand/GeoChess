@@ -30,13 +30,13 @@ const NavigationHeader = (
   await import("../../../../components/shared/NavigationHeader.vue")
 ).default;
 
-function resetAuthState() {
+const resetAuthState = () => {
   username.value = null;
   isAuthenticatedUser.value = false;
   isCurrentUserLoaded.value = true;
   signInWithGoogle.mockReset();
   signOutUser.mockReset();
-}
+};
 
 test("renders the product name and controls", async () => {
   resetAuthState();

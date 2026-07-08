@@ -13,19 +13,19 @@ const { t } = useI18n();
 const root = ref<HTMLElement | null>(null);
 const isOpen = ref(false);
 
-function closeDialog() {
+const closeDialog = () => {
   isOpen.value = false;
-}
+};
 
-function toggleDialog() {
+const toggleDialog = () => {
   isOpen.value = !isOpen.value;
-}
+};
 
-function handleDocumentKeydown(event: KeyboardEvent) {
+const handleDocumentKeydown = (event: KeyboardEvent) => {
   if (event.key === "Escape") {
     closeDialog();
   }
-}
+};
 
 onClickOutside(root, closeDialog);
 

@@ -58,17 +58,17 @@ const isDanger = computed(
     remainingMs.value < DANGER_THRESHOLD_MS,
 );
 
-function clearTick() {
+const clearTick = () => {
   if (timeoutId.value !== null) {
     window.clearTimeout(timeoutId.value);
     timeoutId.value = null;
   }
-}
+};
 
-function tick() {
+const tick = () => {
   nowMs.value = Date.now();
   timeoutId.value = window.setTimeout(tick, TICK_INTERVAL_MS);
-}
+};
 
 // Reset the deadline key whenever the countdown target changes, so that we can emit `timeUp` again if the countdown restarts.
 watch(

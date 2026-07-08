@@ -9,7 +9,7 @@ import {
 import useUserQuery from "@/composables/useUserQuery";
 import { firebaseAuth, googleAuthProvider } from "@/lib/firebase";
 
-export async function signInAnonymouslyIfNeeded() {
+export const signInAnonymouslyIfNeeded = async () => {
   const currentUser = await getCurrentUser();
 
   if (currentUser) {
@@ -17,9 +17,9 @@ export async function signInAnonymouslyIfNeeded() {
   }
 
   return (await signInAnonymously(firebaseAuth)).user;
-}
+};
 
-export function useAuth() {
+export const useAuth = () => {
   const currentUser = useCurrentUser();
   const isCurrentUserLoaded = useIsCurrentUserLoaded();
   const { createUserAsync, isCreatingUser } = useUserQuery();
@@ -36,7 +36,7 @@ export function useAuth() {
     return currentUser.value?.displayName?.trim() || "Guest";
   });
 
-  async function signInWithGoogle() {
+  const signInWithGoogle = async () => {
     const currentFirebaseUser = await getCurrentUser();
 
     if (currentFirebaseUser?.isAnonymous) {
@@ -68,15 +68,15 @@ export function useAuth() {
     }
 
     return credential;
-  }
+  };
 
-  async function signInAnonymously() {
+  const signInAnonymously = async () => {
     return signInAnonymouslyIfNeeded();
-  }
+  };
 
-  async function signOutUser() {
+  const signOutUser = async () => {
     await signOut(firebaseAuth);
-  }
+  };
 
   return {
     currentUser,
@@ -89,4 +89,4 @@ export function useAuth() {
     signOutUser,
     username,
   };
-}
+};

@@ -14,13 +14,13 @@ const props = defineProps<{
 const mapElement = useTemplateRef("mapElement");
 let map: mapboxgl.Map | null = null;
 
-function syncPlaceLabels() {
+const syncPlaceLabels = () => {
   if (map === null) {
     return;
   }
 
   map.setConfigProperty("basemap", "showPlaceLabels", props.showPlaceLabels);
-}
+};
 
 onMounted(() => {
   if (mapElement.value === null) {

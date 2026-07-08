@@ -139,7 +139,7 @@ watch(
   },
 );
 
-async function handleSelect(countryCode: string) {
+const handleSelect = async (countryCode: string) => {
   if (
     gameId.value === null ||
     realtimeAiGame.value === null ||
@@ -158,9 +158,9 @@ async function handleSelect(countryCode: string) {
     console.error(error);
     isSubmittingMove.value = false;
   }
-}
+};
 
-async function handleTimeUp() {
+const handleTimeUp = async () => {
   if (
     gameId.value === null ||
     realtimeAiGame.value === null ||
@@ -187,7 +187,7 @@ async function handleTimeUp() {
     console.error(error);
     isSubmittingTimeout.value = false;
   }
-}
+};
 </script>
 
 <template>

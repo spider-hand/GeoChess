@@ -33,7 +33,7 @@ const classNames = computed(() => [
   },
 ]);
 
-function handleClick(event: MouseEvent) {
+const handleClick = (event: MouseEvent) => {
   if (props.disabled) {
     event.preventDefault();
     event.stopPropagation();
@@ -41,7 +41,7 @@ function handleClick(event: MouseEvent) {
   }
 
   emit("click", event);
-}
+};
 </script>
 
 <template>

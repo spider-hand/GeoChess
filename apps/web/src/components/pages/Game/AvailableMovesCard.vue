@@ -41,21 +41,21 @@ watch(
   { deep: true },
 );
 
-function selectCountry(countryCode: string) {
+const selectCountry = (countryCode: string) => {
   if (props.isSelectDisabled) {
     return;
   }
 
   selectedCountryCode.value = countryCode;
-}
+};
 
-function emitSelect() {
+const emitSelect = () => {
   if (selectedCountryCode.value === null || props.isSelectDisabled) {
     return;
   }
 
   emit("select", selectedCountryCode.value);
-}
+};
 </script>
 
 <template>

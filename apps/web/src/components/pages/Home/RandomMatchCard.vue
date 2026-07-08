@@ -33,9 +33,9 @@ const onlinePlayersLabel = computed(() => {
       });
 });
 
-function emitJoinRandomMatch() {
+const emitJoinRandomMatch = () => {
   emit("joinRandomMatch");
-}
+};
 </script>
 
 <template>

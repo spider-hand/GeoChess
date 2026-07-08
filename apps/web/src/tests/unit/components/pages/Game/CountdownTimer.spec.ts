@@ -6,10 +6,10 @@ import CountdownTimer from "@/components/pages/Game/CountdownTimer.vue";
 
 let nowMs = 0;
 
-async function advanceBy(ms: number) {
+const advanceBy = async (ms: number) => {
   await vi.advanceTimersByTimeAsync(ms);
   await nextTick();
-}
+};
 
 beforeEach(() => {
   nowMs = 1_751_155_200_000;

@@ -21,24 +21,24 @@ const { t } = useI18n();
 const root = ref<HTMLElement | null>(null);
 const isOpen = ref(false);
 
-function closeMenu() {
+const closeMenu = () => {
   isOpen.value = false;
-}
+};
 
-function toggleMenu() {
+const toggleMenu = () => {
   isOpen.value = !isOpen.value;
-}
+};
 
-function emitSignOutClick() {
+const emitSignOutClick = () => {
   emit("signOutClick");
   closeMenu();
-}
+};
 
-function handleDocumentKeydown(event: KeyboardEvent) {
+const handleDocumentKeydown = (event: KeyboardEvent) => {
   if (event.key === "Escape") {
     closeMenu();
   }
-}
+};
 
 onClickOutside(root, closeMenu);
 

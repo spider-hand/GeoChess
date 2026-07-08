@@ -4,9 +4,9 @@ import { render } from "vitest-browser-vue";
 import { createAppI18n } from "@/i18n";
 import UserAvatarMenu from "@/components/shared/UserAvatarMenu.vue";
 
-async function nextTick() {
+const nextTick = async () => {
   await new Promise((resolve) => window.setTimeout(resolve, 0));
-}
+};
 
 test("is closed by default", async () => {
   const { getByRole, container } = render(UserAvatarMenu, {

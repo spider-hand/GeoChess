@@ -22,9 +22,7 @@ const meta = {
   },
   render: (args) => ({
     components: { IconButton },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <IconButton v-bind="args">
         <svg aria-hidden="true" fill="none" height="18" viewBox="0 0 24 24" width="18">

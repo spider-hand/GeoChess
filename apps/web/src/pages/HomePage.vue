@@ -18,7 +18,7 @@ const { signInAnonymously } = useAuth();
 const { createAiGame } = useAiGameQuery();
 const isStartingAiGame = ref(false);
 
-async function handleStartAiMatch(difficulty: Difficulty) {
+const handleStartAiMatch = async (difficulty: Difficulty) => {
   if (isStartingAiGame.value) {
     return;
   }
@@ -34,7 +34,7 @@ async function handleStartAiMatch(difficulty: Difficulty) {
   } finally {
     isStartingAiGame.value = false;
   }
-}
+};
 </script>
 
 <template>

@@ -43,23 +43,23 @@ const isEnterRoomDisabled = computed(
   () => roomKey.value.length !== 6 || Boolean(errorMessage.value),
 );
 
-function normalizeRoomKey(value: string) {
+const normalizeRoomKey = (value: string) => {
   return value.replace(/\D/g, "").slice(0, 6);
-}
+};
 
-function handleRoomKeyInput(event: Event) {
+const handleRoomKeyInput = (event: Event) => {
   const input = event.target as HTMLInputElement;
   const normalizedValue = normalizeRoomKey(input.value);
 
   input.value = normalizedValue;
   setValue(normalizedValue, true);
-}
+};
 
-function emitCreateFriendsRoom() {
+const emitCreateFriendsRoom = () => {
   emit("createFriendsRoom");
-}
+};
 
-async function submitEnterFriendsRoom() {
+const submitEnterFriendsRoom = async () => {
   const validationResult = await validate();
 
   if (!validationResult.valid) {
@@ -67,7 +67,7 @@ async function submitEnterFriendsRoom() {
   }
 
   emit("enterFriendsRoom", roomKey.value);
-}
+};
 </script>
 
 <template>

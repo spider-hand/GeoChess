@@ -17,25 +17,25 @@ const emit = defineEmits<{
 
 const year = new Date().getFullYear();
 
-function emitGithubClick(event: MouseEvent) {
+const emitGithubClick = (event: MouseEvent) => {
   emit("githubClick", event);
-}
+};
 
-function emitDiscordClick(event: MouseEvent) {
+const emitDiscordClick = (event: MouseEvent) => {
   emit("discordClick", event);
-}
+};
 
-function emitPrivacyClick(event: MouseEvent) {
+const emitPrivacyClick = (event: MouseEvent) => {
   emit("privacyClick", event);
-}
+};
 
-function emitTermsClick(event: MouseEvent) {
+const emitTermsClick = (event: MouseEvent) => {
   emit("termsClick", event);
-}
+};
 
-function emitContactClick(event: MouseEvent) {
+const emitContactClick = (event: MouseEvent) => {
   emit("contactClick", event);
-}
+};
 </script>
 
 <template>

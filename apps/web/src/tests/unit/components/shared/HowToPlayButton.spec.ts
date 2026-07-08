@@ -4,9 +4,9 @@ import { render } from "vitest-browser-vue";
 import HowToPlayButton from "../../../../components/shared/HowToPlayButton.vue";
 import { createAppI18n } from "../../../../i18n";
 
-async function nextTick() {
+const nextTick = async () => {
   await new Promise((resolve) => window.setTimeout(resolve, 0));
-}
+};
 
 test("is closed by default", async () => {
   const { getByRole, container } = render(HowToPlayButton, {

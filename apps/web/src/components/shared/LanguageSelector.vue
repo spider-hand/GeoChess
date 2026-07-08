@@ -41,25 +41,25 @@ const currentLanguage = computed(
     LANGUAGE_OPTIONS[0],
 );
 
-function closeMenu() {
+const closeMenu = () => {
   isOpen.value = false;
-}
+};
 
-function toggleMenu() {
+const toggleMenu = () => {
   isOpen.value = !isOpen.value;
-}
+};
 
-function selectLanguage(language: SupportedLanguage) {
+const selectLanguage = (language: SupportedLanguage) => {
   locale.value = language;
   emit("select", language);
   closeMenu();
-}
+};
 
-function handleDocumentKeydown(event: KeyboardEvent) {
+const handleDocumentKeydown = (event: KeyboardEvent) => {
   if (event.key === "Escape") {
     closeMenu();
   }
-}
+};
 
 onClickOutside(root, closeMenu);
 

@@ -43,6 +43,7 @@ Key paths are below:
 - Always write unit tests with a focus on branch coverage. Make sure to test rendered structure, emitted events, state branches and composed component branches
 - Do not add test cases unless they cover a meaningful runtime branch; do not add duplicate cases for the same branch or cases for states that cannot occur in production.
 - Do not manually modify files under `apps/web/src/services/`
+- Always use arrow functions unless there is a specific reason to avoid them
 - Always create a composable to manage server state, instead of using `fetch`. If it doesn't have to manage the state of the API response, the file name should be `use{api-name}Api.ts` (e.g. `useHealthApi.ts`). If it manages the state of API responses, the file name should be `use{api-name}Query.ts` (e.g. `useUserQuery.ts`)
 - Always use the `@` alias instead of relative paths for imports within `apps/web/src/`
 - Always use `@lucide/vue` for icons

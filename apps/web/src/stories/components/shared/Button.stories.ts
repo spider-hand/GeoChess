@@ -35,9 +35,7 @@ const meta = {
   },
   render: (args) => ({
     components: { Button },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: '<Button v-bind="args">Button</Button>',
   }),
 } satisfies Meta<typeof Button>;

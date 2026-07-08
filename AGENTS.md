@@ -25,17 +25,6 @@ Key paths are below:
 
 ## Coding Guidelines
 
-### General
-
-#### Simplicity
-
-- Always start with the most direct implementation that satisfies the current requirement
-- Do not introduce new abstraction layers, helper functions, wrapper composables, factories, adapters, or other indirection unless duplication, repeated branching, or a framework constraint already exists in the current code
-- Do not add speculative branches, optional code paths, or abstractions for scenarios that are not exercised by the current product requirements
-- Do not add fallback branches, compatibility shims, or defensive conditionals unless a concrete runtime case in this repository requires them
-- Do not accept mixed or overly broad input types when one concrete type is sufficient
-- Do not preserve invalid states unless an existing runtime contract or test in this repository requires them
-
 ### Frontend
 
 - Always create files for unit tests and stories when creating a new component

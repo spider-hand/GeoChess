@@ -4,10 +4,10 @@ import { render } from "vitest-browser-vue";
 import TurnStatusStrip from "@/components/pages/Game/TurnStatusStrip.vue";
 import { createAppI18n } from "@/i18n";
 
-test("renders the your-turn status with the current turn", async () => {
+test("renders the player-turn status with the current turn", async () => {
   const { getByLabelText, getByText } = render(TurnStatusStrip, {
     props: {
-      isYourTurn: true,
+      status: "player",
       currentTurn: 10,
     },
     global: {
@@ -20,10 +20,10 @@ test("renders the your-turn status with the current turn", async () => {
   await expect.element(getByText("Turn 10")).toBeVisible();
 });
 
-test("renders the opponent-turn branch and applies the opponent accent", async () => {
+test("renders the AI-turn branch and applies the AI accent", async () => {
   const { container, getByLabelText, getByText } = render(TurnStatusStrip, {
     props: {
-      isYourTurn: false,
+      status: "ai",
       currentTurn: 11,
     },
     global: {
@@ -31,14 +31,32 @@ test("renders the opponent-turn branch and applies the opponent accent", async (
     },
   });
 
-  await expect
-    .element(getByLabelText("Opponent's Turn, Turn 11"))
-    .toBeVisible();
-  await expect.element(getByText("Opponent's Turn")).toBeVisible();
+  await expect.element(getByLabelText("AI Turn, Turn 11")).toBeVisible();
+  await expect.element(getByText("AI Turn")).toBeVisible();
   await expect.element(getByText("Turn 11")).toBeVisible();
   await expect
     .element(
       container.querySelector(".turn-status-strip__status") as HTMLElement,
     )
-    .toHaveClass("turn-status-strip__status--opponent");
+    .toHaveClass("turn-status-strip__status--ai");
+});
+
+test("renders the losing branch with the danger accent", async () => {
+  const { container, getByLabelText, getByText } = render(TurnStatusStrip, {
+    props: {
+      status: "lost",
+      currentTurn: 12,
+    },
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
+
+  await expect.element(getByLabelText("You Lose, Turn 12")).toBeVisible();
+  await expect.element(getByText("You Lose")).toBeVisible();
+  await expect
+    .element(
+      container.querySelector(".turn-status-strip__status") as HTMLElement,
+    )
+    .toHaveClass("turn-status-strip__status--lost");
 });

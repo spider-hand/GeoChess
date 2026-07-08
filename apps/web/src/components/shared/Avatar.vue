@@ -7,23 +7,13 @@ defineOptions({
   name: "SharedAvatar",
 });
 
-const props = withDefaults(
-  defineProps<{
-    name?: string | null;
-    size?: AvatarSize;
-  }>(),
-  {
-    name: null,
-    size: "md",
-  },
-);
+const props = defineProps<{
+  name: string;
+  size: AvatarSize;
+}>();
 
 const initials = computed(() => {
-  const normalizedName = props.name?.trim();
-
-  if (!normalizedName) {
-    return "?";
-  }
+  const normalizedName = props.name.trim();
 
   const words = normalizedName
     .split(/\s+/)
@@ -43,7 +33,7 @@ const initials = computed(() => {
 </script>
 
 <template>
-  <span class="avatar" :class="`avatar--${size}`" aria-hidden="true">
+  <span class="avatar" :class="`avatar--${props.size}`" aria-hidden="true">
     {{ initials }}
   </span>
 </template>

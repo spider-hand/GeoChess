@@ -6,6 +6,9 @@ const meta = {
   title: "Components/Pages/Game/PlayerMatchupCard",
   component: PlayerMatchupCard,
   tags: ["autodocs"],
+  args: {
+    playerName: "Taylor Swift",
+  },
 } satisfies Meta<typeof PlayerMatchupCard>;
 
 export default meta;

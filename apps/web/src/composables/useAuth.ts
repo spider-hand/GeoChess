@@ -24,15 +24,17 @@ export function useAuth() {
   const isCurrentUserLoaded = useIsCurrentUserLoaded();
   const { createUserAsync, isCreatingUser } = useUserQuery();
 
-  const isAuthenticatedUser = computed(
-    () => !!currentUser.value && !currentUser.value.isAnonymous,
-  );
+  const isAuthenticatedUser = computed(() => !!currentUser.value);
   const isAnonymousUser = computed(
     () => currentUser.value?.isAnonymous ?? false,
   );
-  const authenticatedUserName = computed(
-    () => currentUser.value?.displayName?.trim() || null,
-  );
+  const username = computed(() => {
+    if (currentUser.value?.isAnonymous) {
+      return "Guest";
+    }
+
+    return currentUser.value?.displayName?.trim() || "Guest";
+  });
 
   async function signInWithGoogle() {
     const currentFirebaseUser = await getCurrentUser();
@@ -77,7 +79,6 @@ export function useAuth() {
   }
 
   return {
-    authenticatedUserName,
     currentUser,
     isAnonymousUser,
     isAuthenticatedUser,
@@ -86,5 +87,6 @@ export function useAuth() {
     signInAnonymously,
     signInWithGoogle,
     signOutUser,
+    username,
   };
 }

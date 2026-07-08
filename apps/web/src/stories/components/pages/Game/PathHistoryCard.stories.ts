@@ -6,38 +6,18 @@ const meta = {
   title: "Components/Pages/Game/PathHistoryCard",
   component: PathHistoryCard,
   tags: ["autodocs"],
+  args: {
+    historySteps: [
+      { countryCode: "bb", owner: "neutral", turn: 1 },
+      { countryCode: "cc", owner: "player", turn: 2 },
+      { countryCode: "dd", owner: "ai", turn: 3 },
+      { countryCode: "ee", owner: "player", turn: 4 },
+    ],
+  },
 } satisfies Meta<typeof PathHistoryCard>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const CurrentTurnSix: Story = {};
-
-export const CurrentTurnFive: Story = {
-  args: {
-    currentTurn: 5,
-    historySteps: [
-      {
-        countryCode: "us",
-        owner: "you",
-        turn: 1,
-      },
-      {
-        countryCode: "jp",
-        owner: "opponent",
-        turn: 2,
-      },
-      {
-        countryCode: "fr",
-        owner: "you",
-        turn: 3,
-      },
-      {
-        countryCode: "br",
-        owner: "opponent",
-        turn: 4,
-      },
-    ],
-  },
-};
+export const Default: Story = {};

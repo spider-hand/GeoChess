@@ -22,7 +22,7 @@ export type RealtimeAiGame = {
   turn: "player" | "ai";
   start: string;
   country: string;
-  availableMoves: Array<string>;
+  availableMoves?: Array<string>;
   usedCountries: Array<string>;
   moves?: Record<string, RealtimeAiGameMove>;
   createdAt: number;

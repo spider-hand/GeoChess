@@ -4,13 +4,15 @@
       "Game": {
         "AvailableMovesCard": {
           "title": "Verfügbare Züge",
-          "select": "Auswählen"
+          "select": "Auswählen",
+          "selecting": "Wird ausgewählt",
+          "waiting": "Die KI wählt..."
         },
         "PathHistoryCard": {
           "title": "Pfadverlauf",
           "legendLabel": "Legende des Pfadverlaufs",
-          "you": "You",
-          "opponent": "Opponent"
+          "you": "Du",
+          "ai": "KI"
         },
         "PathResultCard": {
           "turn": "Runde {turn}",
@@ -25,11 +27,14 @@
         },
         "TurnStatusStrip": {
           "yourTurn": "Du bist dran",
-          "opponentTurn": "Gegner ist dran",
+          "aiTurn": "KI ist dran",
+          "youWin": "Du gewinnst",
+          "youLose": "Du verlierst",
           "turn": "Runde {turn}"
         },
         "PlayerMatchupCard": {
-          "versus": "vs"
+          "versus": "vs",
+          "ai": "KI"
         }
       },
       "Home": {

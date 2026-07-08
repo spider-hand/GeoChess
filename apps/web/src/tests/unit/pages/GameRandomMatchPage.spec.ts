@@ -4,7 +4,7 @@ import { render } from "vitest-browser-vue";
 vi.mock("@/composables/useAuth", () => ({
   signInAnonymouslyIfNeeded: vi.fn().mockResolvedValue({ isAnonymous: true }),
   useAuth: () => ({
-    authenticatedUserName: null,
+    username: "Guest",
     currentUser: { value: null },
     isAnonymousUser: false,
     isAuthenticatedUser: false,

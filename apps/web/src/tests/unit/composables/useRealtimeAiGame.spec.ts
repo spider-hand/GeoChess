@@ -59,3 +59,40 @@ test("accepts a realtime game payload when moves is missing", async () => {
 
   scope.stop();
 });
+
+test("accepts a realtime game payload when availableMoves is missing", async () => {
+  mockOnValue.mockImplementation((_, callback) => {
+    callback({
+      exists: () => true,
+      val: () => ({
+        id: "game-123",
+        userId: "user-123",
+        difficulty: "medium",
+        turn: "player",
+        start: "BB",
+        country: "BB",
+        usedCountries: ["BB"],
+        createdAt: 1751155200000,
+        updatedAt: 1751155200000,
+      }),
+    });
+
+    return vi.fn();
+  });
+
+  const scope = effectScope();
+  const { default: useRealtimeAiGame } =
+    await import("@/composables/useRealtimeAiGame");
+
+  const state = scope.run(() => useRealtimeAiGame("game-123"));
+  await nextTick();
+
+  expect(state?.realtimeAiGame.value).toMatchObject({
+    id: "game-123",
+  });
+  expect(state?.realtimeAiGame.value?.availableMoves).toBeUndefined();
+  expect(state?.realtimeAiGameError.value).toBeNull();
+  expect(state?.isLoadingRealtimeAiGame.value).toBe(false);
+
+  scope.stop();
+});

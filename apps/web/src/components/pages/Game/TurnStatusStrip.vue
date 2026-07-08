@@ -2,22 +2,30 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import type { TurnStatus } from "@/types/game";
+
 defineOptions({
   name: "GameTurnStatusStrip",
 });
 
 const props = defineProps<{
-  isYourTurn: boolean;
+  status: TurnStatus;
   currentTurn: number;
 }>();
 
 const { t } = useI18n();
 
-const statusLabel = computed(() =>
-  props.isYourTurn
-    ? t("components.pages.Game.TurnStatusStrip.yourTurn")
-    : t("components.pages.Game.TurnStatusStrip.opponentTurn"),
-);
+const STATUS_LABEL_KEYS: Record<
+  TurnStatus,
+  `components.pages.Game.TurnStatusStrip.${string}`
+> = {
+  player: "components.pages.Game.TurnStatusStrip.yourTurn",
+  ai: "components.pages.Game.TurnStatusStrip.aiTurn",
+  won: "components.pages.Game.TurnStatusStrip.youWin",
+  lost: "components.pages.Game.TurnStatusStrip.youLose",
+};
+
+const statusLabel = computed(() => t(STATUS_LABEL_KEYS[props.status]));
 
 const turnLabel = computed(() =>
   t("components.pages.Game.TurnStatusStrip.turn", {
@@ -33,8 +41,10 @@ const ariaLabel = computed(() => `${statusLabel.value}, ${turnLabel.value}`);
     <div
       class="turn-status-strip__status"
       :class="{
-        'turn-status-strip__status--your': isYourTurn,
-        'turn-status-strip__status--opponent': !isYourTurn,
+        'turn-status-strip__status--player': status === 'player',
+        'turn-status-strip__status--ai': status === 'ai',
+        'turn-status-strip__status--won': status === 'won',
+        'turn-status-strip__status--lost': status === 'lost',
       }"
     >
       {{ statusLabel }}
@@ -50,6 +60,7 @@ const ariaLabel = computed(() => `${statusLabel.value}, ${turnLabel.value}`);
 .turn-status-strip {
   display: inline-flex;
   align-items: stretch;
+  min-width: 0;
   border: 1px solid var(--hairline);
   border-radius: var(--radius-token-md);
   background-color: var(--surface-card-dark);
@@ -61,8 +72,8 @@ const ariaLabel = computed(() => `${statusLabel.value}, ${turnLabel.value}`);
 .turn-status-strip__turn {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 0 var(--spacing-sm);
+  min-height: 44px;
+  padding: 0 var(--spacing-md);
   font-family: var(--font-body);
   font-size: var(--font-size-button);
   font-weight: var(--font-weight-semibold);
@@ -70,21 +81,23 @@ const ariaLabel = computed(() => `${statusLabel.value}, ${turnLabel.value}`);
 }
 
 .turn-status-strip__status {
-  flex: 1;
-  justify-content: flex-start;
   color: var(--on-primary);
 }
 
-.turn-status-strip__status--your {
+.turn-status-strip__status--player,
+.turn-status-strip__status--won {
   background-color: var(--primary);
 }
 
-.turn-status-strip__status--opponent {
+.turn-status-strip__status--ai {
   background-color: var(--primary-active);
 }
 
+.turn-status-strip__status--lost {
+  background-color: var(--danger);
+}
+
 .turn-status-strip__turn {
-  flex: 0 0 auto;
   justify-content: center;
   background-color: var(--surface-elevated-dark);
   color: var(--on-dark);
@@ -93,7 +106,7 @@ const ariaLabel = computed(() => `${statusLabel.value}, ${turnLabel.value}`);
 @media (max-width: 480px) {
   .turn-status-strip__status,
   .turn-status-strip__turn {
-    padding: 0 var(--spacing-xs);
+    padding: 0 var(--spacing-sm);
   }
 }
 </style>

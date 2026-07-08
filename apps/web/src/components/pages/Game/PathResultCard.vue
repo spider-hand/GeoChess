@@ -3,76 +3,31 @@ import { History } from "@lucide/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-type StepOwner = "you" | "opponent";
-
-type ResultStep = {
-  countryCode: string;
-  countryNameKey: string;
-  owner: StepOwner;
-  turn: number;
-};
+import type { PathStep } from "@/types/game";
+import { countryFlagSrc } from "@/utils/game";
 
 defineOptions({
   name: "GamePathResultCard",
 });
 
-const RESULT_STEPS: ResultStep[] = [
-  {
-    countryCode: "us",
-    countryNameKey: "components.pages.Game.PathResultCard.countries.us",
-    owner: "you",
-    turn: 1,
-  },
-  {
-    countryCode: "jp",
-    countryNameKey: "components.pages.Game.PathResultCard.countries.jp",
-    owner: "opponent",
-    turn: 2,
-  },
-  {
-    countryCode: "fr",
-    countryNameKey: "components.pages.Game.PathResultCard.countries.fr",
-    owner: "you",
-    turn: 3,
-  },
-  {
-    countryCode: "br",
-    countryNameKey: "components.pages.Game.PathResultCard.countries.br",
-    owner: "opponent",
-    turn: 4,
-  },
-  {
-    countryCode: "de",
-    countryNameKey: "components.pages.Game.PathResultCard.countries.de",
-    owner: "you",
-    turn: 5,
-  },
-  {
-    countryCode: "ca",
-    countryNameKey: "components.pages.Game.PathResultCard.countries.ca",
-    owner: "opponent",
-    turn: 6,
-  },
-];
+const props = defineProps<{
+  resultSteps: Array<PathStep>;
+}>();
 
 const { t } = useI18n();
 
 const legendItems = computed(() => [
   {
-    key: "you",
+    key: "player",
     label: t("components.pages.Game.PathHistoryCard.you"),
-    owner: "you" as const,
+    owner: "player" as const,
   },
   {
-    key: "opponent",
-    label: t("components.pages.Game.PathHistoryCard.opponent"),
-    owner: "opponent" as const,
+    key: "ai",
+    label: t("components.pages.Game.PathHistoryCard.ai"),
+    owner: "ai" as const,
   },
 ]);
-
-function stepFlagSrc(countryCode: string) {
-  return `/flags/${countryCode}.webp`;
-}
 </script>
 
 <template>
@@ -102,7 +57,7 @@ function stepFlagSrc(countryCode: string) {
 
     <div class="path-result-card__body" role="list">
       <div
-        v-for="(step, index) in RESULT_STEPS"
+        v-for="(step, index) in props.resultSteps"
         :key="step.turn"
         class="path-result-card__row"
         role="listitem"
@@ -110,21 +65,26 @@ function stepFlagSrc(countryCode: string) {
         <div class="path-result-card__rail" aria-hidden="true">
           <span
             class="path-result-card__marker"
-            :class="`path-result-card__marker--${step.owner}`"
-            :data-testid="`path-result-card-marker-${step.owner}`"
+            :class="{
+              'path-result-card__marker--player': step.owner === 'player',
+              'path-result-card__marker--ai': step.owner === 'ai',
+              'path-result-card__marker--neutral': step.owner === 'neutral',
+            }"
           />
           <span
-            v-if="index < RESULT_STEPS.length - 1"
+            v-if="index < props.resultSteps.length - 1"
             class="path-result-card__line"
-            :class="{ 'path-result-card__line--you': step.owner === 'you' }"
             data-testid="path-result-card-line"
           />
         </div>
 
         <article
           class="path-result-card__step"
-          :class="`path-result-card__step--${step.owner}`"
-          :data-testid="`path-result-card-step-${step.owner}`"
+          :class="{
+            'path-result-card__step--player': step.owner === 'player',
+            'path-result-card__step--ai': step.owner === 'ai',
+            'path-result-card__step--neutral': step.owner === 'neutral',
+          }"
         >
           <span class="path-result-card__turn">
             {{
@@ -137,13 +97,13 @@ function stepFlagSrc(countryCode: string) {
           <div class="path-result-card__country">
             <img
               class="path-result-card__flag"
-              :src="stepFlagSrc(step.countryCode)"
-              :alt="`${t(step.countryNameKey)} flag`"
+              :src="countryFlagSrc(step.countryCode)"
+              :alt="`${step.countryCode} flag`"
               width="24"
               height="18"
             />
             <span class="path-result-card__country-name">
-              {{ t(step.countryNameKey) }}
+              {{ step.countryCode }}
             </span>
           </div>
         </article>
@@ -157,12 +117,14 @@ function stepFlagSrc(countryCode: string) {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-  width: min(100%, 440px);
+  width: min(100%, 360px);
+  min-height: 320px;
   padding: var(--spacing-lg);
   border: 1px solid var(--hairline);
   border-radius: var(--radius-token-xl);
   background-color: var(--surface-card-dark);
   color: var(--on-dark);
+  overflow: hidden;
 }
 
 .path-result-card__header {
@@ -209,12 +171,12 @@ function stepFlagSrc(countryCode: string) {
   line-height: var(--line-height-copy);
 }
 
-.path-result-card__legend-badge--you {
+.path-result-card__legend-badge--player {
   background-color: var(--primary);
   color: var(--on-primary);
 }
 
-.path-result-card__legend-badge--opponent {
+.path-result-card__legend-badge--ai {
   background-color: var(--surface-elevated-dark);
   color: var(--on-dark);
 }
@@ -222,16 +184,16 @@ function stepFlagSrc(countryCode: string) {
 .path-result-card__body {
   display: flex;
   flex-direction: column;
+  flex: 1;
   gap: var(--spacing-sm);
-  min-height: 360px;
-  max-height: 360px;
+  min-height: 0;
   overflow-y: auto;
   padding-right: var(--spacing-xs);
 }
 
 .path-result-card__row {
   display: grid;
-  grid-template-columns: 20px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: stretch;
   gap: var(--spacing-sm);
 }
@@ -240,65 +202,65 @@ function stepFlagSrc(countryCode: string) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100%;
+  width: 16px;
 }
 
 .path-result-card__marker {
   width: 12px;
   height: 12px;
-  border: 2px solid transparent;
-  border-radius: var(--radius-token-full);
-  flex-shrink: 0;
+  border-radius: 999px;
+  background-color: var(--surface-elevated-dark);
+  border: 1px solid var(--hairline);
 }
 
-.path-result-card__marker--you {
-  border-color: var(--primary);
+.path-result-card__marker--player {
   background-color: var(--primary);
+  border-color: var(--primary);
 }
 
-.path-result-card__marker--opponent {
-  border-color: var(--hairline);
+.path-result-card__marker--ai {
   background-color: var(--surface-elevated-dark);
 }
 
 .path-result-card__line {
-  width: 1px;
   flex: 1;
-  margin-top: var(--spacing-xxs);
+  width: 1px;
+  margin-top: var(--spacing-xs);
   background-color: var(--hairline);
-}
-
-.path-result-card__line--you {
-  background-color: var(--primary);
 }
 
 .path-result-card__step {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
   gap: var(--spacing-xs);
-  min-height: 64px;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid transparent;
+  min-width: 0;
+  padding: var(--spacing-md);
   border-radius: var(--radius-token-lg);
+}
+
+.path-result-card__step--neutral {
   background-color: var(--surface-elevated-dark);
-  text-align: left;
 }
 
-.path-result-card__step--you {
-  border-color: color-mix(in srgb, var(--primary) 34%, transparent);
+.path-result-card__step--player {
+  background-color: color-mix(in srgb, var(--primary) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 45%, transparent);
 }
 
-.path-result-card__step--opponent {
-  border-color: var(--hairline);
+.path-result-card__step--ai {
+  background-color: color-mix(
+    in srgb,
+    var(--surface-elevated-dark) 85%,
+    transparent
+  );
+  border: 1px solid var(--hairline);
 }
 
 .path-result-card__turn {
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: var(--font-size-caption);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-copy);
 }
 
@@ -306,26 +268,25 @@ function stepFlagSrc(countryCode: string) {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
+  min-width: 0;
 }
 
 .path-result-card__flag {
-  width: 24px;
-  height: 18px;
-  border-radius: var(--radius-token-xs);
+  flex-shrink: 0;
+  border-radius: 2px;
   object-fit: cover;
 }
 
 .path-result-card__country-name {
-  color: var(--on-dark);
   font-family: var(--font-body);
   font-size: var(--font-size-body-md);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--line-height-body);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-copy);
 }
 
 @media (max-width: 640px) {
   .path-result-card {
-    padding: var(--spacing-md);
+    width: 100%;
   }
 
   .path-result-card__header {
@@ -334,7 +295,7 @@ function stepFlagSrc(countryCode: string) {
   }
 
   .path-result-card__legend {
-    justify-content: flex-end;
+    flex-wrap: wrap;
   }
 }
 </style>

@@ -15,15 +15,29 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const YourTurn: Story = {
+export const PlayerTurn: Story = {
   args: {
-    isYourTurn: true,
+    status: "player",
   },
 };
 
-export const OpponentTurn: Story = {
+export const AiTurn: Story = {
   args: {
-    isYourTurn: false,
+    status: "ai",
     currentTurn: 11,
+  },
+};
+
+export const Won: Story = {
+  args: {
+    status: "won",
+    currentTurn: 12,
+  },
+};
+
+export const Lost: Story = {
+  args: {
+    status: "lost",
+    currentTurn: 12,
   },
 };

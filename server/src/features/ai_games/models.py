@@ -49,7 +49,7 @@ class RealtimeAiGameRecord(BaseModel):
     turn: AiGameTurn
     start: str
     country: str
-    available_moves: list[str] = Field(alias="availableMoves")
+    available_moves: list[str] = Field(alias="availableMoves", default_factory=list)
     used_countries: list[str] = Field(alias="usedCountries")
     moves: dict[str, RealtimeAiGameMoveRecord] = Field(default_factory=dict)
     created_at: int = Field(alias="createdAt")

@@ -4,13 +4,15 @@
       "Game": {
         "AvailableMovesCard": {
           "title": "選択可能な手",
-          "select": "選択"
+          "select": "選択",
+          "selecting": "選択中...",
+          "waiting": "AIが選択中..."
         },
         "PathHistoryCard": {
           "title": "経路履歴",
           "legendLabel": "経路履歴の凡例",
           "you": "You",
-          "opponent": "Opponent"
+          "ai": "AI"
         },
         "PathResultCard": {
           "turn": "{turn} ターン目",
@@ -25,11 +27,14 @@
         },
         "TurnStatusStrip": {
           "yourTurn": "あなたのターン",
-          "opponentTurn": "相手のターン",
+          "aiTurn": "AIのターン",
+          "youWin": "あなたの勝ち",
+          "youLose": "あなたの負け",
           "turn": "{turn} ターン目"
         },
         "PlayerMatchupCard": {
-          "versus": "vs"
+          "versus": "vs",
+          "ai": "AI"
         }
       },
       "Home": {

@@ -9,14 +9,9 @@ defineOptions({
   name: "SharedUserAvatarMenu",
 });
 
-const props = withDefaults(
-  defineProps<{
-    displayName?: string | null;
-  }>(),
-  {
-    displayName: null,
-  },
-);
+const props = defineProps<{
+  displayName: string;
+}>();
 
 const emit = defineEmits<{
   signOutClick: [];
@@ -66,7 +61,7 @@ onBeforeUnmount(() => {
       type="button"
       @click="toggleMenu"
     >
-      <Avatar :name="props.displayName" />
+      <Avatar :name="props.displayName" size="md" />
     </button>
 
     <div
@@ -83,7 +78,7 @@ onBeforeUnmount(() => {
           {{ t("components.shared.UserAvatarMenu.nameLabel") }}
         </span>
         <span class="user-avatar-menu__summary-name">
-          {{ props.displayName || "?" }}
+          {{ props.displayName }}
         </span>
       </div>
 

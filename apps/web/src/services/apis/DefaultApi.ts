@@ -58,6 +58,10 @@ export interface GetUserRequest {
   userId: string;
 }
 
+export interface TimeoutAiGameRequest {
+  gameId: string;
+}
+
 export interface UpdateUserRequest {
   userId: string;
   createUserRequest: CreateUserRequest;
@@ -373,6 +377,62 @@ export class DefaultApi extends runtime.BaseAPI {
   ): Promise<GetUser200Response> {
     const response = await this.getUserRaw(requestParameters, initOverrides);
     return await response.value();
+  }
+
+  /**
+   * Timeout ai game
+   */
+  async timeoutAiGameRaw(
+    requestParameters: TimeoutAiGameRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters["gameId"] == null) {
+      throw new runtime.RequiredError(
+        "gameId",
+        'Required parameter "gameId" was null or undefined when calling timeoutAiGame().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/ai-games/{gameId}/timeout`;
+    urlPath = urlPath.replace(
+      `{${"gameId"}}`,
+      encodeURIComponent(String(requestParameters["gameId"])),
+    );
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Timeout ai game
+   */
+  async timeoutAiGame(
+    requestParameters: TimeoutAiGameRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.timeoutAiGameRaw(requestParameters, initOverrides);
   }
 
   /**

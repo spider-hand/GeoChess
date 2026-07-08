@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, unref } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
@@ -17,9 +17,9 @@ defineOptions({
 const { t } = useI18n();
 const router = useRouter();
 const {
-  authenticatedUserName: authUserName,
-  isAuthenticatedUser: authIsAuthenticatedUser,
-  isCurrentUserLoaded: authIsCurrentUserLoaded,
+  username,
+  isAuthenticatedUser,
+  isCurrentUserLoaded,
   signInWithGoogle,
   signOutUser,
 } = useAuth();
@@ -148,13 +148,10 @@ async function handleSignOut() {
           <LanguageSelector @select="emitLanguageSelect" />
         </div>
 
-        <div
-          v-if="unref(authIsCurrentUserLoaded)"
-          class="navigation-header__cta-actions"
-        >
+        <div v-if="isCurrentUserLoaded" class="navigation-header__cta-actions">
           <UserAvatarMenu
-            v-if="unref(authIsAuthenticatedUser)"
-            :display-name="unref(authUserName)"
+            v-if="isAuthenticatedUser"
+            :display-name="username"
             @sign-out-click="handleSignOut"
           />
 

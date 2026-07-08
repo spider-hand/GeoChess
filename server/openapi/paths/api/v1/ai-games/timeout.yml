@@ -1,0 +1,32 @@
+parameters:
+  - name: gameId
+    in: path
+    required: true
+    schema:
+      type: string
+post:
+  operationId: timeoutAiGame
+  summary: Timeout ai game
+  security:
+    - BearerAuth: []
+  responses:
+    '204':
+      description: Ai game timed out
+    '400':
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '401':
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '404':
+      description: Ai game not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml

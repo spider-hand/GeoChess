@@ -4,13 +4,15 @@
       "Game": {
         "AvailableMovesCard": {
           "title": "可用走法",
-          "select": "选择"
+          "select": "选择",
+          "selecting": "选择中...",
+          "waiting": "AI 正在选择..."
         },
         "PathHistoryCard": {
           "title": "路径历史",
           "legendLabel": "路径历史图例",
-          "you": "You",
-          "opponent": "Opponent"
+          "you": "你",
+          "ai": "AI"
         },
         "PathResultCard": {
           "turn": "第 {turn} 回合",
@@ -25,11 +27,14 @@
         },
         "TurnStatusStrip": {
           "yourTurn": "轮到你了",
-          "opponentTurn": "轮到对手了",
+          "aiTurn": "AI 回合",
+          "youWin": "你赢了",
+          "youLose": "你输了",
           "turn": "第 {turn} 回合"
         },
         "PlayerMatchupCard": {
-          "versus": "vs"
+          "versus": "vs",
+          "ai": "AI"
         }
       },
       "Home": {

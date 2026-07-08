@@ -19,22 +19,27 @@ defineOptions({
     <NavigationHeader />
 
     <section class="game-page__content">
-      <TurnStatusStrip :current-turn="10" :is-your-turn="true" />
-      <CountdownTimer />
+      <TurnStatusStrip status="player" :current-turn="3" />
+      <CountdownTimer mode="countdown" :started-at-ms="Date.now()" />
 
       <div class="game-page__map-card-row">
-        <GameMap class="game-page__map" />
-        <AvailableMovesCard />
+        <GameMap class="game-page__map" :show-place-labels="false" />
+        <AvailableMovesCard
+          :available-moves="[{ code: 'us' }, { code: 'jp' }]"
+          :is-ai-turn="false"
+          :is-selecting="false"
+          :is-select-disabled="false"
+        />
       </div>
 
-      <PathHistoryCard />
+      <PathHistoryCard :history-steps="[]" />
 
       <div class="game-page__map-card-row">
-        <GameMap class="game-page__map" />
-        <PathResultCard />
+        <GameMap class="game-page__map" :show-place-labels="true" />
+        <PathResultCard :result-steps="[]" />
       </div>
 
-      <PlayerMatchupCard />
+      <PlayerMatchupCard player-name="Player" />
     </section>
 
     <NavigationFooter />

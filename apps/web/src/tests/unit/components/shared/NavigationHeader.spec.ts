@@ -4,7 +4,7 @@ import { ref } from "vue";
 
 import { createAppI18n } from "../../../../i18n";
 
-const authenticatedUserName = ref<string | null>(null);
+const username = ref<string | null>(null);
 const isAuthenticatedUser = ref(false);
 const isCurrentUserLoaded = ref(true);
 const signInWithGoogle = vi.fn();
@@ -18,7 +18,7 @@ vi.mock("vue-router", () => ({
 
 vi.mock("@/composables/useAuth", () => ({
   useAuth: () => ({
-    authenticatedUserName,
+    username,
     isAuthenticatedUser,
     isCurrentUserLoaded,
     signInWithGoogle,
@@ -31,7 +31,7 @@ const NavigationHeader = (
 ).default;
 
 function resetAuthState() {
-  authenticatedUserName.value = null;
+  username.value = null;
   isAuthenticatedUser.value = false;
   isCurrentUserLoaded.value = true;
   signInWithGoogle.mockReset();
@@ -129,7 +129,7 @@ test("hides the auth control until the auth state is resolved", async () => {
 
 test("renders the authenticated menu branch", async () => {
   resetAuthState();
-  authenticatedUserName.value = "Taylor Swift";
+  username.value = "Taylor Swift";
   isAuthenticatedUser.value = true;
   const { getByRole, getByText } = render(NavigationHeader, {
     global: {

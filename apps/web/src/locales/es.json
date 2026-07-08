@@ -4,13 +4,15 @@
       "Game": {
         "AvailableMovesCard": {
           "title": "Movimientos disponibles",
-          "select": "Seleccionar"
+          "select": "Seleccionar",
+          "selecting": "Seleccionando...",
+          "waiting": "La IA está eligiendo..."
         },
         "PathHistoryCard": {
           "title": "Historial de ruta",
           "legendLabel": "Leyenda del historial de ruta",
-          "you": "You",
-          "opponent": "Opponent"
+          "you": "Tú",
+          "ai": "IA"
         },
         "PathResultCard": {
           "turn": "Turno {turn}",
@@ -25,11 +27,14 @@
         },
         "TurnStatusStrip": {
           "yourTurn": "Tu turno",
-          "opponentTurn": "Turno del oponente",
+          "aiTurn": "Turno de la IA",
+          "youWin": "Has ganado",
+          "youLose": "Has perdido",
           "turn": "Turno {turn}"
         },
         "PlayerMatchupCard": {
-          "versus": "vs"
+          "versus": "vs",
+          "ai": "IA"
         }
       },
       "Home": {

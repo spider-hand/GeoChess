@@ -1,31 +1,18 @@
 <script setup lang="ts">
+import { Bot } from "@lucide/vue";
 import { useI18n } from "vue-i18n";
 
-type PlayerSummary = {
-  countryCode: string;
-  name: string;
-};
+import Avatar from "@/components/shared/Avatar.vue";
 
 defineOptions({
   name: "GamePlayerMatchupCard",
 });
 
+defineProps<{
+  playerName: string;
+}>();
+
 const { t } = useI18n();
-
-const players: PlayerSummary[] = [
-  {
-    countryCode: "jp",
-    name: "Aki",
-  },
-  {
-    countryCode: "us",
-    name: "Sam",
-  },
-];
-
-function flagSrc(countryCode: string) {
-  return `/flags/${countryCode}.webp`;
-}
 </script>
 
 <template>
@@ -35,21 +22,17 @@ function flagSrc(countryCode: string) {
         class="player-matchup-card__player"
         data-testid="player-matchup-card-player"
       >
-        <div
+        <Avatar
           class="player-matchup-card__avatar"
-          aria-hidden="true"
+          :name="playerName"
+          size="md"
           data-testid="player-matchup-card-avatar"
         />
 
         <div class="player-matchup-card__identity">
           <p class="player-matchup-card__name">
-            {{ players[0].name }}
+            {{ playerName }}
           </p>
-          <img
-            class="player-matchup-card__flag"
-            :src="flagSrc(players[0].countryCode)"
-            :alt="`${players[0].countryCode.toUpperCase()} flag`"
-          />
         </div>
       </article>
 
@@ -61,21 +44,18 @@ function flagSrc(countryCode: string) {
         class="player-matchup-card__player"
         data-testid="player-matchup-card-player"
       >
-        <div
-          class="player-matchup-card__avatar"
+        <span
+          class="player-matchup-card__avatar player-matchup-card__avatar--ai"
           aria-hidden="true"
           data-testid="player-matchup-card-avatar"
-        />
+        >
+          <Bot :size="20" />
+        </span>
 
         <div class="player-matchup-card__identity">
           <p class="player-matchup-card__name">
-            {{ players[1].name }}
+            {{ t("components.pages.Game.PlayerMatchupCard.ai") }}
           </p>
-          <img
-            class="player-matchup-card__flag"
-            :src="flagSrc(players[1].countryCode)"
-            :alt="`${players[1].countryCode.toUpperCase()} flag`"
-          />
         </div>
       </article>
     </div>
@@ -85,7 +65,6 @@ function flagSrc(countryCode: string) {
 <style scoped>
 .player-matchup-card {
   width: min(100%, 520px);
-  padding: var(--spacing-md);
 }
 
 .player-matchup-card__content {
@@ -97,33 +76,32 @@ function flagSrc(countryCode: string) {
 
 .player-matchup-card__player {
   display: flex;
-  flex-direction: row;
   align-items: center;
   gap: var(--spacing-sm);
+  min-width: 0;
   padding: var(--spacing-md);
   border: 1px solid var(--hairline);
   border-radius: var(--radius-token-xl);
+  background-color: var(--surface-card-dark);
 }
 
 .player-matchup-card__avatar {
   flex-shrink: 0;
+}
+
+.player-matchup-card__avatar--ai {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  background-color: var(--canvas-dark);
+  background-color: var(--surface-elevated-dark);
+  color: var(--on-dark);
 }
 
 .player-matchup-card__identity {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
   min-width: 0;
-}
-
-.player-matchup-card__flag {
-  width: auto;
-  height: 14px;
-  flex-shrink: 0;
 }
 
 .player-matchup-card__name {
@@ -147,21 +125,7 @@ function flagSrc(countryCode: string) {
 
 @media (max-width: 560px) {
   .player-matchup-card {
-    padding: var(--spacing-sm);
-  }
-
-  .player-matchup-card__content {
-    grid-template-columns: 1fr;
-    justify-items: stretch;
-  }
-
-  .player-matchup-card__player {
     width: 100%;
-    justify-content: flex-start;
-  }
-
-  .player-matchup-card__vs {
-    justify-self: center;
   }
 }
 </style>

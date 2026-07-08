@@ -25,6 +25,8 @@ from features.users.repository import UsersRepository
 
 
 class AiGamesService:
+    PLAYER_TURN_TIMEOUT_MS = 60_000
+
     def __init__(
         self,
         ai_games_repository: AiGamesRepository | None = None,
@@ -48,6 +50,15 @@ class AiGamesService:
             for border_code in borders
             if border_code not in used_country_codes
         ]
+
+    def _build_available_moves_field(
+        self, available_moves: list[str]
+    ) -> dict[str, list[str]]:
+        # Realtime database doesn't allow empty arrays, so we omit the field if there are no available moves
+        if not available_moves:
+            return {}
+
+        return {"availableMoves": available_moves}
 
     def _append_move(
         self,
@@ -84,7 +95,7 @@ class AiGamesService:
                 "turn": next_turn,
                 "start": realtime_ai_game.start,
                 "country": country_code,
-                "availableMoves": available_moves,
+                **self._build_available_moves_field(available_moves),
                 "usedCountries": used_countries,
                 "moves": moves,
                 "createdAt": realtime_ai_game.created_at,
@@ -102,6 +113,25 @@ class AiGamesService:
                 message="Ai game was not found.",
             )
 
+    def _apply_timeout_loss(
+        self, realtime_ai_game: RealtimeAiGameRecord
+    ) -> dict[str, object]:
+        return {
+            "id": realtime_ai_game.id,
+            "userId": realtime_ai_game.user_id,
+            "difficulty": realtime_ai_game.difficulty,
+            "turn": "player",
+            "start": realtime_ai_game.start,
+            "country": realtime_ai_game.country,
+            "usedCountries": realtime_ai_game.used_countries,
+            "moves": {
+                move_id: move.model_dump(by_alias=True, mode="json")
+                for move_id, move in realtime_ai_game.moves.items()
+            },
+            "createdAt": realtime_ai_game.created_at,
+            "updatedAt": FIREBASE_SERVER_TIMESTAMP,
+        }
+
     def _build_initial_realtime_ai_game(
         self, ai_game: AiGameRecord
     ) -> tuple[dict[str, object], RealtimeAiGameRecord]:
@@ -117,7 +147,7 @@ class AiGamesService:
             "turn": starting_turn,
             "start": country_code,
             "country": country_code,
-            "availableMoves": available_moves,
+            **self._build_available_moves_field(available_moves),
             "usedCountries": [country_code],
             "moves": {},
             "createdAt": FIREBASE_SERVER_TIMESTAMP,
@@ -230,6 +260,56 @@ class AiGamesService:
             return
 
         enqueue_ai_game_move(game_id)
+
+    def timeout_ai_game(self, user_id: str, game_id: str) -> None:
+        self._require_owned_ai_game(user_id, game_id)
+
+        game_ref = self._get_game_ref(game_id)
+        current_time_ms = int(time() * 1000)
+        did_timeout = False
+
+        def apply_timeout(current_value: dict[str, object] | None):
+            nonlocal did_timeout
+
+            if current_value is None:
+                raise ApiError(
+                    status_code=HTTPStatus.NOT_FOUND,
+                    code="ai_game_not_found",
+                    message="Ai game was not found.",
+                )
+
+            realtime_ai_game = RealtimeAiGameRecord.model_validate(current_value)
+
+            if realtime_ai_game.turn != "player":
+                raise ApiError(
+                    status_code=HTTPStatus.BAD_REQUEST,
+                    code="invalid_request_body",
+                    message="It is not the player's turn.",
+                )
+
+            if not realtime_ai_game.available_moves:
+                raise ApiError(
+                    status_code=HTTPStatus.BAD_REQUEST,
+                    code="invalid_request_body",
+                    message="The game is already finished.",
+                )
+
+            if current_time_ms < (
+                realtime_ai_game.updated_at + self.PLAYER_TURN_TIMEOUT_MS
+            ):
+                raise ApiError(
+                    status_code=HTTPStatus.BAD_REQUEST,
+                    code="invalid_request_body",
+                    message="The timeout has not expired yet.",
+                )
+
+            did_timeout = True
+            return self._apply_timeout_loss(realtime_ai_game)
+
+        game_ref.transaction(apply_timeout)
+
+        if did_timeout:
+            self.ai_games_repository.finish_game(game_id, "lose")
 
     def process_ai_game_move(self, game_id: str) -> None:
         ai_game = self.ai_games_repository.get_by_id(game_id)

@@ -1,28 +1,48 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+
+type TimerMode = "countdown" | "elapsed";
 
 defineOptions({
   name: "GameCountdownTimer",
 });
 
+const props = withDefaults(
+  defineProps<{
+    bufferMs?: number;
+    durationMs?: number;
+    mode: TimerMode;
+    startedAtMs: number;
+  }>(),
+  {
+    bufferMs: 0,
+    durationMs: 60_000,
+  },
+);
+
 const emit = defineEmits<{
   timeUp: [];
 }>();
 
-const INITIAL_REMAINING_MS = 60_000;
 const DANGER_THRESHOLD_MS = 10_000;
 const TICK_INTERVAL_MS = 100;
 
-const remainingMs = ref(INITIAL_REMAINING_MS);
-const isRunning = ref(false);
-const hasExpired = ref(false);
-const remainingAtStartMs = ref(INITIAL_REMAINING_MS);
-const startedAtMs = ref(0);
+const nowMs = ref(Date.now());
 const timeoutId = ref<number | null>(null);
+const emittedDeadlineKey = ref<string | null>(null);
 
-const displaySeconds = computed(() =>
-  remainingMs.value <= 0 ? 0 : Math.ceil(remainingMs.value / 1_000),
+const countdownTargetMs = computed(
+  () => props.startedAtMs + props.durationMs + props.bufferMs,
 );
+const remainingMs = computed(() =>
+  Math.max(0, countdownTargetMs.value - nowMs.value),
+);
+const elapsedMs = computed(() => Math.max(0, nowMs.value - props.startedAtMs));
+
+const displayMs = computed(() =>
+  props.mode === "countdown" ? remainingMs.value : elapsedMs.value,
+);
+const displaySeconds = computed(() => Math.floor(displayMs.value / 1_000));
 
 const formattedTime = computed(() => {
   const minutes = Math.floor(displaySeconds.value / 60);
@@ -32,81 +52,58 @@ const formattedTime = computed(() => {
 });
 
 const isDanger = computed(
-  () => remainingMs.value > 0 && remainingMs.value < DANGER_THRESHOLD_MS,
+  () =>
+    props.mode === "countdown" &&
+    remainingMs.value > 0 &&
+    remainingMs.value < DANGER_THRESHOLD_MS,
 );
 
-function clearScheduledTick() {
+function clearTick() {
   if (timeoutId.value !== null) {
     window.clearTimeout(timeoutId.value);
     timeoutId.value = null;
   }
 }
 
-function syncRemainingTime() {
-  const elapsedMs = performance.now() - startedAtMs.value;
-  const nextRemainingMs = Math.max(0, remainingAtStartMs.value - elapsedMs);
-  remainingMs.value = nextRemainingMs;
-
-  return nextRemainingMs;
-}
-
-function handleTimeUp() {
-  if (hasExpired.value) {
-    return;
-  }
-
-  hasExpired.value = true;
-  isRunning.value = false;
-  remainingMs.value = 0;
-  clearScheduledTick();
-  emit("timeUp");
-}
-
 function tick() {
-  if (!isRunning.value) {
-    return;
-  }
-
-  if (syncRemainingTime() <= 0) {
-    handleTimeUp();
-    return;
-  }
-
+  nowMs.value = Date.now();
   timeoutId.value = window.setTimeout(tick, TICK_INTERVAL_MS);
 }
 
-function start() {
-  if (isRunning.value || hasExpired.value) {
-    return;
-  }
+// Reset the deadline key whenever the countdown target changes, so that we can emit `timeUp` again if the countdown restarts.
+watch(
+  () => `${props.mode}:${countdownTargetMs.value}`,
+  () => {
+    emittedDeadlineKey.value = null;
+  },
+  { immediate: true },
+);
 
-  remainingAtStartMs.value = remainingMs.value;
-  startedAtMs.value = performance.now();
-  isRunning.value = true;
-  timeoutId.value = window.setTimeout(tick, TICK_INTERVAL_MS);
-}
+// Emit `timeUp` when the countdown reaches zero, but only once per countdown target.
+watch(
+  () => [props.mode, remainingMs.value, countdownTargetMs.value] as const,
+  ([mode, nextRemainingMs, targetMs]) => {
+    if (mode !== "countdown" || nextRemainingMs > 0) {
+      return;
+    }
 
-function pause() {
-  if (!isRunning.value || hasExpired.value) {
-    return;
-  }
+    const deadlineKey = `${targetMs}`;
+    if (emittedDeadlineKey.value === deadlineKey) {
+      return;
+    }
 
-  syncRemainingTime();
-  isRunning.value = false;
-  clearScheduledTick();
-}
-
-defineExpose({
-  start,
-  pause,
-});
+    emittedDeadlineKey.value = deadlineKey;
+    emit("timeUp");
+  },
+  { immediate: true },
+);
 
 onMounted(() => {
-  start();
+  tick();
 });
 
 onBeforeUnmount(() => {
-  clearScheduledTick();
+  clearTick();
 });
 </script>
 

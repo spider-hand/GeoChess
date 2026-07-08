@@ -1,6 +1,6 @@
 import { beforeEach, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 const realtimeAiGame = ref({
   id: "game-123",
@@ -17,13 +17,17 @@ const realtimeAiGame = ref({
 });
 const realtimeAiGameError = ref<Error | null>(null);
 const isLoadingRealtimeAiGame = ref(false);
+const username = ref<string | null>("Taylor Swift");
+const isAnonymousUser = ref(false);
+const mockCreateAiGameMove = vi.fn();
+const mockTimeoutAiGame = vi.fn();
 
 vi.mock("@/composables/useAuth", () => ({
   signInAnonymouslyIfNeeded: vi.fn().mockResolvedValue({ isAnonymous: true }),
   useAuth: () => ({
-    authenticatedUserName: null,
+    username: computed(() => username.value),
     currentUser: { value: null },
-    isAnonymousUser: false,
+    isAnonymousUser: computed(() => isAnonymousUser.value),
     isAuthenticatedUser: false,
     isCurrentUserLoaded: true,
     signInAnonymously: vi.fn().mockResolvedValue({ isAnonymous: true }),
@@ -35,7 +39,9 @@ vi.mock("@/composables/useAuth", () => ({
 vi.mock("@/components/pages/Game/GameMap.vue", () => ({
   default: {
     name: "GameMap",
-    template: '<div class="game-map" data-testid="game-map" />',
+    props: ["showPlaceLabels"],
+    template:
+      '<div class="game-map" :data-show-place-labels="String(showPlaceLabels)" data-testid="game-map" />',
   },
 }));
 
@@ -50,6 +56,8 @@ vi.mock("@/composables/useRealtimeAiGame", () => ({
 vi.mock("@/composables/useAiGameQuery", () => ({
   default: () => ({
     createAiGame: vi.fn(),
+    createAiGameMove: (...args: unknown[]) => mockCreateAiGameMove(...args),
+    timeoutAiGame: (...args: unknown[]) => mockTimeoutAiGame(...args),
   }),
 }));
 
@@ -73,9 +81,13 @@ beforeEach(() => {
   };
   realtimeAiGameError.value = null;
   isLoadingRealtimeAiGame.value = false;
+  username.value = "Taylor Swift";
+  isAnonymousUser.value = false;
+  mockCreateAiGameMove.mockReset();
+  mockTimeoutAiGame.mockReset();
 });
 
-test("renders the game vs ai page route", async () => {
+test("renders the in-game player turn layout from realtime state", async () => {
   await router.push("/game/vs-ai/game-123");
   await router.isReady();
 
@@ -85,39 +97,91 @@ test("renders the game vs ai page route", async () => {
     },
   });
 
+  await expect.element(getByText("Taylor Swift")).toBeInTheDocument();
+  await expect
+    .element(
+      container
+        .querySelectorAll(".player-matchup-card__name")
+        .item(1) as HTMLElement,
+    )
+    .toHaveTextContent("AI");
+  await expect.element(getByText("Your Turn")).toBeInTheDocument();
+  await expect
+    .element(container.querySelector(".turn-status-strip__turn") as HTMLElement)
+    .toHaveTextContent("Turn 1");
   await expect
     .element(getByRole("heading", { name: "Available Moves" }))
     .toBeInTheDocument();
   await expect.element(getByRole("timer")).toBeInTheDocument();
-  expect(container.querySelectorAll(".game-page__map-card-row")).toHaveLength(
-    2,
-  );
+  await expect
+    .element(getByRole("heading", { name: "Path History" }))
+    .toBeInTheDocument();
   expect(container.querySelectorAll('[data-testid="game-map"]')).toHaveLength(
-    2,
+    1,
   );
   expect(
-    Array.from(container.querySelectorAll("h2")).filter(
-      (heading) => heading.textContent === "Path History",
-    ),
-  ).toHaveLength(2);
-  await expect.element(getByText("vs")).toBeInTheDocument();
-  await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
-  await expect
-    .element(getByRole("navigation", { name: "Footer navigation" }))
-    .toBeInTheDocument();
+    container
+      .querySelector('[data-testid="game-map"]')
+      ?.getAttribute("data-show-place-labels"),
+  ).toBe("false");
 });
 
-test("redirects home when the game session is missing", async () => {
-  realtimeAiGame.value = null;
+test("renders the AI waiting state and keeps the timer visible", async () => {
+  realtimeAiGame.value = {
+    ...realtimeAiGame.value,
+    turn: "ai",
+    availableMoves: ["CC", "DD"],
+    updatedAt: 1751155260000,
+  };
 
   await router.push("/game/vs-ai/game-123");
   await router.isReady();
 
-  render(App, {
+  const { getByLabelText, getByRole, getByText } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
   });
 
-  await expect.poll(() => router.currentRoute.value.path).toBe("/");
+  await expect.element(getByText("AI Turn")).toBeInTheDocument();
+  await expect.element(getByLabelText("AI is choosing")).toBeVisible();
+  await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
+  await expect.element(getByRole("timer")).toBeInTheDocument();
+});
+
+test("renders the finished loss state with the result card and visible labels", async () => {
+  realtimeAiGame.value = {
+    ...realtimeAiGame.value,
+    availableMoves: [],
+    moves: {
+      "move-1": {
+        country: "CC",
+        actor: "player",
+        createdAt: 1751155250000,
+      },
+    },
+  };
+
+  await router.push("/game/vs-ai/game-123");
+  await router.isReady();
+
+  const { container, getByText } = render(App, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  await expect.element(getByText("You Lose")).toBeInTheDocument();
+  expect(container.querySelector('[role="timer"]')).toBeNull();
+  expect(
+    Array.from(container.querySelectorAll("h2")).some(
+      (heading) => heading.textContent === "Available Moves",
+    ),
+  ).toBe(false);
+  await expect.element(getByText("Turn 2")).toBeInTheDocument();
+  expect(
+    container
+      .querySelector('[data-testid="game-map"]')
+      ?.getAttribute("data-show-place-labels"),
+  ).toBe("true");
 });

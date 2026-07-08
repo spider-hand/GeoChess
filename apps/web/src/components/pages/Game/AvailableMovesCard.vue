@@ -1,27 +1,25 @@
 <script setup lang="ts">
 import { Waypoints } from "@lucide/vue";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
+import { countryFlagSrc } from "@/utils/game";
 import Button from "@/components/shared/Button.vue";
 
-type CountryOption = {
+type AvailableMove = {
   code: string;
-  label: string;
 };
 
 defineOptions({
   name: "GameAvailableMovesCard",
 });
 
-const COUNTRY_OPTIONS: CountryOption[] = [
-  { code: "us", label: "United States" },
-  { code: "jp", label: "Japan" },
-  { code: "fr", label: "France" },
-  { code: "br", label: "Brazil" },
-  { code: "de", label: "Germany" },
-  { code: "za", label: "South Africa" },
-];
+const props = defineProps<{
+  availableMoves: Array<AvailableMove>;
+  isAiTurn: boolean;
+  isSelecting: boolean;
+  isSelectDisabled: boolean;
+}>();
 
 const emit = defineEmits<{
   select: [countryCode: string];
@@ -30,21 +28,29 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const selectedCountryCode = ref<string | null>(null);
 
-const countries = computed(() =>
-  COUNTRY_OPTIONS.map((country) => ({
-    ...country,
-    flagSrc: `/flags/${country.code}.webp`,
-  })),
+const isWaiting = computed(() => props.isAiTurn);
+const isButtonDisabled = computed(
+  () => props.isSelectDisabled || selectedCountryCode.value === null,
 );
 
-const isSelectDisabled = computed(() => selectedCountryCode.value === null);
+watch(
+  () => [props.availableMoves, props.isAiTurn],
+  () => {
+    selectedCountryCode.value = null;
+  },
+  { deep: true },
+);
 
 function selectCountry(countryCode: string) {
+  if (props.isSelectDisabled) {
+    return;
+  }
+
   selectedCountryCode.value = countryCode;
 }
 
 function emitSelect() {
-  if (selectedCountryCode.value === null) {
+  if (selectedCountryCode.value === null || props.isSelectDisabled) {
     return;
   }
 
@@ -62,12 +68,23 @@ function emitSelect() {
     </div>
 
     <div
+      v-if="isWaiting"
+      class="available-moves-card__waiting"
+      :aria-label="t('components.pages.Game.AvailableMovesCard.waiting')"
+    >
+      <span class="available-moves-card__waiting-label">
+        {{ t("components.pages.Game.AvailableMovesCard.waiting") }}
+      </span>
+    </div>
+
+    <div
+      v-else
       class="available-moves-card__options"
       role="listbox"
       :aria-label="t('components.pages.Game.AvailableMovesCard.title')"
     >
       <button
-        v-for="country in countries"
+        v-for="country in props.availableMoves"
         :key="country.code"
         class="available-moves-card__option"
         :class="{
@@ -81,23 +98,27 @@ function emitSelect() {
       >
         <img
           class="available-moves-card__flag"
-          :src="country.flagSrc"
-          :alt="`${country.label} flag`"
+          :src="countryFlagSrc(country.code)"
+          :alt="`${country.code} flag`"
           width="24"
           height="18"
         />
         <span class="available-moves-card__option-label">{{
-          country.label
+          country.code
         }}</span>
       </button>
     </div>
 
     <Button
       class="available-moves-card__button"
-      :disabled="isSelectDisabled"
+      :disabled="isButtonDisabled"
       @click="emitSelect"
     >
-      {{ t("components.pages.Game.AvailableMovesCard.select") }}
+      {{
+        t(
+          `components.pages.Game.AvailableMovesCard.${props.isSelecting ? "selecting" : "select"}`,
+        )
+      }}
     </Button>
   </section>
 </template>
@@ -107,7 +128,7 @@ function emitSelect() {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-  width: min(100%, 440px);
+  width: min(100%, 360px);
   padding: var(--spacing-lg);
   border: 1px solid var(--hairline);
   border-radius: var(--radius-token-xl);
@@ -134,14 +155,34 @@ function emitSelect() {
   color: var(--on-dark);
 }
 
+.available-moves-card__options,
+.available-moves-card__waiting {
+  min-height: 280px;
+  max-height: 280px;
+}
+
 .available-moves-card__options {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  min-height: 280px;
-  max-height: 280px;
   overflow-y: auto;
   padding-right: var(--spacing-xs);
+}
+
+.available-moves-card__waiting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+}
+
+.available-moves-card__waiting-label {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-copy);
+  text-align: center;
 }
 
 .available-moves-card__option {
@@ -200,6 +241,7 @@ function emitSelect() {
 
 @media (max-width: 480px) {
   .available-moves-card {
+    width: 100%;
     padding: var(--spacing-md);
   }
 }

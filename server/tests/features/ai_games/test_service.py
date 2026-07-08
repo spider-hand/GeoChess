@@ -39,6 +39,7 @@ def make_realtime_ai_game(turn="player", available_moves=None, moves=None):
         }
     )
 
+
 def test_create_ai_game_returns_400_for_invalid_payload():
     users_repository = MagicMock()
     users_repository.get_by_id.return_value = MagicMock()
@@ -389,6 +390,99 @@ def test_create_ai_game_move_finishes_game_for_terminal_player_move():
 
     ai_games_repository.finish_game.assert_called_once_with("game-123", "win")
     enqueue_mock.assert_not_called()
+
+
+def test_timeout_ai_game_returns_400_when_it_is_not_players_turn():
+    ai_games_repository = MagicMock()
+    ai_games_repository.get_by_id.return_value = make_ai_game()
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+    game_ref = MagicMock()
+    game_ref.transaction.side_effect = lambda callback: callback(
+        make_realtime_ai_game(turn="ai", available_moves=["CC"]).model_dump(
+            by_alias=True, mode="json"
+        )
+    )
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.firebase_db.reference",
+            lambda path, app: MagicMock(child=lambda game_id: game_ref),
+        )
+
+        with pytest.raises(ApiError) as error:
+            service.timeout_ai_game("user-123", "game-123")
+
+    assert error.value.status_code == 400
+    assert error.value.code == "invalid_request_body"
+
+
+def test_timeout_ai_game_returns_400_when_timeout_has_not_expired():
+    ai_games_repository = MagicMock()
+    ai_games_repository.get_by_id.return_value = make_ai_game()
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+    game_ref = MagicMock()
+    game_ref.transaction.side_effect = lambda callback: callback(
+        make_realtime_ai_game(turn="player", available_moves=["CC"]).model_dump(
+            by_alias=True, mode="json"
+        )
+    )
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.firebase_db.reference",
+            lambda path, app: MagicMock(child=lambda game_id: game_ref),
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.time",
+            lambda: 1751155200 + 30,
+        )
+
+        with pytest.raises(ApiError) as error:
+            service.timeout_ai_game("user-123", "game-123")
+
+    assert error.value.status_code == 400
+    assert error.value.code == "invalid_request_body"
+
+
+def test_timeout_ai_game_marks_loss_after_expiry():
+    ai_games_repository = MagicMock()
+    ai_games_repository.get_by_id.return_value = make_ai_game()
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+    game_ref = MagicMock()
+    updated_state = {}
+
+    def transaction(callback):
+        current = make_realtime_ai_game(
+            turn="player", available_moves=["CC"]
+        ).model_dump(by_alias=True, mode="json")
+        updated_state["value"] = callback(current)
+
+    game_ref.transaction.side_effect = transaction
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.firebase_db.reference",
+            lambda path, app: MagicMock(child=lambda game_id: game_ref),
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.time",
+            lambda: 1751155200 + 61,
+        )
+
+        service.timeout_ai_game("user-123", "game-123")
+
+    assert updated_state["value"]["turn"] == "player"
+    assert "availableMoves" not in updated_state["value"]
+    ai_games_repository.finish_game.assert_called_once_with("game-123", "lose")
 
 
 @pytest.mark.parametrize(

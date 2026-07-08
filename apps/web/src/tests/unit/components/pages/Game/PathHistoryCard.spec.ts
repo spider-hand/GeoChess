@@ -4,8 +4,15 @@ import { render } from "vitest-browser-vue";
 import PathHistoryCard from "@/components/pages/Game/PathHistoryCard.vue";
 import { createAppI18n } from "@/i18n";
 
-test("renders the title, legend badges, and condensed history for turn six", async () => {
+test("renders the title, legend badges, and full history including the neutral start", async () => {
   const { getByRole, getByText, getByTestId } = render(PathHistoryCard, {
+    props: {
+      historySteps: [
+        { countryCode: "bb", owner: "neutral", turn: 1 },
+        { countryCode: "cc", owner: "player", turn: 2 },
+        { countryCode: "dd", owner: "ai", turn: 3 },
+      ],
+    },
     global: {
       plugins: [createAppI18n()],
     },
@@ -15,58 +22,13 @@ test("renders the title, legend badges, and condensed history for turn six", asy
     .element(getByRole("heading", { name: "Path History" }))
     .toBeInTheDocument();
   await expect.element(getByText("You")).toBeVisible();
-  await expect.element(getByText("Opponent")).toBeVisible();
+  await expect.element(getByText("AI")).toBeVisible();
   await expect.element(getByText(/^TURN 1$/)).toBeVisible();
   await expect.element(getByText(/^TURN 2$/)).toBeVisible();
   await expect.element(getByText(/^TURN 3$/)).toBeVisible();
-  await expect.element(getByText(/^TURN 5$/)).toBeVisible();
-  await expect.element(getByText(/^TURN 6$/)).toBeVisible();
-  await expect.element(getByText("US")).toBeVisible();
-  await expect.element(getByText("DE")).toBeVisible();
-  await expect.element(getByTestId("path-history-card-ellipsis")).toBeVisible();
-  expect(getByRole("listitem").length).toBe(5);
-  expect(getByTestId("path-history-card-connector").length).toBe(5);
-});
-
-test("shows continuous turns without ellipsis when current turn is five", async () => {
-  const { getByRole, getByText, getByTestId } = render(PathHistoryCard, {
-    props: {
-      currentTurn: 5,
-      historySteps: [
-        {
-          countryCode: "us",
-          owner: "you",
-          turn: 1,
-        },
-        {
-          countryCode: "jp",
-          owner: "opponent",
-          turn: 2,
-        },
-        {
-          countryCode: "fr",
-          owner: "you",
-          turn: 3,
-        },
-        {
-          countryCode: "br",
-          owner: "opponent",
-          turn: 4,
-        },
-      ],
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
-
-  await expect.element(getByText(/^TURN 1$/)).toBeVisible();
-  await expect.element(getByText(/^TURN 2$/)).toBeVisible();
-  await expect.element(getByText(/^TURN 3$/)).toBeVisible();
-  await expect.element(getByText(/^TURN 4$/)).toBeVisible();
-  await expect.element(getByText(/^TURN 5$/)).toBeVisible();
-  await expect.element(getByText("US")).toBeVisible();
-  await expect.element(getByText("JP")).toBeVisible();
-  expect(getByTestId("path-history-card-ellipsis").length).toBe(0);
-  expect(getByRole("listitem").length).toBe(5);
+  await expect.element(getByText("BB")).toBeVisible();
+  await expect.element(getByText("CC")).toBeVisible();
+  await expect.element(getByText("DD")).toBeVisible();
+  expect(getByRole("listitem").length).toBe(3);
+  expect(getByTestId("path-history-card-connector").length).toBe(2);
 });

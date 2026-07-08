@@ -7,6 +7,12 @@ const meta = {
   title: "Components/Pages/Game/AvailableMovesCard",
   component: AvailableMovesCard,
   tags: ["autodocs"],
+  args: {
+    availableMoves: [{ code: "us" }, { code: "jp" }, { code: "fr" }],
+    isAiTurn: false,
+    isSelecting: false,
+    isSelectDisabled: false,
+  },
 } satisfies Meta<typeof AvailableMovesCard>;
 
 export default meta;
@@ -19,10 +25,22 @@ export const CountrySelected: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      canvas.getByRole("option", { name: /Japan flag Japan/i }),
-    );
+    await userEvent.click(canvas.getByRole("option", { name: /JP flag JP/i }));
 
     await expect(canvas.getByRole("button", { name: "Select" })).toBeEnabled();
+  },
+};
+
+export const AiTurn: Story = {
+  args: {
+    isAiTurn: true,
+    isSelectDisabled: true,
+  },
+};
+
+export const Selecting: Story = {
+  args: {
+    isSelecting: true,
+    isSelectDisabled: true,
   },
 };

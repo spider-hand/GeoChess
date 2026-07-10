@@ -26,6 +26,10 @@
             "ca": "Canada"
           }
         },
+        "GameVsAiPage": {
+          "playAgain": "Play Again",
+          "exit": "Exit"
+        },
         "TurnStatusStrip": {
           "yourTurn": "Your Turn",
           "aiTurn": "AI Turn",

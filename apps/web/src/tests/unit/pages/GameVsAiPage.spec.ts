@@ -19,6 +19,7 @@ const realtimeAiGameError = ref<Error | null>(null);
 const isLoadingRealtimeAiGame = ref(false);
 const username = ref<string | null>("Taylor Swift");
 const isAnonymousUser = ref(false);
+const mockCreateAiGame = vi.fn();
 const mockCreateAiGameMove = vi.fn();
 const mockTimeoutAiGame = vi.fn();
 
@@ -55,7 +56,7 @@ vi.mock("@/composables/useRealtimeAiGame", () => ({
 
 vi.mock("@/composables/useAiGameQuery", () => ({
   default: () => ({
-    createAiGame: vi.fn(),
+    createAiGame: (...args: unknown[]) => mockCreateAiGame(...args),
     createAiGameMove: (...args: unknown[]) => mockCreateAiGameMove(...args),
     timeoutAiGame: (...args: unknown[]) => mockTimeoutAiGame(...args),
   }),
@@ -83,6 +84,7 @@ beforeEach(() => {
   isLoadingRealtimeAiGame.value = false;
   username.value = "Taylor Swift";
   isAnonymousUser.value = false;
+  mockCreateAiGame.mockReset();
   mockCreateAiGameMove.mockReset();
   mockTimeoutAiGame.mockReset();
 });
@@ -150,7 +152,7 @@ test("renders the AI waiting state and keeps the timer visible", async () => {
   await expect.element(getByRole("timer")).toBeInTheDocument();
 });
 
-test("renders the finished loss state with the result card and visible labels", async () => {
+test("renders the finished loss state with the result card, actions, and visible labels", async () => {
   realtimeAiGame.value = {
     ...realtimeAiGame.value,
     availableMoves: [],
@@ -166,7 +168,7 @@ test("renders the finished loss state with the result card and visible labels", 
   await router.push("/game/vs-ai/game-123");
   await router.isReady();
 
-  const { container, getByText } = render(App, {
+  const { container, getByRole, getByText } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
@@ -183,6 +185,7 @@ test("renders the finished loss state with the result card and visible labels", 
       (heading) => heading.textContent === "Available Moves",
     ),
   ).toBe(false);
+  expect(container.querySelector(".path-history-card")).toBeNull();
   await expect
     .element(
       container
@@ -202,4 +205,94 @@ test("renders the finished loss state with the result card and visible labels", 
       .querySelector('[data-testid="game-map"]')
       ?.getAttribute("data-show-place-labels"),
   ).toBe("true");
+  await expect
+    .element(getByRole("button", { name: "Play Again" }))
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "Exit" }))
+    .toBeInTheDocument();
+});
+
+test("clicking Play Again creates a new AI game with the same difficulty and navigates to it", async () => {
+  realtimeAiGame.value = {
+    ...realtimeAiGame.value,
+    availableMoves: [],
+    difficulty: "medium",
+  };
+  mockCreateAiGame.mockResolvedValue({ id: "game-456" });
+
+  await router.push("/game/vs-ai/game-123");
+  await router.isReady();
+
+  const { getByRole } = render(App, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  await getByRole("button", { name: "Play Again" }).click();
+
+  expect(mockCreateAiGame).toHaveBeenCalledWith({ difficulty: "medium" });
+  await expect
+    .poll(() => router.currentRoute.value.path)
+    .toBe("/game/vs-ai/game-456");
+});
+
+test("keeps Exit enabled while Play Again is pending", async () => {
+  realtimeAiGame.value = {
+    ...realtimeAiGame.value,
+    availableMoves: [],
+  };
+
+  let resolveCreateAiGame: ((value: { id: string }) => void) | null = null;
+  mockCreateAiGame.mockImplementation(
+    () =>
+      new Promise<{ id: string }>((resolve) => {
+        resolveCreateAiGame = resolve;
+      }),
+  );
+
+  await router.push("/game/vs-ai/game-123");
+  await router.isReady();
+
+  const { getByRole } = render(App, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  const playAgainButton = getByRole("button", { name: "Play Again" });
+  const exitButton = getByRole("button", { name: "Exit" });
+
+  await playAgainButton.click();
+
+  await expect.element(playAgainButton).toBeDisabled();
+  await expect.element(exitButton).toBeEnabled();
+  expect(mockCreateAiGame).toHaveBeenCalledTimes(1);
+
+  resolveCreateAiGame?.({ id: "game-456" });
+
+  await expect
+    .poll(() => router.currentRoute.value.path)
+    .toBe("/game/vs-ai/game-456");
+});
+
+test("clicking Exit navigates back to the home page", async () => {
+  realtimeAiGame.value = {
+    ...realtimeAiGame.value,
+    availableMoves: [],
+  };
+
+  await router.push("/game/vs-ai/game-123");
+  await router.isReady();
+
+  const { getByRole } = render(App, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  await getByRole("button", { name: "Exit" }).click();
+
+  await expect.poll(() => router.currentRoute.value.path).toBe("/");
 });

@@ -26,6 +26,10 @@
             "ca": "Kanada"
           }
         },
+        "GameVsAiPage": {
+          "playAgain": "Nochmal spielen",
+          "exit": "Beenden"
+        },
         "TurnStatusStrip": {
           "yourTurn": "Du bist dran",
           "aiTurn": "KI ist dran",

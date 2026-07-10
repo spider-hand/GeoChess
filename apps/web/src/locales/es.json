@@ -26,6 +26,10 @@
             "ca": "Canadá"
           }
         },
+        "GameVsAiPage": {
+          "playAgain": "Jugar de nuevo",
+          "exit": "Salir"
+        },
         "TurnStatusStrip": {
           "yourTurn": "Tu turno",
           "aiTurn": "Turno de la IA",

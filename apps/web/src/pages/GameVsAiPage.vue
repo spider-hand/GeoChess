@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
 import useAiGameQuery from "@/composables/useAiGameQuery";
@@ -13,6 +14,7 @@ import PathResultCard from "@/components/pages/Game/PathResultCard.vue";
 import PlayerMatchupCard from "@/components/pages/Game/PlayerMatchupCard.vue";
 import ResultBadge from "@/components/pages/Game/ResultBadge.vue";
 import TurnStatusStrip from "@/components/pages/Game/TurnStatusStrip.vue";
+import Button from "@/components/shared/Button.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 import type { PathStep, TurnStatus } from "@/types/game";
@@ -24,9 +26,11 @@ defineOptions({
 const PLAYER_TURN_TIMEOUT_MS = 60_000;
 const PLAYER_TURN_TIMEOUT_BUFFER_MS = 500;
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const aiGameQuery = useAiGameQuery();
+const createAiGame = aiGameQuery.createAiGame;
 const createAiGameMove = aiGameQuery.createAiGameMove;
 const timeoutAiGame = aiGameQuery.timeoutAiGame;
 const { username } = useAuth();
@@ -38,6 +42,7 @@ const { realtimeAiGame, realtimeAiGameError, isLoadingRealtimeAiGame } =
 
 const isSubmittingMove = ref(false);
 const isSubmittingTimeout = ref(false);
+const isStartingNewGame = ref(false);
 const timeoutRequestKey = ref<string | null>(null);
 
 const isFinished = computed(() => {
@@ -187,6 +192,33 @@ const handleTimeUp = async () => {
     isSubmittingTimeout.value = false;
   }
 };
+
+const handlePlayAgain = async () => {
+  if (
+    realtimeAiGame.value === null ||
+    isStartingNewGame.value ||
+    !isFinished.value
+  ) {
+    return;
+  }
+
+  isStartingNewGame.value = true;
+
+  try {
+    const aiGame = await createAiGame({
+      difficulty: realtimeAiGame.value.difficulty,
+    });
+    await router.push(`/game/vs-ai/${aiGame.id}`);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isStartingNewGame.value = false;
+  }
+};
+
+const handleExit = async () => {
+  await router.push("/");
+};
 </script>
 
 <template>
@@ -238,6 +270,14 @@ const handleTimeUp = async () => {
       </div>
 
       <PathHistoryCard v-if="!isFinished" :history-steps="historySteps" />
+      <div v-else class="game-page__finished-actions">
+        <Button :loading="isStartingNewGame" @click="handlePlayAgain">
+          {{ t("components.pages.Game.GameVsAiPage.playAgain") }}
+        </Button>
+        <Button variant="secondary" @click="handleExit">
+          {{ t("components.pages.Game.GameVsAiPage.exit") }}
+        </Button>
+      </div>
     </section>
 
     <NavigationFooter />
@@ -303,6 +343,13 @@ const handleTimeUp = async () => {
   min-width: 0;
 }
 
+.game-page__finished-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
 @media (max-width: 960px) {
   .game-page__map-card-row {
     flex-direction: column;
@@ -324,6 +371,14 @@ const handleTimeUp = async () => {
 }
 
 @media (max-width: 480px) {
+  .game-page__finished-actions {
+    flex-direction: column;
+  }
+
+  .game-page__finished-actions :deep(.button) {
+    width: 100%;
+  }
+
   .game-page__status-group {
     gap: var(--spacing-xs);
   }

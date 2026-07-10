@@ -26,6 +26,10 @@
             "ca": "Canada"
           }
         },
+        "GameVsAiPage": {
+          "playAgain": "Rejouer",
+          "exit": "Quitter"
+        },
         "TurnStatusStrip": {
           "yourTurn": "Votre tour",
           "aiTurn": "Tour de l'IA",

@@ -21,8 +21,6 @@ const STATUS_LABEL_KEYS: Record<
 > = {
   player: "components.pages.Game.TurnStatusStrip.yourTurn",
   ai: "components.pages.Game.TurnStatusStrip.aiTurn",
-  won: "components.pages.Game.TurnStatusStrip.youWin",
-  lost: "components.pages.Game.TurnStatusStrip.youLose",
 };
 
 const statusLabel = computed(() => t(STATUS_LABEL_KEYS[props.status]));
@@ -43,8 +41,6 @@ const ariaLabel = computed(() => `${statusLabel.value}, ${turnLabel.value}`);
       :class="{
         'turn-status-strip__status--player': status === 'player',
         'turn-status-strip__status--ai': status === 'ai',
-        'turn-status-strip__status--won': status === 'won',
-        'turn-status-strip__status--lost': status === 'lost',
       }"
     >
       {{ statusLabel }}
@@ -84,17 +80,12 @@ const ariaLabel = computed(() => `${statusLabel.value}, ${turnLabel.value}`);
   color: var(--on-primary);
 }
 
-.turn-status-strip__status--player,
-.turn-status-strip__status--won {
+.turn-status-strip__status--player {
   background-color: var(--primary);
 }
 
 .turn-status-strip__status--ai {
   background-color: var(--primary-active);
-}
-
-.turn-status-strip__status--lost {
-  background-color: var(--danger);
 }
 
 .turn-status-strip__turn {

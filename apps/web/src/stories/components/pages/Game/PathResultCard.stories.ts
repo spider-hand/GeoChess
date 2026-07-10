@@ -8,10 +8,10 @@ const meta = {
   tags: ["autodocs"],
   args: {
     resultSteps: [
-      { countryCode: "bb", owner: "neutral", turn: 1 },
-      { countryCode: "cc", owner: "player", turn: 2 },
-      { countryCode: "dd", owner: "ai", turn: 3 },
-      { countryCode: "ee", owner: "player", turn: 4 },
+      { countryCode: "bb", owner: "neutral", turn: 0 },
+      { countryCode: "cc", owner: "player", turn: 1 },
+      { countryCode: "dd", owner: "ai", turn: 2 },
+      { countryCode: "ee", owner: "player", turn: 3 },
     ],
   },
 } satisfies Meta<typeof PathResultCard>;

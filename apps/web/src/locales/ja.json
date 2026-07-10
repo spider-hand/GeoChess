@@ -15,6 +15,7 @@
           "ai": "AI"
         },
         "PathResultCard": {
+          "start": "開始地点",
           "turn": "{turn} ターン目",
           "countries": {
             "us": "アメリカ",
@@ -28,9 +29,11 @@
         "TurnStatusStrip": {
           "yourTurn": "あなたのターン",
           "aiTurn": "AIのターン",
-          "youWin": "あなたの勝ち",
-          "youLose": "あなたの負け",
           "turn": "{turn} ターン目"
+        },
+        "ResultBadge": {
+          "youWin": "あなたの勝ち",
+          "youLose": "あなたの負け"
         },
         "PlayerMatchupCard": {
           "versus": "vs",

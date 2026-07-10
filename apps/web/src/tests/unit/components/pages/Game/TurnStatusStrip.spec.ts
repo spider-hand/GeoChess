@@ -40,23 +40,3 @@ test("renders the AI-turn branch and applies the AI accent", async () => {
     )
     .toHaveClass("turn-status-strip__status--ai");
 });
-
-test("renders the losing branch with the danger accent", async () => {
-  const { container, getByLabelText, getByText } = render(TurnStatusStrip, {
-    props: {
-      status: "lost",
-      currentTurn: 12,
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
-
-  await expect.element(getByLabelText("You Lose, Turn 12")).toBeVisible();
-  await expect.element(getByText("You Lose")).toBeVisible();
-  await expect
-    .element(
-      container.querySelector(".turn-status-strip__status") as HTMLElement,
-    )
-    .toHaveClass("turn-status-strip__status--lost");
-});

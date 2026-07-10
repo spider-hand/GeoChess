@@ -8,9 +8,9 @@ test("renders the shared header, legend, and realtime result steps", async () =>
   const { getByRole, getByTestId, getByText } = render(PathResultCard, {
     props: {
       resultSteps: [
-        { countryCode: "bb", owner: "neutral", turn: 1 },
-        { countryCode: "cc", owner: "player", turn: 2 },
-        { countryCode: "dd", owner: "ai", turn: 3 },
+        { countryCode: "bb", owner: "neutral", turn: 0 },
+        { countryCode: "cc", owner: "player", turn: 1 },
+        { countryCode: "dd", owner: "ai", turn: 2 },
       ],
     },
     global: {
@@ -23,8 +23,9 @@ test("renders the shared header, legend, and realtime result steps", async () =>
     .toBeInTheDocument();
   await expect.element(getByText("You")).toBeVisible();
   await expect.element(getByText("AI")).toBeVisible();
+  await expect.element(getByText("Start")).toBeVisible();
   await expect.element(getByText("Turn 1")).toBeVisible();
-  await expect.element(getByText("Turn 3")).toBeVisible();
+  await expect.element(getByText("Turn 2")).toBeVisible();
   await expect.element(getByText("BB")).toBeVisible();
   await expect.element(getByText("DD")).toBeVisible();
   expect(getByRole("listitem").length).toBe(3);

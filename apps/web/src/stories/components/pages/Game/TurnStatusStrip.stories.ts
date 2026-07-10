@@ -27,17 +27,3 @@ export const AiTurn: Story = {
     currentTurn: 11,
   },
 };
-
-export const Won: Story = {
-  args: {
-    status: "won",
-    currentTurn: 12,
-  },
-};
-
-export const Lost: Story = {
-  args: {
-    status: "lost",
-    currentTurn: 12,
-  },
-};

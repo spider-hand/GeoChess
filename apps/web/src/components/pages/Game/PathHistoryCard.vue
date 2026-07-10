@@ -28,6 +28,13 @@ const legendItems = computed(() => [
     owner: "ai" as const,
   },
 ]);
+
+const turnLabel = (turn: number) =>
+  turn === 0
+    ? t("components.pages.Game.PathResultCard.start")
+    : t("components.pages.Game.PathResultCard.turn", {
+        turn,
+      });
 </script>
 
 <template>
@@ -66,7 +73,9 @@ const legendItems = computed(() => [
           }"
           role="listitem"
         >
-          <span class="path-history-card__turn">TURN {{ step.turn }}</span>
+          <span class="path-history-card__turn">
+            {{ turnLabel(step.turn) }}
+          </span>
           <img
             class="path-history-card__flag"
             :src="countryFlagSrc(step.countryCode)"

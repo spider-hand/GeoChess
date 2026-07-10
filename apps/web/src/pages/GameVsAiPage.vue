@@ -11,6 +11,7 @@ import GameMap from "@/components/pages/Game/GameMap.vue";
 import PathHistoryCard from "@/components/pages/Game/PathHistoryCard.vue";
 import PathResultCard from "@/components/pages/Game/PathResultCard.vue";
 import PlayerMatchupCard from "@/components/pages/Game/PlayerMatchupCard.vue";
+import ResultBadge from "@/components/pages/Game/ResultBadge.vue";
 import TurnStatusStrip from "@/components/pages/Game/TurnStatusStrip.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
@@ -39,30 +40,36 @@ const isSubmittingMove = ref(false);
 const isSubmittingTimeout = ref(false);
 const timeoutRequestKey = ref<string | null>(null);
 
-const pageState = computed<TurnStatus>(() => {
+const isFinished = computed(() => {
   if (realtimeAiGame.value === null) {
-    return "player";
+    return false;
   }
 
   if (realtimeAiGame.value.availableMoves.length === 0) {
-    return realtimeAiGame.value.turn === "player" ? "lost" : "won";
+    return true;
   }
 
-  return realtimeAiGame.value.turn === "player" ? "player" : "ai";
+  return false;
 });
+const turnStatus = computed<TurnStatus>(() =>
+  realtimeAiGame.value?.turn === "ai" ? "ai" : "player",
+);
+const result = computed<"won" | "lost" | null>(() => {
+  if (!isFinished.value || realtimeAiGame.value === null) {
+    return null;
+  }
 
+  return realtimeAiGame.value.turn === "player" ? "lost" : "won";
+});
 const currentTurn = computed(
   () => realtimeAiGame.value?.usedCountries.length ?? 0,
 );
-const isFinished = computed(
-  () => pageState.value === "won" || pageState.value === "lost",
-);
 const timerMode = computed(() =>
-  pageState.value === "player" ? "countdown" : "elapsed",
+  turnStatus.value === "player" ? "countdown" : "elapsed",
 );
 const isMoveSelectionDisabled = computed(
   () =>
-    pageState.value !== "player" ||
+    turnStatus.value !== "player" ||
     isSubmittingMove.value ||
     isSubmittingTimeout.value,
 );
@@ -78,26 +85,22 @@ const historySteps = computed<Array<PathStep>>(() => {
     return [];
   }
 
-  const steps: Array<PathStep> = [
-    {
-      countryCode: realtimeAiGame.value.start,
-      owner: "neutral" as const,
-      turn: 1,
-    },
-  ];
   const orderedMoves = Object.entries(realtimeAiGame.value.moves).sort(
     (left, right) => left[1].createdAt - right[1].createdAt,
   );
 
-  steps.push(
+  return [
+    {
+      countryCode: realtimeAiGame.value.start,
+      owner: "neutral" as const,
+      turn: 0,
+    },
     ...orderedMoves.map(([, move], index) => ({
       countryCode: move.country,
       owner: move.actor === "player" ? ("player" as const) : ("ai" as const),
-      turn: index + 2,
+      turn: index + 1,
     })),
-  );
-
-  return steps;
+  ];
 });
 
 // Leave the page when the realtime game could not be loaded.
@@ -159,7 +162,8 @@ const handleTimeUp = async () => {
   if (
     gameId.value === null ||
     realtimeAiGame.value === null ||
-    pageState.value !== "player"
+    turnStatus.value !== "player" ||
+    isFinished.value
   ) {
     return;
   }
@@ -198,7 +202,12 @@ const handleTimeUp = async () => {
         <PlayerMatchupCard :player-name="username" />
 
         <div class="game-page__status-group">
-          <TurnStatusStrip :status="pageState" :current-turn="currentTurn" />
+          <TurnStatusStrip
+            v-if="!isFinished"
+            :status="turnStatus"
+            :current-turn="currentTurn"
+          />
+          <ResultBadge v-else-if="result" :result="result" />
           <CountdownTimer
             v-if="!isFinished"
             :mode="timerMode"
@@ -220,7 +229,7 @@ const handleTimeUp = async () => {
         <AvailableMovesCard
           v-if="!isFinished"
           :available-moves="realtimeAiGame.availableMoves"
-          :is-ai-turn="pageState === 'ai'"
+          :is-ai-turn="turnStatus === 'ai'"
           :is-selecting="isSubmittingMove"
           :is-select-disabled="isMoveSelectionDisabled"
           @select="handleSelect"

@@ -106,6 +106,7 @@ test("renders the in-game player turn layout from realtime state", async () => {
     )
     .toHaveTextContent("AI");
   await expect.element(getByText("Your Turn")).toBeInTheDocument();
+  expect(container.querySelector(".result-badge")).toBeNull();
   await expect
     .element(container.querySelector(".turn-status-strip__turn") as HTMLElement)
     .toHaveTextContent("Turn 1");
@@ -172,13 +173,30 @@ test("renders the finished loss state with the result card and visible labels", 
   });
 
   await expect.element(getByText("You Lose")).toBeInTheDocument();
+  expect(container.querySelector(".turn-status-strip")).toBeNull();
+  await expect
+    .element(container.querySelector(".result-badge") as HTMLElement)
+    .toBeInTheDocument();
   expect(container.querySelector('[role="timer"]')).toBeNull();
   expect(
     Array.from(container.querySelectorAll("h2")).some(
       (heading) => heading.textContent === "Available Moves",
     ),
   ).toBe(false);
-  await expect.element(getByText("Turn 2")).toBeInTheDocument();
+  await expect
+    .element(
+      container
+        .querySelectorAll(".path-result-card__turn")
+        .item(0) as HTMLElement,
+    )
+    .toHaveTextContent("Start");
+  await expect
+    .element(
+      container
+        .querySelectorAll(".path-result-card__turn")
+        .item(1) as HTMLElement,
+    )
+    .toHaveTextContent("Turn 1");
   expect(
     container
       .querySelector('[data-testid="game-map"]')

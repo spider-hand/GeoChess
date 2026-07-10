@@ -15,6 +15,7 @@
           "ai": "KI"
         },
         "PathResultCard": {
+          "start": "Start",
           "turn": "Runde {turn}",
           "countries": {
             "us": "Vereinigte Staaten",
@@ -28,9 +29,11 @@
         "TurnStatusStrip": {
           "yourTurn": "Du bist dran",
           "aiTurn": "KI ist dran",
-          "youWin": "Du gewinnst",
-          "youLose": "Du verlierst",
           "turn": "Runde {turn}"
+        },
+        "ResultBadge": {
+          "youWin": "Du gewinnst",
+          "youLose": "Du verlierst"
         },
         "PlayerMatchupCard": {
           "versus": "vs",

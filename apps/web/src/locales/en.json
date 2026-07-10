@@ -15,6 +15,7 @@
           "ai": "AI"
         },
         "PathResultCard": {
+          "start": "Start",
           "turn": "Turn {turn}",
           "countries": {
             "us": "United States",
@@ -28,9 +29,11 @@
         "TurnStatusStrip": {
           "yourTurn": "Your Turn",
           "aiTurn": "AI Turn",
-          "youWin": "You Win",
-          "youLose": "You Lose",
           "turn": "Turn {turn}"
+        },
+        "ResultBadge": {
+          "youWin": "You Win",
+          "youLose": "You Lose"
         },
         "PlayerMatchupCard": {
           "versus": "vs",

@@ -28,6 +28,13 @@ const legendItems = computed(() => [
     owner: "ai" as const,
   },
 ]);
+
+const turnLabel = (turn: number) =>
+  turn === 0
+    ? t("components.pages.Game.PathResultCard.start")
+    : t("components.pages.Game.PathResultCard.turn", {
+        turn,
+      });
 </script>
 
 <template>
@@ -87,11 +94,7 @@ const legendItems = computed(() => [
           }"
         >
           <span class="path-result-card__turn">
-            {{
-              t("components.pages.Game.PathResultCard.turn", {
-                turn: step.turn,
-              })
-            }}
+            {{ turnLabel(step.turn) }}
           </span>
 
           <div class="path-result-card__country">

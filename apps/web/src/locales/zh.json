@@ -15,6 +15,7 @@
           "ai": "AI"
         },
         "PathResultCard": {
+          "start": "起点",
           "turn": "第 {turn} 回合",
           "countries": {
             "us": "美国",
@@ -28,9 +29,11 @@
         "TurnStatusStrip": {
           "yourTurn": "轮到你了",
           "aiTurn": "AI 回合",
-          "youWin": "你赢了",
-          "youLose": "你输了",
           "turn": "第 {turn} 回合"
+        },
+        "ResultBadge": {
+          "youWin": "你赢了",
+          "youLose": "你输了"
         },
         "PlayerMatchupCard": {
           "versus": "vs",

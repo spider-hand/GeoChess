@@ -69,12 +69,22 @@
         "descriptionLine3": "C'est tout. Amusez-vous bien !"
       },
       "LanguageSelector": {
-        "triggerLabel": "Paramètres de langue",
+        "triggerLabel": "Langue",
         "supportedLanguagesLabel": "Langues prises en charge. Sélection actuelle : {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "Navigation principale",
         "signUp": "S'inscrire",
+        "signOut": "Se déconnecter",
+        "openMenu": "Ouvrir le menu de navigation",
+        "closeMenu": "Fermer le menu de navigation",
+        "howToPlayTriggerLabel": "Comment jouer",
+        "howToPlayDescriptionLine1": "Revendiquer un pays voisin à chaque tour.",
+        "howToPlayDescriptionLine2": "Aucun coup légal ? Vous perdez.",
+        "howToPlayDescriptionLine3": "C'est tout. Amusez-vous !",
+        "githubLabel": "GitHub",
+        "discordLabel": "Discord",
+        "languageLabel": "Langue",
         "githubRepositoryLink": "Lien du dépôt GitHub",
         "discordServerLink": "Lien du serveur Discord"
       },

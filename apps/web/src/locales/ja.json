@@ -69,12 +69,22 @@
         "descriptionLine3": "それだけ。楽しんで！"
       },
       "LanguageSelector": {
-        "triggerLabel": "言語設定",
+        "triggerLabel": "言語",
         "supportedLanguagesLabel": "対応言語。現在の選択: {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "メインナビゲーション",
         "signUp": "サインアップ",
+        "signOut": "サインアウト",
+        "openMenu": "ナビゲーションメニューを開く",
+        "closeMenu": "ナビゲーションメニューを閉じる",
+        "howToPlayTriggerLabel": "遊び方",
+        "howToPlayDescriptionLine1": "毎ターン、隣接する国を1つ取ります。",
+        "howToPlayDescriptionLine2": "合法手がない？ あなたの負けです。",
+        "howToPlayDescriptionLine3": "それだけ。楽しんで！",
+        "githubLabel": "GitHub",
+        "discordLabel": "Discord",
+        "languageLabel": "言語",
         "githubRepositoryLink": "GitHub リポジトリへのリンク",
         "discordServerLink": "Discord サーバーへのリンク"
       },

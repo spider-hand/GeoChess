@@ -69,12 +69,22 @@
         "descriptionLine3": "É isso. Divirta-se!"
       },
       "LanguageSelector": {
-        "triggerLabel": "Configurações de idioma",
+        "triggerLabel": "Idioma",
         "supportedLanguagesLabel": "Idiomas compatíveis. Seleção atual: {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "Navegação principal",
         "signUp": "Cadastre-se",
+        "signOut": "Sair",
+        "openMenu": "Abrir menu de navegação",
+        "closeMenu": "Fechar menu de navegação",
+        "howToPlayTriggerLabel": "Como jogar",
+        "howToPlayDescriptionLine1": "Conquiste um país vizinho a cada turno.",
+        "howToPlayDescriptionLine2": "Sem movimentos válidos? Você perde.",
+        "howToPlayDescriptionLine3": "É isso. Divirta-se!",
+        "githubLabel": "GitHub",
+        "discordLabel": "Discord",
+        "languageLabel": "Idioma",
         "githubRepositoryLink": "Link do repositório do GitHub",
         "discordServerLink": "Link do servidor do Discord"
       },

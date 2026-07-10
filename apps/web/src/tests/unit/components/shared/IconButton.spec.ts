@@ -6,7 +6,7 @@ import IconButton from "../../../../components/shared/IconButton.vue";
 test("renders slot content with the accessibility label", async () => {
   const { getByRole } = render(IconButton, {
     props: {
-      ariaLabel: "Language settings",
+      ariaLabel: "Language",
     },
     slots: {
       default:
@@ -15,7 +15,7 @@ test("renders slot content with the accessibility label", async () => {
   });
 
   await expect
-    .element(getByRole("button", { name: "Language settings" }))
+    .element(getByRole("button", { name: "Language" }))
     .toBeInTheDocument();
 });
 
@@ -45,7 +45,7 @@ test("emits click when enabled", async () => {
   const onClick = vi.fn();
   const { getByRole } = render(IconButton, {
     props: {
-      ariaLabel: "Language settings",
+      ariaLabel: "Language",
       onClick,
     },
     slots: {
@@ -53,7 +53,7 @@ test("emits click when enabled", async () => {
     },
   });
 
-  await getByRole("button", { name: "Language settings" }).click();
+  await getByRole("button", { name: "Language" }).click();
 
   expect(onClick).toHaveBeenCalledTimes(1);
 });
@@ -61,7 +61,7 @@ test("emits click when enabled", async () => {
 test("applies the disabled branch", async () => {
   const { getByRole } = render(IconButton, {
     props: {
-      ariaLabel: "Language settings",
+      ariaLabel: "Language",
       disabled: true,
     },
     slots: {
@@ -69,7 +69,7 @@ test("applies the disabled branch", async () => {
     },
   });
 
-  const button = getByRole("button", { name: "Language settings" });
+  const button = getByRole("button", { name: "Language" });
 
   await expect.element(button).toBeDisabled();
   await expect.element(button).toHaveClass("icon-button--disabled");

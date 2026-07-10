@@ -1,20 +1,25 @@
 <script setup lang="ts">
+import { Menu, X } from "@lucide/vue";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
+import { SUPPORTED_LANGUAGES } from "@/constants/languages";
 import { useAuth } from "@/composables/useAuth";
+import useOnClickOutside from "@/composables/useOnClickOutside";
+import Avatar from "@/components/shared/Avatar.vue";
 import Button from "@/components/shared/Button.vue";
 import HowToPlayButton from "@/components/shared/HowToPlayButton.vue";
 import IconButton from "@/components/shared/IconButton.vue";
 import LanguageSelector from "@/components/shared/LanguageSelector.vue";
 import UserAvatarMenu from "@/components/shared/UserAvatarMenu.vue";
+import type { SupportedLanguage } from "@/types/language";
 
 defineOptions({
   name: "SharedNavigationHeader",
 });
 
-const { t } = useI18n();
+const { locale, t } = useI18n({ useScope: "global" });
 const router = useRouter();
 const {
   username,
@@ -24,6 +29,10 @@ const {
   signOutUser,
 } = useAuth();
 const isSigningUpInternal = ref(false);
+const mobileMenuRoot = ref<HTMLElement | null>(null);
+const isMobileMenuOpen = ref(false);
+const isMobileHowToPlayOpen = ref(false);
+const isMobileLanguageOpen = ref(false);
 
 const emit = defineEmits<{
   brandClick: [event: MouseEvent];
@@ -48,11 +57,41 @@ const emitLanguageSelect = (language: string) => {
   emit("languageSelect", language);
 };
 
+const closeMobileMenu = () => {
+  isMobileMenuOpen.value = false;
+  isMobileHowToPlayOpen.value = false;
+  isMobileLanguageOpen.value = false;
+};
+
+const toggleMobileMenu = () => {
+  if (isMobileMenuOpen.value) {
+    closeMobileMenu();
+    return;
+  }
+
+  isMobileMenuOpen.value = true;
+};
+
+const toggleMobileHowToPlay = () => {
+  isMobileHowToPlayOpen.value = !isMobileHowToPlayOpen.value;
+};
+
+const toggleMobileLanguage = () => {
+  isMobileLanguageOpen.value = !isMobileLanguageOpen.value;
+};
+
+const selectMobileLanguage = (language: SupportedLanguage) => {
+  locale.value = language;
+  emitLanguageSelect(language);
+  closeMobileMenu();
+};
+
 const handleSignUp = async () => {
   if (isSigningUpInternal.value) {
     return;
   }
 
+  closeMobileMenu();
   isSigningUpInternal.value = true;
 
   try {
@@ -67,12 +106,28 @@ const handleSignUp = async () => {
 
 const handleSignOut = async () => {
   try {
+    closeMobileMenu();
     await signOutUser();
     await router.push("/");
   } catch (error) {
     console.error(error);
   }
 };
+
+const handleGithubClick = (event: MouseEvent) => {
+  closeMobileMenu();
+  emitGithubClick(event);
+};
+
+const handleDiscordClick = (event: MouseEvent) => {
+  closeMobileMenu();
+  emitDiscordClick(event);
+};
+
+useOnClickOutside({
+  root: mobileMenuRoot,
+  close: closeMobileMenu,
+});
 </script>
 
 <template>
@@ -92,11 +147,15 @@ const handleSignOut = async () => {
       </button>
 
       <div class="navigation-header__actions">
-        <div class="navigation-header__nav-actions">
+        <div
+          class="navigation-header__nav-actions navigation-header__nav-actions--desktop"
+        >
           <HowToPlayButton />
         </div>
 
-        <div class="navigation-header__utility-actions">
+        <div
+          class="navigation-header__utility-actions navigation-header__utility-actions--desktop"
+        >
           <IconButton
             :ariaLabel="
               t('components.shared.NavigationHeader.githubRepositoryLink')
@@ -148,7 +207,10 @@ const handleSignOut = async () => {
           <LanguageSelector @select="emitLanguageSelect" />
         </div>
 
-        <div v-if="isCurrentUserLoaded" class="navigation-header__cta-actions">
+        <div
+          v-if="isCurrentUserLoaded"
+          class="navigation-header__cta-actions navigation-header__cta-actions--desktop"
+        >
           <UserAvatarMenu
             v-if="isAuthenticatedUser"
             :display-name="username"
@@ -163,6 +225,152 @@ const handleSignOut = async () => {
           >
             {{ t("components.shared.NavigationHeader.signUp") }}
           </Button>
+        </div>
+
+        <div ref="mobileMenuRoot" class="navigation-header__mobile-menu">
+          <IconButton
+            class="navigation-header__mobile-menu-trigger"
+            :ariaLabel="
+              isMobileMenuOpen
+                ? t('components.shared.NavigationHeader.closeMenu')
+                : t('components.shared.NavigationHeader.openMenu')
+            "
+            :aria-expanded="isMobileMenuOpen"
+            aria-controls="navigation-header-mobile-panel"
+            @click="toggleMobileMenu"
+          >
+            <X v-if="isMobileMenuOpen" :size="20" aria-hidden="true" />
+            <Menu v-else :size="20" aria-hidden="true" />
+          </IconButton>
+
+          <div
+            v-if="isMobileMenuOpen"
+            id="navigation-header-mobile-panel"
+            class="navigation-header__mobile-panel"
+            data-testid="navigation-header-mobile-panel"
+          >
+            <div
+              v-if="isCurrentUserLoaded && isAuthenticatedUser"
+              class="navigation-header__mobile-user"
+              data-testid="navigation-header-mobile-user"
+            >
+              <Avatar :name="username" size="sm" />
+              <span
+                class="navigation-header__mobile-username"
+                data-testid="navigation-header-mobile-username"
+              >
+                {{ username }}
+              </span>
+            </div>
+
+            <button
+              class="navigation-header__mobile-row navigation-header__mobile-row--accordion"
+              data-testid="navigation-header-mobile-how-to-play-toggle"
+              type="button"
+              :aria-expanded="isMobileHowToPlayOpen"
+              @click="toggleMobileHowToPlay"
+            >
+              {{
+                t("components.shared.NavigationHeader.howToPlayTriggerLabel")
+              }}
+            </button>
+
+            <div
+              v-if="isMobileHowToPlayOpen"
+              class="navigation-header__mobile-accordion-content"
+            >
+              <p class="navigation-header__mobile-copy">
+                {{
+                  t(
+                    "components.shared.NavigationHeader.howToPlayDescriptionLine1",
+                  )
+                }}
+              </p>
+              <p class="navigation-header__mobile-copy">
+                {{
+                  t(
+                    "components.shared.NavigationHeader.howToPlayDescriptionLine2",
+                  )
+                }}
+              </p>
+              <p class="navigation-header__mobile-copy">
+                {{
+                  t(
+                    "components.shared.NavigationHeader.howToPlayDescriptionLine3",
+                  )
+                }}
+              </p>
+            </div>
+
+            <button
+              class="navigation-header__mobile-row"
+              type="button"
+              @click="handleGithubClick"
+            >
+              {{ t("components.shared.NavigationHeader.githubLabel") }}
+            </button>
+
+            <button
+              class="navigation-header__mobile-row"
+              type="button"
+              @click="handleDiscordClick"
+            >
+              {{ t("components.shared.NavigationHeader.discordLabel") }}
+            </button>
+
+            <button
+              class="navigation-header__mobile-row navigation-header__mobile-row--accordion"
+              data-testid="navigation-header-mobile-language-toggle"
+              type="button"
+              :aria-expanded="isMobileLanguageOpen"
+              @click="toggleMobileLanguage"
+            >
+              {{ t("components.shared.NavigationHeader.languageLabel") }}
+            </button>
+
+            <div
+              v-if="isMobileLanguageOpen"
+              class="navigation-header__mobile-accordion-content navigation-header__mobile-accordion-content--list"
+            >
+              <button
+                v-for="language in SUPPORTED_LANGUAGES"
+                :key="language.value"
+                class="navigation-header__mobile-language"
+                :class="{
+                  'navigation-header__mobile-language--selected':
+                    language.value === locale,
+                }"
+                type="button"
+                @click="selectMobileLanguage(language.value)"
+              >
+                <span aria-hidden="true" class="navigation-header__mobile-flag">
+                  {{ language.flag }}
+                </span>
+                <span class="navigation-header__mobile-language-label">
+                  {{ language.label }}
+                </span>
+              </button>
+            </div>
+
+            <Button
+              v-if="isCurrentUserLoaded && !isAuthenticatedUser"
+              class="navigation-header__mobile-auth-button"
+              pill
+              :loading="isSigningUpInternal"
+              @click="handleSignUp"
+            >
+              {{ t("components.shared.NavigationHeader.signUp") }}
+            </Button>
+
+            <button
+              v-else-if="isCurrentUserLoaded"
+              class="navigation-header__mobile-row"
+              type="button"
+              @click="handleSignOut"
+            >
+              {{ t("components.shared.NavigationHeader.signOut") }}
+            </button>
+          </div>
         </div>
       </div>
     </nav>
@@ -212,6 +420,11 @@ const handleSignOut = async () => {
   gap: var(--spacing-md);
 }
 
+.navigation-header__mobile-menu {
+  display: none;
+  position: relative;
+}
+
 .navigation-header__nav-actions,
 .navigation-header__cta-actions {
   display: flex;
@@ -224,16 +437,149 @@ const handleSignOut = async () => {
   gap: var(--spacing-xs);
 }
 
+.navigation-header__mobile-panel {
+  position: absolute;
+  top: calc(100% + var(--spacing-xs));
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: min(320px, calc(100vw - (var(--spacing-md) * 2)));
+  padding: var(--spacing-sm);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-token-sm);
+  background-color: var(--surface-card-dark);
+  box-shadow: 0 12px 28px color-mix(in srgb, black 32%, transparent);
+}
+
+.navigation-header__mobile-row,
+.navigation-header__mobile-auth-button {
+  width: 100%;
+}
+
+.navigation-header__mobile-row {
+  border: 0;
+  border-radius: var(--radius-token-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: transparent;
+  color: var(--body);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.navigation-header__mobile-row:hover {
+  background-color: var(--surface-elevated-dark);
+  color: var(--on-dark);
+}
+
+.navigation-header__mobile-row:focus-visible,
+.navigation-header__mobile-language:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--info-ring) 50%, transparent);
+  outline-offset: 2px;
+}
+
+.navigation-header__mobile-accordion-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: 0 var(--spacing-sm) var(--spacing-xs);
+}
+
+.navigation-header__mobile-accordion-content--list {
+  gap: var(--spacing-xxs);
+}
+
+.navigation-header__mobile-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--font-size-body-sm);
+  line-height: var(--line-height-body);
+}
+
+.navigation-header__mobile-user {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-height: 52px;
+  padding: var(--spacing-sm) var(--spacing-sm);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.navigation-header__mobile-username {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--on-dark);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navigation-header__mobile-language {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-token-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: transparent;
+  color: var(--body);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-md);
+  line-height: var(--line-height-body);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.navigation-header__mobile-language:hover {
+  background-color: var(--surface-elevated-dark);
+  color: var(--on-dark);
+}
+
+.navigation-header__mobile-language--selected {
+  color: var(--primary);
+}
+
+.navigation-header__mobile-flag {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.navigation-header__mobile-language-label {
+  font-size: var(--font-size-body-md);
+  line-height: var(--line-height-body);
+}
+
 @media (max-width: 640px) {
   .navigation-header__content {
-    flex-wrap: wrap;
     padding-inline: var(--spacing-md);
   }
 
   .navigation-header__actions {
-    width: 100%;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .navigation-header__nav-actions--desktop,
+  .navigation-header__utility-actions--desktop,
+  .navigation-header__cta-actions--desktop {
+    display: none;
+  }
+
+  .navigation-header__mobile-menu {
+    display: block;
   }
 }
 </style>

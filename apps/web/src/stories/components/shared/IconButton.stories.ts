@@ -16,7 +16,7 @@ const meta = {
     },
   },
   args: {
-    ariaLabel: "Language settings",
+    ariaLabel: "Language",
     size: "md",
     disabled: false,
   },

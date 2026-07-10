@@ -69,12 +69,22 @@
         "descriptionLine3": "Das ist alles. Viel Spaß!"
       },
       "LanguageSelector": {
-        "triggerLabel": "Spracheinstellungen",
+        "triggerLabel": "Sprache",
         "supportedLanguagesLabel": "Unterstützte Sprachen. Aktuelle Auswahl: {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "Hauptnavigation",
         "signUp": "Registrieren",
+        "signOut": "Abmelden",
+        "openMenu": "Navigationsmenü öffnen",
+        "closeMenu": "Navigationsmenü schließen",
+        "howToPlayTriggerLabel": "Spielanleitung",
+        "howToPlayDescriptionLine1": "Erobere in jedem Zug ein benachbartes Land.",
+        "howToPlayDescriptionLine2": "Keine gültigen Züge? Du verlierst.",
+        "howToPlayDescriptionLine3": "Das ist alles. Viel Spaß!",
+        "githubLabel": "GitHub",
+        "discordLabel": "Discord",
+        "languageLabel": "Sprache",
         "githubRepositoryLink": "GitHub-Repository-Link",
         "discordServerLink": "Discord-Server-Link"
       },

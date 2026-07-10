@@ -69,12 +69,22 @@
         "descriptionLine3": "Eso es todo. ¡Disfruta!"
       },
       "LanguageSelector": {
-        "triggerLabel": "Configuración de idioma",
+        "triggerLabel": "Idioma",
         "supportedLanguagesLabel": "Idiomas compatibles. Selección actual: {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "Navegación principal",
         "signUp": "Registrarse",
+        "signOut": "Cerrar sesión",
+        "openMenu": "Abrir menú de navegación",
+        "closeMenu": "Cerrar menú de navegación",
+        "howToPlayTriggerLabel": "Cómo jugar",
+        "howToPlayDescriptionLine1": "Reclama un país vecino en cada turno.",
+        "howToPlayDescriptionLine2": "¿No hay movimientos legales? Pierdes.",
+        "howToPlayDescriptionLine3": "Eso es todo. ¡Disfruta!",
+        "githubLabel": "GitHub",
+        "discordLabel": "Discord",
+        "languageLabel": "Idioma",
         "githubRepositoryLink": "Enlace al repositorio de GitHub",
         "discordServerLink": "Enlace al servidor de Discord"
       },

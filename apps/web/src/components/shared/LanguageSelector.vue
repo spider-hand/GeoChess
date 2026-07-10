@@ -2,30 +2,14 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import { SUPPORTED_LANGUAGES } from "@/constants/languages";
 import useOnClickOutside from "@/composables/useOnClickOutside";
 import IconButton from "@/components/shared/IconButton.vue";
-
-type SupportedLanguage = "zh" | "en" | "fr" | "de" | "ja" | "pt" | "es";
-
-type LanguageOption = {
-  value: SupportedLanguage;
-  label: string;
-  flag: string;
-};
+import type { SupportedLanguage } from "@/types/language";
 
 defineOptions({
   name: "SharedLanguageSelector",
 });
-
-const LANGUAGE_OPTIONS: LanguageOption[] = [
-  { value: "de", label: "Deutsch", flag: "🇩🇪" },
-  { value: "en", label: "English", flag: "🇬🇧" },
-  { value: "es", label: "Español", flag: "🇪🇸" },
-  { value: "fr", label: "Français", flag: "🇫🇷" },
-  { value: "ja", label: "日本語", flag: "🇯🇵" },
-  { value: "pt", label: "Português", flag: "🇵🇹" },
-  { value: "zh", label: "中文", flag: "🇨🇳" },
-];
 
 const emit = defineEmits<{
   select: [language: SupportedLanguage];
@@ -37,8 +21,8 @@ const isOpen = ref(false);
 
 const currentLanguage = computed(
   () =>
-    LANGUAGE_OPTIONS.find((option) => option.value === locale.value) ??
-    LANGUAGE_OPTIONS[0],
+    SUPPORTED_LANGUAGES.find((option) => option.value === locale.value) ??
+    SUPPORTED_LANGUAGES[0],
 );
 
 const closeMenu = () => {
@@ -100,7 +84,7 @@ useOnClickOutside({
       "
     >
       <button
-        v-for="language in LANGUAGE_OPTIONS"
+        v-for="language in SUPPORTED_LANGUAGES"
         :key="language.value"
         class="language-selector__item"
         :class="{

@@ -69,12 +69,22 @@
         "descriptionLine3": "That's it. Enjoy!"
       },
       "LanguageSelector": {
-        "triggerLabel": "Language settings",
+        "triggerLabel": "Language",
         "supportedLanguagesLabel": "Supported languages. Current selection: {language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "Primary navigation",
         "signUp": "Sign Up",
+        "signOut": "Sign Out",
+        "openMenu": "Open navigation menu",
+        "closeMenu": "Close navigation menu",
+        "howToPlayTriggerLabel": "How to play",
+        "howToPlayDescriptionLine1": "Claim a neighboring country each turn.",
+        "howToPlayDescriptionLine2": "No legal moves? You lose.",
+        "howToPlayDescriptionLine3": "That's it. Enjoy!",
+        "githubLabel": "GitHub",
+        "discordLabel": "Discord",
+        "languageLabel": "Language",
         "githubRepositoryLink": "GitHub repository link",
         "discordServerLink": "Discord server link"
       },

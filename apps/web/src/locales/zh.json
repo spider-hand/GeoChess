@@ -69,12 +69,22 @@
         "descriptionLine3": "就这样。祝你玩得开心！"
       },
       "LanguageSelector": {
-        "triggerLabel": "语言设置",
+        "triggerLabel": "语言",
         "supportedLanguagesLabel": "支持的语言。当前选择：{language}"
       },
       "NavigationHeader": {
         "primaryNavigationLabel": "主导航",
         "signUp": "注册",
+        "signOut": "退出登录",
+        "openMenu": "打开导航菜单",
+        "closeMenu": "关闭导航菜单",
+        "howToPlayTriggerLabel": "玩法说明",
+        "howToPlayDescriptionLine1": "每回合占领一个相邻的国家。",
+        "howToPlayDescriptionLine2": "没有合法走法？你输了。",
+        "howToPlayDescriptionLine3": "就这么简单。玩得开心！",
+        "githubLabel": "GitHub",
+        "discordLabel": "Discord",
+        "languageLabel": "语言",
         "githubRepositoryLink": "GitHub 仓库链接",
         "discordServerLink": "Discord 服务器链接"
       },

@@ -88,10 +88,16 @@ test("renders the home page for the root route", async () => {
     .element(getByRole("button", { name: "GeoChess" }))
     .toBeInTheDocument();
   await expect
+    .element(getByRole("button", { name: "Open navigation menu" }))
+    .toBeInTheDocument();
+
+  await getByRole("button", { name: "Open navigation menu" }).click();
+
+  await expect
     .element(getByRole("button", { name: "How to play" }))
     .toBeInTheDocument();
   await expect
-    .element(getByRole("button", { name: "Language settings" }))
+    .element(getByRole("button", { name: "Language" }))
     .toBeInTheDocument();
   await expect
     .element(
@@ -100,9 +106,6 @@ test("renders the home page for the root route", async () => {
     .toBeInTheDocument();
   await expect
     .element(getByRole("navigation", { name: "Footer navigation" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "GitHub", exact: true }))
     .toBeInTheDocument();
   await expect
     .element(getByRole("heading", { name: "Play vs AI" }))

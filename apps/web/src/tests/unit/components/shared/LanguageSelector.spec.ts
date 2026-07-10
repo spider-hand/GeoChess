@@ -16,7 +16,7 @@ test("is closed by default", async () => {
   });
 
   await expect
-    .element(getByRole("button", { name: "Language settings" }))
+    .element(getByRole("button", { name: "Language" }))
     .toBeInTheDocument();
   expect(container.querySelector('[role="menu"]')).toBeNull();
 });
@@ -28,7 +28,7 @@ test("opens and renders the supported languages", async () => {
     },
   });
 
-  await getByRole("button", { name: "Language settings" }).click();
+  await getByRole("button", { name: "Language" }).click();
 
   await expect.element(getByRole("menu")).toBeInTheDocument();
   await expect
@@ -65,7 +65,7 @@ test("selects a language, emits the value, and closes the menu", async () => {
     },
   });
 
-  await getByRole("button", { name: "Language settings" }).click();
+  await getByRole("button", { name: "Language" }).click();
   await getByRole("menuitemradio", { name: /日本語/ }).click();
 
   expect(onSelect).toHaveBeenCalledWith("ja");
@@ -79,7 +79,7 @@ test("reflects the selected state when reopened", async () => {
     },
   });
 
-  await getByRole("button", { name: "Paramètres de langue" }).click();
+  await getByRole("button", { name: "Langue" }).click();
 
   await expect
     .element(getByRole("menuitemradio", { name: /Français/ }))
@@ -93,14 +93,14 @@ test("closes on outside click and escape", async () => {
     },
   });
 
-  await getByRole("button", { name: "Language settings" }).click();
+  await getByRole("button", { name: "Language" }).click();
   await expect.element(getByRole("menu")).toBeInTheDocument();
 
   document.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   await nextTick();
   expect(container.querySelector('[role="menu"]')).toBeNull();
 
-  await getByRole("button", { name: "Language settings" }).click();
+  await getByRole("button", { name: "Language" }).click();
   await expect.element(getByRole("menu")).toBeInTheDocument();
 
   document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));

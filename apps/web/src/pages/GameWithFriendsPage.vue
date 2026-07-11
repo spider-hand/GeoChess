@@ -20,7 +20,7 @@ defineOptions({
 
     <section class="game-page__content">
       <TurnStatusStrip status="player" :current-turn="3" />
-      <CountdownTimer mode="countdown" :started-at-ms="Date.now()" />
+      <CountdownTimer :started-at-ms="Date.now()" />
 
       <div class="game-page__map-card-row">
         <GameMap class="game-page__map" :show-place-labels="false" />

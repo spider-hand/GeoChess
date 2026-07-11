@@ -69,9 +69,6 @@ const result = computed<"won" | "lost" | null>(() => {
 const currentTurn = computed(
   () => realtimeAiGame.value?.usedCountries.length ?? 0,
 );
-const timerMode = computed(() =>
-  turnStatus.value === "player" ? "countdown" : "elapsed",
-);
 const isMoveSelectionDisabled = computed(
   () =>
     turnStatus.value !== "player" ||
@@ -242,7 +239,6 @@ const handleExit = async () => {
           <ResultBadge v-else-if="result" :result="result" />
           <CountdownTimer
             v-if="!isFinished"
-            :mode="timerMode"
             :started-at-ms="timerStartedAtMs"
             :duration-ms="PLAYER_TURN_TIMEOUT_MS"
             :buffer-ms="PLAYER_TURN_TIMEOUT_BUFFER_MS"

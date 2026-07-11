@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
-type TimerMode = "countdown" | "elapsed";
-
 defineOptions({
   name: "GameCountdownTimer",
 });
@@ -11,7 +9,6 @@ const props = withDefaults(
   defineProps<{
     bufferMs?: number;
     durationMs?: number;
-    mode: TimerMode;
     startedAtMs: number;
   }>(),
   {
@@ -37,12 +34,7 @@ const countdownTargetMs = computed(
 const remainingMs = computed(() =>
   Math.max(0, countdownTargetMs.value - nowMs.value),
 );
-const elapsedMs = computed(() => Math.max(0, nowMs.value - props.startedAtMs));
-
-const displayMs = computed(() =>
-  props.mode === "countdown" ? remainingMs.value : elapsedMs.value,
-);
-const displaySeconds = computed(() => Math.floor(displayMs.value / 1_000));
+const displaySeconds = computed(() => Math.floor(remainingMs.value / 1_000));
 
 const formattedTime = computed(() => {
   const minutes = Math.floor(displaySeconds.value / 60);
@@ -52,10 +44,7 @@ const formattedTime = computed(() => {
 });
 
 const isDanger = computed(
-  () =>
-    props.mode === "countdown" &&
-    remainingMs.value > 0 &&
-    remainingMs.value < DANGER_THRESHOLD_MS,
+  () => remainingMs.value > 0 && remainingMs.value < DANGER_THRESHOLD_MS,
 );
 
 const clearTick = () => {
@@ -72,7 +61,7 @@ const tick = () => {
 
 // Reset the deadline key whenever the countdown target changes, so that we can emit `timeUp` again if the countdown restarts.
 watch(
-  () => `${props.mode}:${countdownTargetMs.value}`,
+  () => `${countdownTargetMs.value}`,
   () => {
     emittedDeadlineKey.value = null;
   },
@@ -81,9 +70,9 @@ watch(
 
 // Emit `timeUp` when the countdown reaches zero, but only once per countdown target.
 watch(
-  () => [props.mode, remainingMs.value, countdownTargetMs.value] as const,
-  ([mode, nextRemainingMs, targetMs]) => {
-    if (mode !== "countdown" || nextRemainingMs > 0) {
+  () => [remainingMs.value, countdownTargetMs.value] as const,
+  ([nextRemainingMs, targetMs]) => {
+    if (nextRemainingMs > 0) {
       return;
     }
 

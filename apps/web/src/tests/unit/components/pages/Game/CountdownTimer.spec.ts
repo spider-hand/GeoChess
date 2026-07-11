@@ -24,7 +24,6 @@ afterEach(() => {
 test("renders the countdown timer and starts at 01:00", async () => {
   const { getByRole, getByText } = render(CountdownTimer, {
     props: {
-      mode: "countdown",
       startedAtMs: nowMs,
     },
   });
@@ -36,7 +35,6 @@ test("renders the countdown timer and starts at 01:00", async () => {
 test("switches to the danger color when the remaining time drops below ten seconds", async () => {
   const { container, getByText } = render(CountdownTimer, {
     props: {
-      mode: "countdown",
       startedAtMs: nowMs,
     },
   });
@@ -49,24 +47,10 @@ test("switches to the danger color when the remaining time drops below ten secon
     .toHaveClass("countdown-timer__value--danger");
 });
 
-test("counts elapsed time while the AI is thinking", async () => {
-  const { getByText } = render(CountdownTimer, {
-    props: {
-      mode: "elapsed",
-      startedAtMs: nowMs,
-    },
-  });
-
-  await advanceBy(12_000);
-
-  await expect.element(getByText("00:12")).toBeVisible();
-});
-
 test("emits time-up once when the countdown reaches zero", async () => {
   const onTimeUp = vi.fn();
   const { getByText } = render(CountdownTimer, {
     props: {
-      mode: "countdown",
       startedAtMs: nowMs,
       bufferMs: 500,
       onTimeUp,

@@ -20,5 +20,18 @@ export default defineConfig({
       // https://vitest.dev/config/browser/playwright
       instances: [{ browser: "chromium" }],
     },
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html", "json-summary"],
+      reportsDirectory: "./coverage",
+      all: true,
+      include: ["src/**/*.{ts,vue}"],
+      exclude: [
+        "src/tests/**",
+        "src/stories/**",
+        "src/services/**",
+        "vitest.shims.d.ts",
+      ],
+    },
   },
 });

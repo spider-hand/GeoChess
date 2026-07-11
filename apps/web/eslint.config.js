@@ -9,7 +9,12 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   {
-    ignores: ["dist/**", "node_modules/**", "storybook-static/**"],
+    ignores: [
+      "coverage/**",
+      "dist/**",
+      "node_modules/**",
+      "storybook-static/**",
+    ],
   },
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,vue}"],

@@ -12,6 +12,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "test:browser": "vitest --config=vitest.browser.config.ts",
+    "test:browser:coverage": "vitest --config=vitest.browser.config.ts --run --coverage",
     "generate:api": "openapi-generator generate -i ../../server/openapi/openapi.yml -g typescript-fetch -o ./src/services/",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

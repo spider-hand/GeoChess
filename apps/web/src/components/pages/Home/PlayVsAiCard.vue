@@ -12,14 +12,9 @@ defineOptions({
 
 const { t } = useI18n();
 
-const props = withDefaults(
-  defineProps<{
-    isStartingGame?: boolean;
-  }>(),
-  {
-    isStartingGame: false,
-  },
-);
+const props = defineProps<{
+  isStartingGame: boolean;
+}>();
 
 const selectedDifficulty = ref<Difficulty>("medium");
 

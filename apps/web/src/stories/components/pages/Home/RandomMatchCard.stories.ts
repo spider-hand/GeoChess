@@ -7,6 +7,7 @@ const meta = {
   component: RandomMatchCard,
   tags: ["autodocs"],
   args: {
+    disabled: false,
     onlinePlayers: 40,
   },
 } satisfies Meta<typeof RandomMatchCard>;
@@ -20,5 +21,11 @@ export const Default: Story = {};
 export const OnePlayerOnline: Story = {
   args: {
     onlinePlayers: 1,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
   },
 };

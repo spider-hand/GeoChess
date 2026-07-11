@@ -6,6 +6,9 @@ import { createAppI18n } from "@/i18n";
 
 test("renders the card title and actions", async () => {
   const { getByRole } = render(PlayVsAiCard, {
+    props: {
+      isStartingGame: false,
+    },
     global: {
       plugins: [createAppI18n()],
     },
@@ -24,6 +27,9 @@ test("renders the card title and actions", async () => {
 
 test("defaults to medium and updates the selected branch on click", async () => {
   const { getByRole } = render(PlayVsAiCard, {
+    props: {
+      isStartingGame: false,
+    },
     global: {
       plugins: [createAppI18n()],
     },
@@ -63,6 +69,7 @@ test("emits the selected difficulty when starting an ai match", async () => {
   const onStartAiMatch = vi.fn();
   const { getByRole } = render(PlayVsAiCard, {
     props: {
+      isStartingGame: false,
       onStartAiMatch,
     },
     global: {

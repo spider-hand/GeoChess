@@ -50,8 +50,8 @@ const handleStartAiMatch = async (difficulty: Difficulty) => {
           :is-starting-game="isStartingAiGame"
           @start-ai-match="handleStartAiMatch"
         />
-        <PlayWithFriendsCard />
-        <RandomMatchCard :online-players="40" />
+        <PlayWithFriendsCard :disabled="isStartingAiGame" />
+        <RandomMatchCard :disabled="isStartingAiGame" :online-players="40" />
       </div>
     </section>
 

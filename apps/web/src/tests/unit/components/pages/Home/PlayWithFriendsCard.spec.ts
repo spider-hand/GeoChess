@@ -6,6 +6,9 @@ import { createAppI18n } from "@/i18n";
 
 test("renders the card actions and join controls", async () => {
   const { getByRole, getByText } = render(PlayWithFriendsCard, {
+    props: {
+      disabled: false,
+    },
     global: {
       plugins: [createAppI18n()],
     },
@@ -29,6 +32,9 @@ test("renders the card actions and join controls", async () => {
 
 test("normalizes the room key and shows validation after interaction", async () => {
   const { getByRole, getByText } = render(PlayWithFriendsCard, {
+    props: {
+      disabled: false,
+    },
     global: {
       plugins: [createAppI18n()],
     },
@@ -66,6 +72,7 @@ test("emits the expected action events", async () => {
   const onEnterFriendsRoom = vi.fn();
   const { getByRole } = render(PlayWithFriendsCard, {
     props: {
+      disabled: false,
       onCreateFriendsRoom,
       onEnterFriendsRoom,
     },
@@ -80,4 +87,23 @@ test("emits the expected action events", async () => {
 
   expect(onCreateFriendsRoom).toHaveBeenCalledTimes(1);
   expect(onEnterFriendsRoom).toHaveBeenCalledWith("654321");
+});
+
+test("disables all actions when disabled", async () => {
+  const { getByRole } = render(PlayWithFriendsCard, {
+    props: {
+      disabled: true,
+    },
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
+
+  await expect
+    .element(getByRole("button", { name: "Create Room" }))
+    .toBeDisabled();
+  await expect.element(getByRole("textbox")).toBeDisabled();
+  await expect
+    .element(getByRole("button", { name: "Enter Room" }))
+    .toBeDisabled();
 });

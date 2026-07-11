@@ -10,6 +10,10 @@ defineOptions({
   name: "HomePlayWithFriendsCard",
 });
 
+const props = defineProps<{
+  disabled: boolean;
+}>();
+
 const emit = defineEmits<{
   createFriendsRoom: [];
   enterFriendsRoom: [roomKey: string];
@@ -40,7 +44,8 @@ const shouldShowRoomKeyError = computed(
 );
 
 const isEnterRoomDisabled = computed(
-  () => roomKey.value.length !== 6 || Boolean(errorMessage.value),
+  () =>
+    props.disabled || roomKey.value.length !== 6 || Boolean(errorMessage.value),
 );
 
 const normalizeRoomKey = (value: string) => {
@@ -81,6 +86,7 @@ const submitEnterFriendsRoom = async () => {
 
     <Button
       class="play-with-friends-card__create-button"
+      :disabled="props.disabled"
       @click="emitCreateFriendsRoom"
     >
       {{ t("components.pages.Home.PlayWithFriendsCard.createRoom") }}
@@ -103,6 +109,7 @@ const submitEnterFriendsRoom = async () => {
           }"
           :placeholder="t('components.pages.Home.PlayWithFriendsCard.roomKey')"
           :value="roomKey"
+          :disabled="props.disabled"
           inputmode="numeric"
           maxlength="6"
           type="text"

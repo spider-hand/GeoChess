@@ -7,6 +7,7 @@ import { createAppI18n } from "@/i18n";
 test("renders the title, badge, and join action", async () => {
   const { getByRole, getByText } = render(RandomMatchCard, {
     props: {
+      disabled: false,
       onlinePlayers: 40,
     },
     global: {
@@ -26,6 +27,7 @@ test("renders the title, badge, and join action", async () => {
 test("renders singular and locale-formatted player counts", async () => {
   const { getByText, rerender } = render(RandomMatchCard, {
     props: {
+      disabled: false,
       onlinePlayers: 1,
     },
     global: {
@@ -36,6 +38,7 @@ test("renders singular and locale-formatted player counts", async () => {
   await expect.element(getByText("1 player online")).toBeVisible();
 
   await rerender({
+    disabled: false,
     onlinePlayers: 1200,
   });
 
@@ -46,6 +49,7 @@ test("emits joinRandomMatch when joining the lobby", async () => {
   const onJoinRandomMatch = vi.fn();
   const { getByRole } = render(RandomMatchCard, {
     props: {
+      disabled: false,
       onlinePlayers: 40,
       onJoinRandomMatch,
     },
@@ -57,4 +61,20 @@ test("emits joinRandomMatch when joining the lobby", async () => {
   await getByRole("button", { name: "Join Lobby" }).click();
 
   expect(onJoinRandomMatch).toHaveBeenCalledTimes(1);
+});
+
+test("disables join action when disabled", async () => {
+  const { getByRole } = render(RandomMatchCard, {
+    props: {
+      disabled: true,
+      onlinePlayers: 40,
+    },
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
+
+  await expect
+    .element(getByRole("button", { name: "Join Lobby" }))
+    .toBeDisabled();
 });

@@ -7,6 +7,9 @@ const meta = {
   title: "Components/Pages/Home/PlayVsAiCard",
   component: PlayVsAiCard,
   tags: ["autodocs"],
+  args: {
+    isStartingGame: false,
+  },
 } satisfies Meta<typeof PlayVsAiCard>;
 
 export default meta;

@@ -10,6 +10,7 @@ defineOptions({
 });
 
 const props = defineProps<{
+  disabled: boolean;
   onlinePlayers: number;
 }>();
 
@@ -53,7 +54,11 @@ const emitJoinRandomMatch = () => {
       </span>
     </div>
 
-    <Button class="random-match-card__join-button" @click="emitJoinRandomMatch">
+    <Button
+      class="random-match-card__join-button"
+      :disabled="props.disabled"
+      @click="emitJoinRandomMatch"
+    >
       {{ t("components.pages.Home.RandomMatchCard.joinLobby") }}
     </Button>
   </section>

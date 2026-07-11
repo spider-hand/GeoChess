@@ -7,6 +7,9 @@ const meta = {
   title: "Components/Pages/Home/PlayWithFriendsCard",
   component: PlayWithFriendsCard,
   tags: ["autodocs"],
+  args: {
+    disabled: false,
+  },
 } satisfies Meta<typeof PlayWithFriendsCard>;
 
 export default meta;
@@ -26,5 +29,11 @@ export const ValidationError: Story = {
     await expect(
       canvas.getByRole("button", { name: "Enter Room" }),
     ).toBeDisabled();
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
   },
 };

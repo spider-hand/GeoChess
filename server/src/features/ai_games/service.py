@@ -35,8 +35,11 @@ class AiGamesService:
         self.ai_games_repository = ai_games_repository or AiGamesRepository()
         self.users_repository = users_repository or UsersRepository()
 
+    def _get_ai_games_ref(self):
+        return firebase_db.reference("aiGames", app=get_firebase_app())
+
     def _get_game_ref(self, game_id: str):
-        return firebase_db.reference("aiGames", app=get_firebase_app()).child(game_id)
+        return self._get_ai_games_ref().child(game_id)
 
     def _compute_available_moves(
         self, country_code: str, used_countries: list[str]
@@ -353,4 +356,8 @@ class AiGamesService:
             return
 
     def delete_expired_ai_games(self) -> int:
-        return self.ai_games_repository.delete_expired_games()
+        deleted_game_ids = self.ai_games_repository.delete_expired_games()
+        if deleted_game_ids:
+            self._get_ai_games_ref().update({game_id: None for game_id in deleted_game_ids})
+
+        return len(deleted_game_ids)

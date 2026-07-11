@@ -617,10 +617,43 @@ def test_process_ai_game_move_finishes_game_when_ai_has_no_available_moves():
 
 def test_delete_expired_ai_games_returns_deleted_count():
     ai_games_repository = MagicMock()
-    ai_games_repository.delete_expired_games.return_value = 5
+    ai_games_repository.delete_expired_games.return_value = ["game-1", "game-2"]
     service = AiGamesService(ai_games_repository=ai_games_repository)
+    ai_games_ref = MagicMock()
 
-    deleted_count = service.delete_expired_ai_games()
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.firebase_db.reference",
+            lambda path, app: ai_games_ref,
+        )
 
-    assert deleted_count == 5
+        deleted_count = service.delete_expired_ai_games()
+
+    assert deleted_count == 2
     ai_games_repository.delete_expired_games.assert_called_once_with()
+    ai_games_ref.update.assert_called_once_with({"game-1": None, "game-2": None})
+
+
+def test_delete_expired_ai_games_skips_realtime_delete_when_nothing_was_deleted():
+    ai_games_repository = MagicMock()
+    ai_games_repository.delete_expired_games.return_value = []
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+    ai_games_ref = MagicMock()
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.firebase_db.reference",
+            lambda path, app: ai_games_ref,
+        )
+
+        deleted_count = service.delete_expired_ai_games()
+
+    assert deleted_count == 0
+    ai_games_repository.delete_expired_games.assert_called_once_with()
+    ai_games_ref.update.assert_not_called()

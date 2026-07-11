@@ -73,11 +73,12 @@ class AiGamesRepository:
                 (result, game_id),
             )
 
-    def delete_expired_games(self) -> int:
+    def delete_expired_games(self) -> list[str]:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute("""
                 DELETE FROM ai_games
                 WHERE created_at < NOW() - INTERVAL '30 days'
+                RETURNING id
                 """)
 
-            return cursor.rowcount
+            return [row["id"] for row in cursor.fetchall()]

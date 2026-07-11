@@ -29,15 +29,20 @@ def test_finish_game_updates_result_and_updated_at():
 
 def test_delete_expired_games_uses_strict_30_day_cutoff():
     connection, cursor = make_connection_and_cursor()
-    cursor.rowcount = 3
+    cursor.fetchall.return_value = [
+        {"id": "game-1"},
+        {"id": "game-2"},
+        {"id": "game-3"},
+    ]
 
     with patch("features.ai_games.repository.get_connection", return_value=connection):
-        deleted_count = AiGamesRepository().delete_expired_games()
+        deleted_ids = AiGamesRepository().delete_expired_games()
 
-    assert deleted_count == 3
+    assert deleted_ids == ["game-1", "game-2", "game-3"]
     cursor.execute.assert_called_once_with(
         """
                 DELETE FROM ai_games
                 WHERE created_at < NOW() - INTERVAL '30 days'
+                RETURNING id
                 """
     )

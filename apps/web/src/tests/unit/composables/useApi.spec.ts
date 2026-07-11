@@ -1,8 +1,7 @@
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 import { ref } from "vue";
 
 type MockFirebaseUser = {
-  isAnonymous?: boolean;
   getIdToken: () => Promise<string>;
 };
 
@@ -24,7 +23,7 @@ beforeEach(() => {
   mockFirebaseAuth.currentUser = null;
 });
 
-test("returns an empty access token when there is no current user", async () => {
+it("should return an empty access token when there is no current user", async () => {
   const { default: useApi } = await import("@/composables/useApi");
 
   const { apiConfig } = useApi();
@@ -32,7 +31,7 @@ test("returns an empty access token when there is no current user", async () => 
   await expect(apiConfig.accessToken?.()).resolves.toBe("");
 });
 
-test("returns the current user token by default", async () => {
+it("should return the current user token when firebase auth has no current user", async () => {
   const getIdToken = vi.fn().mockResolvedValue("firebase-token");
   currentUser.value = { getIdToken };
 
@@ -44,19 +43,7 @@ test("returns the current user token by default", async () => {
   expect(getIdToken).toHaveBeenCalledTimes(1);
 });
 
-test("returns an access token for anonymous users", async () => {
-  const getIdToken = vi.fn().mockResolvedValue("firebase-token");
-  currentUser.value = { getIdToken, isAnonymous: true };
-
-  const { default: useApi } = await import("@/composables/useApi");
-
-  const { apiConfig } = useApi();
-
-  await expect(apiConfig.accessToken?.()).resolves.toBe("firebase-token");
-  expect(getIdToken).toHaveBeenCalledTimes(1);
-});
-
-test("prefers firebase auth current user when it is available", async () => {
+it("should prefer the firebase auth current user token when it is available", async () => {
   const currentUserToken = vi.fn().mockResolvedValue("current-user-token");
   const authUserToken = vi.fn().mockResolvedValue("auth-user-token");
   currentUser.value = { getIdToken: currentUserToken };

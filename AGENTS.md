@@ -29,8 +29,12 @@ Key paths are below:
 
 - Always create files for unit tests and stories when creating a new component
 - Always write one story per meaningful branch
-- Always write unit tests with a focus on branch coverage. Make sure to test rendered structure, emitted events, state branches and composed component branches
-- Do not add test cases unless they cover a meaningful runtime branch; do not add duplicate cases for the same branch or cases for states that cannot occur in production.
+- Always use `it("should ...")` for test cases
+- Always include one default-state test when it helps establish the baseline render; name it `should render the default state properly`
+- Do not create test cases for behavior that is neither user-visible nor exposed as a public outcome such as an emitted event, navigation, or child props owned by the current unit
+- Do not create test cases for something that doesn't have visible output, except for checking emitted events
+- Always use `it.each(...)` for repeated scenarios of the same behavior across multiple meaningful inputs
+- Do not assert child component internals from parent or page tests unless the parent is explicitly responsible for that output
 - Do not manually modify files under `apps/web/src/services/`
 - Always use arrow functions unless there is a specific reason to avoid them
 - Always create a composable to manage server state, instead of using `fetch`. If it doesn't have to manage the state of the API response, the file name should be `use{api-name}Api.ts` (e.g. `useHealthApi.ts`). If it manages the state of API responses, the file name should be `use{api-name}Query.ts` (e.g. `useUserQuery.ts`)

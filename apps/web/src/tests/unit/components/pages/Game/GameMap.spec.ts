@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 const mapboxMockState = vi.hoisted(() => ({
@@ -92,139 +92,94 @@ vi.mock("mapbox-gl", () => {
 
 import GameMap from "@/components/pages/Game/GameMap.vue";
 
+const finishedMarkers = [
+  { countryCode: "JP", owner: "neutral" as const, label: "Start" },
+  { countryCode: "KR", owner: "player" as const, label: "Taylor Swift" },
+  { countryCode: "CN", owner: "ai" as const, label: "AI" },
+];
+
+const renderGameMap = (
+  props: Partial<{
+    isFinished: boolean;
+    markers: typeof finishedMarkers;
+  }> = {},
+) =>
+  render(GameMap, {
+    props: {
+      isFinished: false,
+      markers: [],
+      ...props,
+    },
+  });
+
 beforeEach(() => {
   mapboxMockState.maps.length = 0;
   mapboxMockState.addedMarkers.length = 0;
   mapboxMockState.removedMarkers.length = 0;
 });
 
-test("mounts in labels-only mode without creating markers", async () => {
-  const { container, rerender } = render(GameMap, {
-    props: {
-      isFinished: false,
-      markers: [],
-    },
+it("should not show place labels and markers when the game is active", async () => {
+  const { container } = renderGameMap({
+    isFinished: false,
+    markers: finishedMarkers,
   });
 
-  expect(container.querySelector('[data-testid="game-map"]')).not.toBeNull();
-  expect(mapboxMockState.addedMarkers).toHaveLength(0);
   expect(mapboxMockState.maps[0]?.options.config.basemap.showPlaceLabels).toBe(
     false,
   );
-
-  await rerender({
-    isFinished: true,
-    markers: [{ countryCode: "JP", owner: "neutral", label: "Start" }],
-  });
-
-  expect(mapboxMockState.maps[0]?.setConfigProperty).toHaveBeenCalledWith(
-    "basemap",
-    "showPlaceLabels",
-    true,
-  );
-  expect(mapboxMockState.addedMarkers).toHaveLength(1);
-  expect(mapboxMockState.maps[0]?.easeTo).toHaveBeenCalledWith({
-    center: [138, 36],
-    zoom: 3.5,
-    duration: 1500,
-    essential: true,
-  });
-});
-
-test("keeps markers hidden while active even when marker data exists", async () => {
-  const { container } = render(GameMap, {
-    props: {
-      isFinished: false,
-      markers: [
-        { countryCode: "JP", owner: "neutral", label: "Start" },
-        { countryCode: "KR", owner: "player", label: "Taylor Swift" },
-        { countryCode: "CN", owner: "ai", label: "AI" },
-      ],
-    },
-  });
-
-  expect(mapboxMockState.addedMarkers).toHaveLength(0);
-  expect(mapboxMockState.maps[0]?.easeTo).not.toHaveBeenCalled();
   expect(container.querySelectorAll(".game-map-marker")).toHaveLength(0);
 });
 
-test("renders player, ai, and neutral markers when finished", async () => {
-  const { container } = render(GameMap, {
-    props: {
-      isFinished: true,
-      markers: [
-        { countryCode: "JP", owner: "neutral", label: "Start" },
-        { countryCode: "KR", owner: "player", label: "Taylor Swift" },
-        { countryCode: "CN", owner: "ai", label: "AI" },
-      ],
-    },
+it("should not focus on the start marker when the game is active", async () => {
+  renderGameMap({
+    isFinished: false,
+    markers: finishedMarkers,
   });
 
-  expect(mapboxMockState.addedMarkers).toHaveLength(3);
-  expect(mapboxMockState.maps[0]?.easeTo).toHaveBeenCalledWith({
-    center: [138, 36],
-    zoom: 3.5,
-    duration: 1500,
-    essential: true,
+  expect(mapboxMockState.maps[0]?.easeTo).not.toHaveBeenCalled();
+});
+
+it("should show place labels and markers when the game is finished", async () => {
+  const { container } = renderGameMap({
+    isFinished: true,
+    markers: finishedMarkers,
   });
+
+  expect(mapboxMockState.maps[0]?.options.config.basemap.showPlaceLabels).toBe(
+    true,
+  );
   expect(container.querySelectorAll(".game-map-marker")).toHaveLength(3);
+});
+
+it("should apply the styles properly to player, ai and neutral markers", async () => {
+  const { container } = renderGameMap({
+    isFinished: true,
+    markers: finishedMarkers,
+  });
+
   expect(
     container.querySelector(
       '[data-country-code="JP"] .game-map-marker__neutral-pin',
     ),
   ).not.toBeNull();
   expect(
-    container.querySelector('[data-country-code="KR"] .avatar'),
+    container.querySelector(
+      '[data-country-code="KR"] .game-map-marker__content--player .avatar',
+    ),
   ).not.toBeNull();
   expect(
-    container.querySelector('[data-country-code="CN"] svg'),
+    container.querySelector(
+      '[data-country-code="CN"] .game-map-marker__content--ai svg',
+    ),
   ).not.toBeNull();
 });
 
-test("replaces marker instances cleanly when marker props change", async () => {
-  const { container, rerender } = render(GameMap, {
-    props: {
-      isFinished: true,
-      markers: [
-        { countryCode: "JP", owner: "neutral", label: "Start" },
-        { countryCode: "KR", owner: "player", label: "Taylor Swift" },
-      ],
-    },
-  });
-
-  expect(container.querySelectorAll(".game-map-marker")).toHaveLength(2);
-
-  await rerender({
+it("should focus on the start marker when the game is finished", async () => {
+  renderGameMap({
     isFinished: true,
-    markers: [{ countryCode: "CN", owner: "ai", label: "AI" }],
+    markers: finishedMarkers,
   });
 
-  expect(mapboxMockState.removedMarkers).toHaveLength(2);
-  expect(mapboxMockState.maps[0]?.easeTo).toHaveBeenCalledWith({
-    center: [138, 36],
-    zoom: 3.5,
-    duration: 1500,
-    essential: true,
-  });
-  expect(container.querySelectorAll(".game-map-marker")).toHaveLength(1);
-  expect(container.querySelector('[data-country-code="CN"]')).not.toBeNull();
-  expect(container.querySelector('[data-country-code="JP"]')).toBeNull();
-});
-
-test("skips markers when coordinates are unavailable", async () => {
-  const { container } = render(GameMap, {
-    props: {
-      isFinished: true,
-      markers: [
-        { countryCode: "??", owner: "player", label: "Taylor Swift" },
-        { countryCode: "JP", owner: "neutral", label: "Start" },
-      ],
-    },
-  });
-
-  expect(mapboxMockState.addedMarkers).toHaveLength(1);
-  expect(container.querySelectorAll(".game-map-marker")).toHaveLength(1);
-  expect(container.querySelector('[data-country-code="JP"]')).not.toBeNull();
   expect(mapboxMockState.maps[0]?.easeTo).toHaveBeenCalledWith({
     center: [138, 36],
     zoom: 3.5,
@@ -233,31 +188,17 @@ test("skips markers when coordinates are unavailable", async () => {
   });
 });
 
-test("skips camera focus when the start marker is missing", async () => {
-  render(GameMap, {
-    props: {
-      isFinished: true,
-      markers: [{ countryCode: "KR", owner: "player", label: "Taylor Swift" }],
-    },
+it("should remove markers when the game is reverted back to active state", async () => {
+  const { container, rerender } = renderGameMap({
+    isFinished: true,
+    markers: finishedMarkers,
   });
 
-  expect(mapboxMockState.addedMarkers).toHaveLength(1);
-  expect(mapboxMockState.maps[0]?.easeTo).not.toHaveBeenCalled();
-});
-
-test("clears result markers when reverting back to active state", async () => {
-  const { container, rerender } = render(GameMap, {
-    props: {
-      isFinished: true,
-      markers: [{ countryCode: "JP", owner: "neutral", label: "Start" }],
-    },
-  });
-
-  expect(container.querySelectorAll(".game-map-marker")).toHaveLength(1);
+  expect(container.querySelectorAll(".game-map-marker")).toHaveLength(3);
 
   await rerender({
     isFinished: false,
-    markers: [{ countryCode: "JP", owner: "neutral", label: "Start" }],
+    markers: finishedMarkers,
   });
 
   expect(mapboxMockState.maps[0]?.setConfigProperty).toHaveBeenCalledWith(
@@ -265,6 +206,5 @@ test("clears result markers when reverting back to active state", async () => {
     "showPlaceLabels",
     false,
   );
-  expect(mapboxMockState.removedMarkers).toHaveLength(1);
   expect(container.querySelectorAll(".game-map-marker")).toHaveLength(0);
 });

@@ -1,12 +1,13 @@
-import { expect, test, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
-import IconButton from "../../../../components/shared/IconButton.vue";
+import IconButton from "@/components/shared/IconButton.vue";
 
-test("renders slot content with the accessibility label", async () => {
-  const { getByRole } = render(IconButton, {
+const renderIconButton = (props: Record<string, unknown> = {}) =>
+  render(IconButton, {
     props: {
       ariaLabel: "Language",
+      ...props,
     },
     slots: {
       default:
@@ -14,63 +15,41 @@ test("renders slot content with the accessibility label", async () => {
     },
   });
 
+it("should render the default state properly", async () => {
+  const { getByRole } = renderIconButton();
+
   await expect
     .element(getByRole("button", { name: "Language" }))
     .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "Language" }))
+    .toHaveClass("icon-button--md");
 });
 
-test("applies size branches", async () => {
-  const { getByRole, rerender } = render(IconButton, {
-    props: {
-      ariaLabel: "Settings",
-      size: "md",
-    },
-    slots: {
-      default: '<svg aria-hidden="true" viewBox="0 0 24 24"></svg>',
-    },
-  });
+it("should apply the compact size", async () => {
+  const { getByRole } = renderIconButton({ size: "compact" });
 
-  const button = getByRole("button", { name: "Settings" });
-
-  await expect.element(button).toHaveClass("icon-button--md");
-
-  await rerender({
-    ariaLabel: "Settings",
-    size: "compact",
-  });
-  await expect.element(button).toHaveClass("icon-button--compact");
+  await expect
+    .element(getByRole("button", { name: "Language" }))
+    .toHaveClass("icon-button--compact");
 });
 
-test("emits click when enabled", async () => {
+it("should emit click when enabled", async () => {
   const onClick = vi.fn();
-  const { getByRole } = render(IconButton, {
-    props: {
-      ariaLabel: "Language",
-      onClick,
-    },
-    slots: {
-      default: '<svg aria-hidden="true" viewBox="0 0 24 24"></svg>',
-    },
-  });
+  const { getByRole } = renderIconButton({ onClick });
 
   await getByRole("button", { name: "Language" }).click();
 
   expect(onClick).toHaveBeenCalledTimes(1);
 });
 
-test("applies the disabled branch", async () => {
-  const { getByRole } = render(IconButton, {
-    props: {
-      ariaLabel: "Language",
-      disabled: true,
-    },
-    slots: {
-      default: '<svg aria-hidden="true" viewBox="0 0 24 24"></svg>',
-    },
-  });
+it("should apply the disabled state", async () => {
+  const { getByRole } = renderIconButton({ disabled: true });
 
-  const button = getByRole("button", { name: "Language" });
-
-  await expect.element(button).toBeDisabled();
-  await expect.element(button).toHaveClass("icon-button--disabled");
+  await expect
+    .element(getByRole("button", { name: "Language" }))
+    .toBeDisabled();
+  await expect
+    .element(getByRole("button", { name: "Language" }))
+    .toHaveClass("icon-button--disabled");
 });

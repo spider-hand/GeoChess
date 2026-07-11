@@ -1,5 +1,5 @@
 import { nextTick } from "vue";
-import { afterEach, beforeEach, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import CountdownTimer from "@/components/pages/Game/CountdownTimer.vue";
@@ -11,6 +11,16 @@ const advanceBy = async (ms: number) => {
   await nextTick();
 };
 
+const renderCountdownTimer = (
+  props: Partial<{ startedAtMs: number } & { onTimeUp: () => void }> = {},
+) =>
+  render(CountdownTimer, {
+    props: {
+      startedAtMs: nowMs,
+      ...props,
+    },
+  });
+
 beforeEach(() => {
   nowMs = 1_751_155_200_000;
   vi.useFakeTimers();
@@ -21,23 +31,15 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-test("renders the countdown timer and starts at 01:00", async () => {
-  const { getByRole, getByText } = render(CountdownTimer, {
-    props: {
-      startedAtMs: nowMs,
-    },
-  });
+it("should render the default state properly", async () => {
+  const { getByRole, getByText } = renderCountdownTimer();
 
   await expect.element(getByRole("timer")).toBeVisible();
   await expect.element(getByText("01:00")).toBeVisible();
 });
 
-test("switches to the danger color when the remaining time drops below ten seconds", async () => {
-  const { container, getByText } = render(CountdownTimer, {
-    props: {
-      startedAtMs: nowMs,
-    },
-  });
+it("should apply the danger class when the remaining time is below 10 seconds", async () => {
+  const { container, getByText } = renderCountdownTimer();
 
   await advanceBy(51_000);
 
@@ -47,20 +49,22 @@ test("switches to the danger color when the remaining time drops below ten secon
     .toHaveClass("countdown-timer__value--danger");
 });
 
-test("emits time-up once when the countdown reaches zero", async () => {
+it("should emit time-up event when the countdown reaches zero", async () => {
   const onTimeUp = vi.fn();
-  const { getByText } = render(CountdownTimer, {
-    props: {
-      startedAtMs: nowMs,
-      onTimeUp,
-    },
-  });
+  const { getByText } = renderCountdownTimer({ onTimeUp });
 
   await advanceBy(60_500);
 
   await expect.element(getByText("00:00")).toBeVisible();
   expect(onTimeUp).toHaveBeenCalledTimes(1);
+});
 
+it("should not emit time-up event multiple times when the countdown reaches zero", async () => {
+  const onTimeUp = vi.fn();
+
+  renderCountdownTimer({ onTimeUp });
+
+  await advanceBy(60_500);
   await advanceBy(5_000);
 
   expect(onTimeUp).toHaveBeenCalledTimes(1);

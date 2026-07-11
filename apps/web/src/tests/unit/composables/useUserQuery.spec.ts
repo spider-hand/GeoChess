@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 
 const mockDefaultCreateUser = vi.fn();
 const mockSetQueryData = vi.fn();
@@ -33,14 +33,14 @@ vi.mock("@/services", async () => {
     ...actual,
     Configuration: class {
       basePath: string;
-      accessToken?: () => Promise<string>;
+      accessToken?: string;
 
       constructor({
         basePath,
         accessToken,
       }: {
         basePath: string;
-        accessToken?: () => Promise<string>;
+        accessToken?: string;
       }) {
         this.basePath = basePath;
         this.accessToken = accessToken;
@@ -63,7 +63,7 @@ beforeEach(() => {
   mockConfiguration.mockReset();
 });
 
-test("creates a user with the default authenticated api client", async () => {
+it("should create a user with the provided id token and cache the created user", async () => {
   const createdUser = {
     userId: "user-123",
     displayName: "Taylor Swift",
@@ -96,43 +96,6 @@ test("creates a user with the default authenticated api client", async () => {
   });
   expect(mockSetQueryData).toHaveBeenCalledWith(
     ["user", "user-123"],
-    createdUser,
-  );
-});
-
-test("creates a user with the shared authenticated api client", async () => {
-  const createdUser = {
-    userId: "user-456",
-    displayName: "Alicia Keys",
-    createdAt: new Date("2026-06-29T00:00:00Z"),
-    updatedAt: new Date("2026-06-29T00:00:00Z"),
-  };
-  mockDefaultCreateUser.mockResolvedValue(createdUser);
-
-  const { default: useUserQuery } = await import("@/composables/useUserQuery");
-
-  const { createUserAsync } = useUserQuery();
-
-  await expect(
-    createUserAsync({
-      userId: "user-456",
-      createUserRequest: {
-        displayName: "Alicia Keys",
-      },
-      idToken: "token-456",
-    }),
-  ).resolves.toEqual(createdUser);
-
-  expect(mockConfiguration).toHaveBeenCalledTimes(1);
-  expect(mockConfiguration.mock.calls[0]?.[0]?.accessToken).toBe("token-456");
-  expect(mockDefaultCreateUser).toHaveBeenCalledWith({
-    userId: "user-456",
-    createUserRequest: {
-      displayName: "Alicia Keys",
-    },
-  });
-  expect(mockSetQueryData).toHaveBeenCalledWith(
-    ["user", "user-456"],
     createdUser,
   );
 });

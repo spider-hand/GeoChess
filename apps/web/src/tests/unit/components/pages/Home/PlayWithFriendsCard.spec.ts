@@ -1,10 +1,10 @@
-import { expect, test, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import PlayWithFriendsCard from "@/components/pages/Home/PlayWithFriendsCard.vue";
 import { createAppI18n } from "@/i18n";
 
-test("renders the card actions and join controls", async () => {
+it("should render the default state properly", async () => {
   const { getByRole, getByText } = render(PlayWithFriendsCard, {
     props: {
       disabled: false,
@@ -30,7 +30,7 @@ test("renders the card actions and join controls", async () => {
     .toBeDisabled();
 });
 
-test("normalizes the room key and shows validation after interaction", async () => {
+it("should normalize the room key and show validation after invalid interaction", async () => {
   const { getByRole, getByText } = render(PlayWithFriendsCard, {
     props: {
       disabled: false,
@@ -67,7 +67,7 @@ test("normalizes the room key and shows validation after interaction", async () 
     .toBeDisabled();
 });
 
-test("emits the expected action events", async () => {
+it("should emit the expected action events", async () => {
   const onCreateFriendsRoom = vi.fn();
   const onEnterFriendsRoom = vi.fn();
   const { getByRole } = render(PlayWithFriendsCard, {
@@ -89,7 +89,7 @@ test("emits the expected action events", async () => {
   expect(onEnterFriendsRoom).toHaveBeenCalledWith("654321");
 });
 
-test("disables all actions when disabled", async () => {
+it("should disable all actions when disabled", async () => {
   const { getByRole } = render(PlayWithFriendsCard, {
     props: {
       disabled: true,

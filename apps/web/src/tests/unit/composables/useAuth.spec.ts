@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 import { ref } from "vue";
 
 type MockFirebaseUser = {
@@ -48,7 +48,47 @@ beforeEach(() => {
   mockCreateUserAsync.mockReset();
 });
 
-test("reuses the current user for anonymous sign in when already authenticated", async () => {
+it.each([
+  {
+    currentUser: { uid: "user-123" },
+    expectedUsername: "Guest",
+    isAnonymousUser: false,
+    isAuthenticatedUser: true,
+  },
+  {
+    currentUser: { uid: "guest-123", isAnonymous: true },
+    expectedUsername: "Guest",
+    isAnonymousUser: true,
+    isAuthenticatedUser: true,
+  },
+  {
+    currentUser: { uid: "user-456", displayName: "  Taylor Swift  " },
+    expectedUsername: "Taylor Swift",
+    isAnonymousUser: false,
+    isAuthenticatedUser: true,
+  },
+])(
+  "should expose the public auth state for $expectedUsername",
+  async ({
+    currentUser: nextCurrentUser,
+    expectedUsername,
+    isAnonymousUser,
+    isAuthenticatedUser,
+  }) => {
+    currentUser.value = nextCurrentUser;
+
+    const { useAuth } = await import("@/composables/useAuth");
+
+    const auth = useAuth();
+
+    expect(auth.username.value).toBe(expectedUsername);
+    expect(auth.isAnonymousUser.value).toBe(isAnonymousUser);
+    expect(auth.isAuthenticatedUser.value).toBe(isAuthenticatedUser);
+    expect(auth.isCurrentUserLoaded.value).toBe(true);
+  },
+);
+
+it("should reuse the current user for anonymous sign in when already authenticated", async () => {
   const existingUser = { uid: "user-123" };
   mockGetCurrentUser.mockResolvedValue(existingUser);
 
@@ -58,7 +98,7 @@ test("reuses the current user for anonymous sign in when already authenticated",
   expect(mockSignInAnonymously).not.toHaveBeenCalled();
 });
 
-test("signs in anonymously when there is no current user", async () => {
+it("should sign in anonymously when there is no current user", async () => {
   mockGetCurrentUser.mockResolvedValue(null);
   mockSignInAnonymously.mockResolvedValue({ user: { uid: "guest-123" } });
 
@@ -70,7 +110,7 @@ test("signs in anonymously when there is no current user", async () => {
   expect(mockSignInAnonymously).toHaveBeenCalledTimes(1);
 });
 
-test("signs out the anonymous user before starting google sign in and saves the user record", async () => {
+it("should sign out the anonymous user before starting google sign in and save the user record", async () => {
   mockGetCurrentUser.mockResolvedValue({ isAnonymous: true });
   mockSignInWithPopup.mockResolvedValue({
     user: {
@@ -96,7 +136,26 @@ test("signs out the anonymous user before starting google sign in and saves the 
   });
 });
 
-test("signs the user back out when user creation fails", async () => {
+it("should sign the user out when the authenticated user has no display name", async () => {
+  mockGetCurrentUser.mockResolvedValue(null);
+  mockSignInWithPopup.mockResolvedValue({
+    user: {
+      uid: "user-123",
+      displayName: "   ",
+      getIdToken: vi.fn().mockResolvedValue("token"),
+    },
+  });
+
+  const { useAuth } = await import("@/composables/useAuth");
+
+  await expect(useAuth().signInWithGoogle()).rejects.toThrow(
+    "Authenticated user must have a display name.",
+  );
+  expect(mockCreateUserAsync).not.toHaveBeenCalled();
+  expect(mockSignOut).toHaveBeenCalledTimes(1);
+});
+
+it("should sign the user out when saving the authenticated user fails", async () => {
   mockGetCurrentUser.mockResolvedValue(null);
   mockSignInWithPopup.mockResolvedValue({
     user: {

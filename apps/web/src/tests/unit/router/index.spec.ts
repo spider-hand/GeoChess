@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 
 const mockEnsureVsAiAccess = vi.fn();
 
@@ -21,7 +21,20 @@ beforeEach(() => {
   mockEnsureVsAiAccess.mockReset();
 });
 
-test("allows entry to the vs ai route after auth is ensured", async () => {
+it.each(["/", "/game/with-friends", "/game/random-match"])(
+  "should allow navigation to %s without requiring vs ai auth",
+  async (path) => {
+    const { default: router } = await import("@/router");
+
+    await router.push(path);
+    await router.isReady();
+
+    expect(mockEnsureVsAiAccess).not.toHaveBeenCalled();
+    expect(router.currentRoute.value.path).toBe(path);
+  },
+);
+
+it("should allow entry to the vs ai route after auth is ensured", async () => {
   mockEnsureVsAiAccess.mockResolvedValue({ isAnonymous: true });
 
   const { default: router } = await import("@/router");
@@ -34,7 +47,7 @@ test("allows entry to the vs ai route after auth is ensured", async () => {
   expect(router.currentRoute.value.path).toBe("/game/vs-ai/game-123");
 });
 
-test("redirects to home when the vs ai auth guard fails", async () => {
+it("should redirect to home when the vs ai auth guard fails", async () => {
   mockEnsureVsAiAccess.mockRejectedValue(new Error("auth failed"));
 
   const { default: router } = await import("@/router");

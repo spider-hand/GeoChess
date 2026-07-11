@@ -1,4 +1,4 @@
-import { expect, test, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 vi.mock("@/composables/useAuth", () => ({
@@ -15,10 +15,65 @@ vi.mock("@/composables/useAuth", () => ({
   }),
 }));
 
+vi.mock("@/components/pages/Game/TurnStatusStrip.vue", () => ({
+  default: {
+    name: "TurnStatusStrip",
+    props: ["status", "currentTurn"],
+    template:
+      '<div data-testid="turn-status-strip" :data-status="status" :data-current-turn="String(currentTurn)" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/CountdownTimer.vue", () => ({
+  default: {
+    name: "CountdownTimer",
+    props: ["startedAtMs"],
+    template: '<div data-testid="countdown-timer" />',
+  },
+}));
+
 vi.mock("@/components/pages/Game/GameMap.vue", () => ({
   default: {
     name: "GameMap",
-    template: '<div class="game-map" data-testid="game-map" />',
+    props: ["isFinished"],
+    template:
+      '<div data-testid="game-map" :data-is-finished="String(isFinished)" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/AvailableMovesCard.vue", () => ({
+  default: {
+    name: "AvailableMovesCard",
+    props: ["availableMoves", "isAiTurn", "isSelecting", "isSelectDisabled"],
+    template:
+      '<div data-testid="available-moves-card" :data-moves="String(availableMoves.length)" :data-is-ai-turn="String(isAiTurn)" :data-is-selecting="String(isSelecting)" :data-is-select-disabled="String(isSelectDisabled)" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/PathHistoryCard.vue", () => ({
+  default: {
+    name: "PathHistoryCard",
+    props: ["historySteps"],
+    template:
+      '<div data-testid="path-history-card" :data-steps="String(historySteps.length)" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/PathResultCard.vue", () => ({
+  default: {
+    name: "PathResultCard",
+    props: ["resultSteps"],
+    template:
+      '<div data-testid="path-result-card" :data-steps="String(resultSteps.length)" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/PlayerMatchupCard.vue", () => ({
+  default: {
+    name: "PlayerMatchupCard",
+    props: ["playerName"],
+    template:
+      '<div data-testid="player-matchup-card" :data-player-name="playerName" />',
   },
 }));
 
@@ -26,34 +81,45 @@ import App from "@/App.vue";
 import { createAppI18n } from "@/i18n";
 import router from "@/router";
 
-test("renders the game random match page route", async () => {
+it("should render the default state properly", async () => {
   await router.push("/game/random-match");
   await router.isReady();
 
-  const { container, getByRole, getByText } = render(App, {
+  const { container } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
   });
 
-  await expect
-    .element(getByRole("heading", { name: "Available Moves" }))
-    .toBeInTheDocument();
-  await expect.element(getByRole("timer")).toBeInTheDocument();
-  expect(container.querySelectorAll(".game-page__map-card-row")).toHaveLength(
-    2,
-  );
+  expect(
+    container.querySelector('[data-testid="turn-status-strip"]'),
+  ).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="countdown-timer"]'),
+  ).not.toBeNull();
   expect(container.querySelectorAll('[data-testid="game-map"]')).toHaveLength(
     2,
   );
   expect(
-    Array.from(container.querySelectorAll("h2")).filter(
-      (heading) => heading.textContent === "Path History",
-    ),
-  ).toHaveLength(2);
-  await expect.element(getByText("vs")).toBeInTheDocument();
-  await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
-  await expect
-    .element(getByRole("navigation", { name: "Footer navigation" }))
-    .toBeInTheDocument();
+    container
+      .querySelectorAll('[data-testid="game-map"]')[0]
+      ?.getAttribute("data-is-finished"),
+  ).toBe("false");
+  expect(
+    container
+      .querySelectorAll('[data-testid="game-map"]')[1]
+      ?.getAttribute("data-is-finished"),
+  ).toBe("true");
+  expect(
+    container.querySelector('[data-testid="available-moves-card"]'),
+  ).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="path-history-card"]'),
+  ).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="path-result-card"]'),
+  ).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="player-matchup-card"]'),
+  ).not.toBeNull();
 });

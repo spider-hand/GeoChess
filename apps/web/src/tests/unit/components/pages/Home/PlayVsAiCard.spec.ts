@@ -1,10 +1,10 @@
-import { expect, test, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import PlayVsAiCard from "@/components/pages/Home/PlayVsAiCard.vue";
 import { createAppI18n } from "@/i18n";
 
-test("renders the card title and actions", async () => {
+it("should render the default state properly", async () => {
   const { getByRole } = render(PlayVsAiCard, {
     props: {
       isStartingGame: false,
@@ -25,7 +25,7 @@ test("renders the card title and actions", async () => {
     .toBeVisible();
 });
 
-test("defaults to medium and updates the selected branch on click", async () => {
+it("should update the selected difficulty when a difficulty button is clicked", async () => {
   const { getByRole } = render(PlayVsAiCard, {
     props: {
       isStartingGame: false,
@@ -65,28 +65,32 @@ test("defaults to medium and updates the selected branch on click", async () => 
   ).toBe(false);
 });
 
-test("emits the selected difficulty when starting an ai match", async () => {
-  const onStartAiMatch = vi.fn();
-  const { getByRole } = render(PlayVsAiCard, {
-    props: {
-      isStartingGame: false,
-      onStartAiMatch,
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
+it.each([
+  { difficultyLabel: "Easy", emittedDifficulty: "easy" as const },
+  { difficultyLabel: "Hard", emittedDifficulty: "hard" as const },
+])(
+  "should emit $emittedDifficulty when starting an ai match",
+  async ({ difficultyLabel, emittedDifficulty }) => {
+    const onStartAiMatch = vi.fn();
+    const { getByRole } = render(PlayVsAiCard, {
+      props: {
+        isStartingGame: false,
+        onStartAiMatch,
+      },
+      global: {
+        plugins: [createAppI18n()],
+      },
+    });
 
-  await getByRole("button", { name: "Easy" }).click();
-  await getByRole("button", { name: "Start Game" }).click();
-  await getByRole("button", { name: "Hard" }).click();
-  await getByRole("button", { name: "Start Game" }).click();
+    await getByRole("button", { name: difficultyLabel }).click();
+    await getByRole("button", { name: "Start Game" }).click();
 
-  expect(onStartAiMatch).toHaveBeenNthCalledWith(1, "easy");
-  expect(onStartAiMatch).toHaveBeenNthCalledWith(2, "hard");
-});
+    expect(onStartAiMatch).toHaveBeenCalledWith(emittedDifficulty);
+    expect(onStartAiMatch).toHaveBeenCalledTimes(1);
+  },
+);
 
-test("applies the loading branch while starting a game", async () => {
+it("should disable all actions while starting a game", async () => {
   const { getByRole } = render(PlayVsAiCard, {
     props: {
       isStartingGame: true,

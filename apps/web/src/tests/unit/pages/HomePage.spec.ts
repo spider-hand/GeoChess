@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { ref } from "vue";
 
@@ -49,6 +49,34 @@ vi.mock("@/composables/useRealtimeAiGame", () => ({
   }),
 }));
 
+vi.mock("@/components/pages/Home/PlayVsAiCard.vue", () => ({
+  default: {
+    name: "PlayVsAiCard",
+    props: ["isStartingGame"],
+    emits: ["start-ai-match"],
+    template:
+      '<div data-testid="play-vs-ai-card" :data-is-starting-game="String(isStartingGame)"><button @click="$emit(\'start-ai-match\', \'hard\')">Start mocked AI game</button></div>',
+  },
+}));
+
+vi.mock("@/components/pages/Home/PlayWithFriendsCard.vue", () => ({
+  default: {
+    name: "PlayWithFriendsCard",
+    props: ["disabled"],
+    template:
+      '<div data-testid="play-with-friends-card" :data-disabled="String(disabled)" />',
+  },
+}));
+
+vi.mock("@/components/pages/Home/RandomMatchCard.vue", () => ({
+  default: {
+    name: "RandomMatchCard",
+    props: ["disabled", "onlinePlayers"],
+    template:
+      '<div data-testid="random-match-card" :data-disabled="String(disabled)" :data-online-players="String(onlinePlayers)" />',
+  },
+}));
+
 import App from "@/App.vue";
 import { createAppI18n } from "@/i18n";
 import router from "@/router";
@@ -74,67 +102,34 @@ beforeEach(() => {
   isLoadingRealtimeAiGame.value = false;
 });
 
-test("renders the home page for the root route", async () => {
+it("should render the default state properly", async () => {
   await router.push("/");
   await router.isReady();
 
-  const { getByRole, getByText } = render(App, {
+  const { container } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
   });
 
-  await expect
-    .element(getByRole("button", { name: "GeoChess" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "Open navigation menu" }))
-    .toBeInTheDocument();
-
-  await getByRole("button", { name: "Open navigation menu" }).click();
-
-  await expect
-    .element(getByRole("button", { name: "How to play" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "Language" }))
-    .toBeInTheDocument();
-  await expect
-    .element(
-      getByText(`© ${new Date().getFullYear()} GeoChess All rights reserved.`),
-    )
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("navigation", { name: "Footer navigation" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("heading", { name: "Play vs AI" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "Medium" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "Start Game" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("heading", { name: "Play with Friends" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "Create Room" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "Enter Room" }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("heading", { name: "Random Match" }))
-    .toBeInTheDocument();
-  await expect.element(getByText("40 players online")).toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "Join Lobby" }))
-    .toBeInTheDocument();
+  expect(container.querySelector(".home-page__hero-image")).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="play-vs-ai-card"]'),
+  ).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="play-with-friends-card"]'),
+  ).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="random-match-card"]'),
+  ).not.toBeNull();
+  expect(
+    container
+      .querySelector('[data-testid="random-match-card"]')
+      ?.getAttribute("data-online-players"),
+  ).toBe("40");
 });
 
-test("creates an ai game with the selected difficulty and navigates to the game route", async () => {
+it("should create an ai game with the selected difficulty and navigate to the game route", async () => {
   mockCreateAiGame.mockResolvedValue({ id: "game-123" });
 
   await router.push("/");
@@ -146,8 +141,7 @@ test("creates an ai game with the selected difficulty and navigates to the game 
     },
   });
 
-  await getByRole("button", { name: "Hard" }).click();
-  await getByRole("button", { name: "Start Game" }).click();
+  await getByRole("button", { name: "Start mocked AI game" }).click();
 
   expect(mockSignInAnonymously).toHaveBeenCalledTimes(1);
   expect(mockCreateAiGame).toHaveBeenCalledWith({ difficulty: "hard" });

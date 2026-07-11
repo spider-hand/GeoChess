@@ -1,4 +1,4 @@
-import { afterEach, expect, test, vi } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
 import { effectScope, nextTick } from "vue";
 
 const mockOnValue = vi.fn();
@@ -18,7 +18,7 @@ afterEach(() => {
   mockDatabaseRef.mockReset();
 });
 
-test("normalizes a realtime game payload when moves is missing", async () => {
+it("should default moves to an empty object when the realtime game payload omits it", async () => {
   mockOnValue.mockImplementation((_, callback) => {
     callback({
       exists: () => true,
@@ -60,7 +60,7 @@ test("normalizes a realtime game payload when moves is missing", async () => {
   scope.stop();
 });
 
-test("normalizes a realtime game payload when availableMoves is missing", async () => {
+it("should default availableMoves to an empty array when the realtime game payload omits it", async () => {
   mockOnValue.mockImplementation((_, callback) => {
     callback({
       exists: () => true,

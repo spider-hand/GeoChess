@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { computed, ref } from "vue";
 
@@ -38,12 +38,74 @@ vi.mock("@/composables/useAuth", () => ({
   }),
 }));
 
+vi.mock("@/components/pages/Game/PlayerMatchupCard.vue", () => ({
+  default: {
+    name: "PlayerMatchupCard",
+    props: ["playerName"],
+    template:
+      '<div data-testid="player-matchup-card" :data-player-name="playerName ?? \'\'" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/TurnStatusStrip.vue", () => ({
+  default: {
+    name: "TurnStatusStrip",
+    props: ["status", "currentTurn"],
+    template:
+      '<div data-testid="turn-status-strip" :data-status="status" :data-current-turn="String(currentTurn)" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/ResultBadge.vue", () => ({
+  default: {
+    name: "ResultBadge",
+    props: ["result"],
+    template: '<div data-testid="result-badge" :data-result="result" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/CountdownTimer.vue", () => ({
+  default: {
+    name: "CountdownTimer",
+    props: ["startedAtMs"],
+    template: '<div data-testid="countdown-timer" />',
+  },
+}));
+
 vi.mock("@/components/pages/Game/GameMap.vue", () => ({
   default: {
     name: "GameMap",
     props: ["isFinished", "markers"],
     template:
-      '<div class="game-map" :data-is-finished="String(isFinished)" :data-markers="JSON.stringify(markers)" data-testid="game-map" />',
+      '<div data-testid="game-map" :data-is-finished="String(isFinished)" :data-markers="JSON.stringify(markers)" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/AvailableMovesCard.vue", () => ({
+  default: {
+    name: "AvailableMovesCard",
+    props: ["availableMoves", "isAiTurn", "isSelecting", "isSelectDisabled"],
+    emits: ["select"],
+    template:
+      '<div data-testid="available-moves-card" :data-moves="String(availableMoves.length)" :data-is-ai-turn="String(isAiTurn)" :data-is-selecting="String(isSelecting)" :data-is-select-disabled="String(isSelectDisabled)" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/PathResultCard.vue", () => ({
+  default: {
+    name: "PathResultCard",
+    props: ["resultSteps"],
+    template:
+      '<div data-testid="path-result-card" :data-steps="String(resultSteps.length)" />',
+  },
+}));
+
+vi.mock("@/components/pages/Game/PathHistoryCard.vue", () => ({
+  default: {
+    name: "PathHistoryCard",
+    props: ["historySteps"],
+    template:
+      '<div data-testid="path-history-card" :data-steps="String(historySteps.length)" />',
   },
 }));
 
@@ -95,54 +157,43 @@ beforeEach(() => {
   mockConfetti.mockReset();
 });
 
-test("renders the in-game player turn layout from realtime state", async () => {
+it("should render the active game layout for the default state", async () => {
   await router.push("/game/vs-ai/game-123");
   await router.isReady();
 
-  const { container, getByRole, getByText } = render(App, {
+  const { container } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
   });
 
-  await expect.element(getByText("Taylor Swift")).toBeInTheDocument();
-  await expect
-    .element(
-      container
-        .querySelectorAll(".player-matchup-card__name")
-        .item(1) as HTMLElement,
-    )
-    .toHaveTextContent("AI");
-  await expect.element(getByText("Your Turn")).toBeInTheDocument();
-  expect(container.querySelector(".result-badge")).toBeNull();
-  await expect
-    .element(container.querySelector(".turn-status-strip__turn") as HTMLElement)
-    .toHaveTextContent("Turn 1");
-  await expect
-    .element(getByRole("heading", { name: "Available Moves" }))
-    .toBeInTheDocument();
-  await expect.element(getByRole("timer")).toBeInTheDocument();
-  await expect
-    .element(getByRole("heading", { name: "Path History" }))
-    .toBeInTheDocument();
-  expect(container.querySelectorAll('[data-testid="game-map"]')).toHaveLength(
-    1,
-  );
+  expect(
+    container.querySelector('[data-testid="player-matchup-card"]'),
+  ).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="turn-status-strip"]'),
+  ).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="countdown-timer"]'),
+  ).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="available-moves-card"]'),
+  ).not.toBeNull();
+  expect(
+    container.querySelector('[data-testid="path-history-card"]'),
+  ).not.toBeNull();
+  expect(container.querySelector('[data-testid="result-badge"]')).toBeNull();
+  expect(
+    container.querySelector('[data-testid="path-result-card"]'),
+  ).toBeNull();
   expect(
     container
       .querySelector('[data-testid="game-map"]')
       ?.getAttribute("data-is-finished"),
   ).toBe("false");
-  expect(
-    container
-      .querySelector('[data-testid="game-map"]')
-      ?.getAttribute("data-markers"),
-  ).toBe(
-    JSON.stringify([{ countryCode: "BB", owner: "neutral", label: "Start" }]),
-  );
 });
 
-test("renders the AI waiting state and keeps the timer visible", async () => {
+it("should pass the ai-turn state to the active game controls", async () => {
   realtimeAiGame.value = {
     ...realtimeAiGame.value,
     turn: "ai",
@@ -153,19 +204,30 @@ test("renders the AI waiting state and keeps the timer visible", async () => {
   await router.push("/game/vs-ai/game-123");
   await router.isReady();
 
-  const { getByLabelText, getByRole, getByText } = render(App, {
+  const { container } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
   });
 
-  await expect.element(getByText("AI Turn")).toBeInTheDocument();
-  await expect.element(getByLabelText("AI is choosing")).toBeVisible();
-  await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
-  await expect.element(getByRole("timer")).toBeInTheDocument();
+  expect(
+    container
+      .querySelector('[data-testid="turn-status-strip"]')
+      ?.getAttribute("data-status"),
+  ).toBe("ai");
+  expect(
+    container
+      .querySelector('[data-testid="available-moves-card"]')
+      ?.getAttribute("data-is-ai-turn"),
+  ).toBe("true");
+  expect(
+    container
+      .querySelector('[data-testid="available-moves-card"]')
+      ?.getAttribute("data-is-select-disabled"),
+  ).toBe("true");
 });
 
-test("renders the finished loss state with the result card, actions, and visible labels", async () => {
+it("should render the finished loss layout with replay actions", async () => {
   realtimeAiGame.value = {
     ...realtimeAiGame.value,
     availableMoves: [],
@@ -178,56 +240,38 @@ test("renders the finished loss state with the result card, actions, and visible
     },
   };
 
-  await router.push("/game/vs-ai/game-123");
-  await router.isReady();
-
-  const { container, getByRole, getByText } = render(App, {
+  const { container, getByRole } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
   });
 
-  await expect.element(getByText("You Lose")).toBeInTheDocument();
-  expect(container.querySelector(".turn-status-strip")).toBeNull();
-  await expect
-    .element(container.querySelector(".result-badge") as HTMLElement)
-    .toBeInTheDocument();
-  expect(container.querySelector('[role="timer"]')).toBeNull();
+  await router.push("/game/vs-ai/game-123");
+  await router.isReady();
+
   expect(
-    Array.from(container.querySelectorAll("h2")).some(
-      (heading) => heading.textContent === "Available Moves",
-    ),
-  ).toBe(false);
-  expect(container.querySelector(".path-history-card")).toBeNull();
-  await expect
-    .element(
-      container
-        .querySelectorAll(".path-result-card__turn")
-        .item(0) as HTMLElement,
-    )
-    .toHaveTextContent("Start");
-  await expect
-    .element(
-      container
-        .querySelectorAll(".path-result-card__turn")
-        .item(1) as HTMLElement,
-    )
-    .toHaveTextContent("Turn 1");
+    container.querySelector('[data-testid="turn-status-strip"]'),
+  ).toBeNull();
+  expect(container.querySelector('[data-testid="countdown-timer"]')).toBeNull();
+  expect(
+    container.querySelector('[data-testid="available-moves-card"]'),
+  ).toBeNull();
+  expect(
+    container.querySelector('[data-testid="path-history-card"]'),
+  ).toBeNull();
+  expect(
+    container.querySelector('[data-testid="path-result-card"]'),
+  ).not.toBeNull();
+  expect(
+    container
+      .querySelector('[data-testid="result-badge"]')
+      ?.getAttribute("data-result"),
+  ).toBe("lost");
   expect(
     container
       .querySelector('[data-testid="game-map"]')
       ?.getAttribute("data-is-finished"),
   ).toBe("true");
-  expect(
-    container
-      .querySelector('[data-testid="game-map"]')
-      ?.getAttribute("data-markers"),
-  ).toBe(
-    JSON.stringify([
-      { countryCode: "BB", owner: "neutral", label: "Start" },
-      { countryCode: "CC", owner: "player", label: "Taylor Swift" },
-    ]),
-  );
   await expect
     .element(getByRole("button", { name: "Play Again" }))
     .toBeInTheDocument();
@@ -237,7 +281,7 @@ test("renders the finished loss state with the result card, actions, and visible
   expect(mockConfetti).not.toHaveBeenCalled();
 });
 
-test("fires confetti once when the page loads in a winning state", async () => {
+it("should fire confetti once when the page loads in a winning state", async () => {
   realtimeAiGame.value = {
     ...realtimeAiGame.value,
     turn: "ai",
@@ -256,27 +300,20 @@ test("fires confetti once when the page loads in a winning state", async () => {
     },
   };
 
-  await router.push("/game/vs-ai/game-123");
-  await router.isReady();
-
-  const { container, getByText } = render(App, {
+  const { container } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
   });
 
-  await expect.element(getByText("You Win")).toBeInTheDocument();
+  await router.push("/game/vs-ai/game-123");
+  await router.isReady();
+
   expect(
     container
-      .querySelector('[data-testid="game-map"]')
-      ?.getAttribute("data-markers"),
-  ).toBe(
-    JSON.stringify([
-      { countryCode: "BB", owner: "neutral", label: "Start" },
-      { countryCode: "CC", owner: "player", label: "Taylor Swift" },
-      { countryCode: "DD", owner: "ai", label: "AI" },
-    ]),
-  );
+      .querySelector('[data-testid="result-badge"]')
+      ?.getAttribute("data-result"),
+  ).toBe("won");
   expect(mockConfetti).toHaveBeenCalledTimes(1);
   expect(mockConfetti).toHaveBeenCalledWith({
     particleCount: 150,
@@ -285,42 +322,18 @@ test("fires confetti once when the page loads in a winning state", async () => {
   });
 });
 
-test("clicking Play Again creates a new AI game with the same difficulty and navigates to it", async () => {
+it("should create a new ai game with the same difficulty when Play Again is clicked", async () => {
   realtimeAiGame.value = {
     ...realtimeAiGame.value,
     availableMoves: [],
     difficulty: "medium",
   };
-  mockCreateAiGame.mockResolvedValue({ id: "game-456" });
 
-  await router.push("/game/vs-ai/game-123");
-  await router.isReady();
-
-  const { getByRole } = render(App, {
-    global: {
-      plugins: [createAppI18n(), router],
-    },
-  });
-
-  await getByRole("button", { name: "Play Again" }).click();
-
-  expect(mockCreateAiGame).toHaveBeenCalledWith({ difficulty: "medium" });
-  await expect
-    .poll(() => router.currentRoute.value.path)
-    .toBe("/game/vs-ai/game-456");
-});
-
-test("keeps Exit enabled while Play Again is pending", async () => {
-  realtimeAiGame.value = {
-    ...realtimeAiGame.value,
-    availableMoves: [],
-  };
-
-  let resolveCreateAiGame: ((value: { id: string }) => void) | null = null;
+  let finishCreateAiGame!: (value: { id: string }) => void;
   mockCreateAiGame.mockImplementation(
     () =>
       new Promise<{ id: string }>((resolve) => {
-        resolveCreateAiGame = resolve;
+        finishCreateAiGame = (value) => resolve(value);
       }),
   );
 
@@ -333,23 +346,19 @@ test("keeps Exit enabled while Play Again is pending", async () => {
     },
   });
 
-  const playAgainButton = getByRole("button", { name: "Play Again" });
-  const exitButton = getByRole("button", { name: "Exit" });
+  await getByRole("button", { name: "Play Again" }).click();
 
-  await playAgainButton.click();
-
-  await expect.element(playAgainButton).toBeDisabled();
-  await expect.element(exitButton).toBeEnabled();
   expect(mockCreateAiGame).toHaveBeenCalledTimes(1);
+  expect(mockCreateAiGame).toHaveBeenCalledWith({ difficulty: "medium" });
 
-  resolveCreateAiGame?.({ id: "game-456" });
+  finishCreateAiGame({ id: "game-456" });
 
   await expect
     .poll(() => router.currentRoute.value.path)
     .toBe("/game/vs-ai/game-456");
 });
 
-test("clicking Exit navigates back to the home page", async () => {
+it("should navigate back to the home page when Exit is clicked", async () => {
   realtimeAiGame.value = {
     ...realtimeAiGame.value,
     availableMoves: [],

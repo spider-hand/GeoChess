@@ -1,22 +1,26 @@
-import { expect, test, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
-import { createAppI18n } from "@/i18n";
 import UserAvatarMenu from "@/components/shared/UserAvatarMenu.vue";
+import { createAppI18n } from "@/i18n";
 
 const nextTick = async () => {
   await new Promise((resolve) => window.setTimeout(resolve, 0));
 };
 
-test("is closed by default", async () => {
-  const { getByRole, container } = render(UserAvatarMenu, {
+const renderUserAvatarMenu = (props: Record<string, unknown> = {}) =>
+  render(UserAvatarMenu, {
     props: {
       displayName: "Taylor Swift",
+      ...props,
     },
     global: {
       plugins: [createAppI18n()],
     },
   });
+
+it("should render the default state properly", async () => {
+  const { container, getByRole } = renderUserAvatarMenu();
 
   await expect
     .element(getByRole("button", { name: "Account menu" }))
@@ -24,16 +28,10 @@ test("is closed by default", async () => {
   expect(container.querySelector('[role="menu"]')).toBeNull();
 });
 
-test("opens the menu and emits sign out", async () => {
+it("should open the menu and emit sign out", async () => {
   const onSignOutClick = vi.fn();
-  const { getByRole, getByText, container } = render(UserAvatarMenu, {
-    props: {
-      displayName: "Taylor Swift",
-      onSignOutClick,
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
+  const { container, getByRole, getByText } = renderUserAvatarMenu({
+    onSignOutClick,
   });
 
   await getByRole("button", { name: "Account menu" }).click();
@@ -47,27 +45,22 @@ test("opens the menu and emits sign out", async () => {
   expect(container.querySelector('[role="menu"]')).toBeNull();
 });
 
-test("closes on outside click and escape", async () => {
-  const { getByRole, container } = render(UserAvatarMenu, {
-    props: {
-      displayName: "Taylor Swift",
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
+it("should close the menu on outside click", async () => {
+  const { container, getByRole } = renderUserAvatarMenu();
 
   await getByRole("button", { name: "Account menu" }).click();
-  await expect.element(getByRole("menu")).toBeInTheDocument();
-
   document.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   await nextTick();
+
   expect(container.querySelector('[role="menu"]')).toBeNull();
+});
+
+it("should close the menu on escape", async () => {
+  const { container, getByRole } = renderUserAvatarMenu();
 
   await getByRole("button", { name: "Account menu" }).click();
-  await expect.element(getByRole("menu")).toBeInTheDocument();
-
   document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
   await nextTick();
+
   expect(container.querySelector('[role="menu"]')).toBeNull();
 });

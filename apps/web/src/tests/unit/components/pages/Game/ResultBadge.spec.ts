@@ -1,18 +1,21 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import ResultBadge from "@/components/pages/Game/ResultBadge.vue";
 import { createAppI18n } from "@/i18n";
 
-test("renders the winning branch with the success accent", async () => {
-  const { container, getByText } = render(ResultBadge, {
+const renderResultBadge = (result: "won" | "lost") =>
+  render(ResultBadge, {
     props: {
-      result: "won",
+      result,
     },
     global: {
       plugins: [createAppI18n()],
     },
   });
+
+it("should render the winning result visibly", async () => {
+  const { container, getByText } = renderResultBadge("won");
 
   await expect.element(getByText("You Win")).toBeVisible();
   await expect
@@ -20,15 +23,8 @@ test("renders the winning branch with the success accent", async () => {
     .toHaveClass("result-badge--won");
 });
 
-test("renders the losing branch with the danger accent", async () => {
-  const { container, getByText } = render(ResultBadge, {
-    props: {
-      result: "lost",
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
+it("should render the losing result visibly", async () => {
+  const { container, getByText } = renderResultBadge("lost");
 
   await expect.element(getByText("You Lose")).toBeVisible();
   await expect

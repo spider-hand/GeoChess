@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 
 const mockCreateAiGame = vi.fn();
 const mockCreateAiGameMove = vi.fn();
@@ -37,7 +37,7 @@ beforeEach(() => {
   });
 });
 
-test("calls createAiGame with the selected difficulty", async () => {
+it("should create an ai game with the provided difficulty", async () => {
   mockCreateAiGame.mockResolvedValue({ id: "game-123" });
 
   const { default: useAiGameQuery } =
@@ -50,7 +50,7 @@ test("calls createAiGame with the selected difficulty", async () => {
   });
 });
 
-test("calls createAiGameMove with the game id and selected country", async () => {
+it("should create an ai move with the provided game id and country code", async () => {
   mockCreateAiGameMove.mockResolvedValue(undefined);
 
   const { default: useAiGameQuery } =
@@ -64,7 +64,7 @@ test("calls createAiGameMove with the game id and selected country", async () =>
   });
 });
 
-test("calls timeoutAiGame with the game id", async () => {
+it("should timeout an ai game with the provided game id", async () => {
   mockTimeoutAiGame.mockResolvedValue(undefined);
 
   const { default: useAiGameQuery } =

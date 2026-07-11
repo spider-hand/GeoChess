@@ -1,15 +1,19 @@
-import { expect, test, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import { createAppI18n } from "@/i18n";
 
-test("renders the footer credit and actions", async () => {
-  const { getByRole, getByText } = render(NavigationFooter, {
+const renderNavigationFooter = (props: Record<string, unknown> = {}) =>
+  render(NavigationFooter, {
+    props,
     global: {
       plugins: [createAppI18n()],
     },
   });
+
+it("should render the default state properly", async () => {
+  const { getByRole, getByText } = renderNavigationFooter();
 
   const year = new Date().getFullYear();
 
@@ -30,30 +34,18 @@ test("renders the footer credit and actions", async () => {
     .toBeInTheDocument();
 });
 
-test("emits explicit events for each footer action", async () => {
-  const onPrivacyClick = vi.fn();
-  const onTermsClick = vi.fn();
-  const onContactClick = vi.fn();
-
-  const { getByRole } = render(NavigationFooter, {
-    props: {
-      onPrivacyClick,
-      onTermsClick,
-      onContactClick,
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
+it.each([
+  { label: "Privacy", prop: "onPrivacyClick" },
+  { label: "Terms", prop: "onTermsClick" },
+  { label: "Contact", prop: "onContactClick" },
+] as const)("should emit the $label action", async ({ label, prop }) => {
+  const handler = vi.fn();
+  const { getByRole } = renderNavigationFooter({
+    [prop]: handler,
   });
 
-  await getByRole("button", { name: "Privacy" }).click();
-  await getByRole("button", { name: "Terms" }).click();
-  await getByRole("button", { name: "Contact" }).click();
+  await getByRole("button", { name: label }).click();
 
-  expect(onPrivacyClick).toHaveBeenCalledTimes(1);
-  expect(onTermsClick).toHaveBeenCalledTimes(1);
-  expect(onContactClick).toHaveBeenCalledTimes(1);
-  expect(onPrivacyClick).toHaveBeenCalledWith(expect.any(MouseEvent));
-  expect(onTermsClick).toHaveBeenCalledWith(expect.any(MouseEvent));
-  expect(onContactClick).toHaveBeenCalledWith(expect.any(MouseEvent));
+  expect(handler).toHaveBeenCalledTimes(1);
+  expect(handler).toHaveBeenCalledWith(expect.any(MouseEvent));
 });

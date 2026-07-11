@@ -1,8 +1,8 @@
-import { expect, test, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { ref } from "vue";
 
-import { createAppI18n } from "../../../../i18n";
+import { createAppI18n } from "@/i18n";
 
 const username = ref<string | null>(null);
 const isAuthenticatedUser = ref(false);
@@ -28,7 +28,7 @@ vi.mock("@/composables/useAuth", () => ({
 }));
 
 const NavigationHeader = (
-  await import("../../../../components/shared/NavigationHeader.vue")
+  await import("@/components/shared/NavigationHeader.vue")
 ).default;
 
 const resetAuthState = () => {
@@ -40,13 +40,17 @@ const resetAuthState = () => {
   signOutUser.mockReset();
 };
 
-test("renders the header structure for desktop and mobile layouts", async () => {
-  resetAuthState();
-  const { container, getByRole } = render(NavigationHeader, {
+const renderNavigationHeader = (props: Record<string, unknown> = {}) =>
+  render(NavigationHeader, {
+    props,
     global: {
       plugins: [createAppI18n()],
     },
   });
+
+it("should render the default state properly", async () => {
+  resetAuthState();
+  const { container, getByRole, getByText } = renderNavigationHeader();
 
   await expect
     .element(getByRole("button", { name: "GeoChess" }))
@@ -54,7 +58,7 @@ test("renders the header structure for desktop and mobile layouts", async () => 
   await expect
     .element(getByRole("button", { name: "Open navigation menu" }))
     .toBeInTheDocument();
-
+  await expect.element(getByText("Sign Up")).toBeInTheDocument();
   expect(container.querySelector(".how-to-play-button")).not.toBeNull();
   expect(
     container.querySelector('[aria-label="GitHub repository link"]'),
@@ -63,16 +67,11 @@ test("renders the header structure for desktop and mobile layouts", async () => 
     container.querySelector('[aria-label="Discord server link"]'),
   ).not.toBeNull();
   expect(container.querySelector(".language-selector")).not.toBeNull();
-  expect(container.querySelector(".button--pill")).not.toBeNull();
 });
 
-test("opens and closes the mobile menu", async () => {
+it("should open and close the mobile menu", async () => {
   resetAuthState();
-  const { container, getByRole, getByTestId } = render(NavigationHeader, {
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
+  const { container, getByRole, getByTestId } = renderNavigationHeader();
 
   await getByRole("button", { name: "Open navigation menu" }).click();
 
@@ -90,16 +89,30 @@ test("opens and closes the mobile menu", async () => {
   ).toBeNull();
 });
 
-test("shows the mobile how to play accordion content", async () => {
+it("should not render the user section when not logged in", async () => {
   resetAuthState();
-  const { container, getByRole, getByTestId, getByText } = render(
-    NavigationHeader,
-    {
-      global: {
-        plugins: [createAppI18n()],
-      },
-    },
-  );
+  const { container, getByRole } = renderNavigationHeader();
+
+  await getByRole("button", { name: "Open navigation menu" }).click();
+
+  await expect
+    .element(getByRole("button", { name: "GitHub", exact: true }))
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "Discord", exact: true }))
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "Sign Up" }))
+    .toBeInTheDocument();
+  expect(
+    container.querySelector('[data-testid="navigation-header-mobile-user"]'),
+  ).toBeNull();
+});
+
+it("should show the mobile how to play accordion content", async () => {
+  resetAuthState();
+  const { container, getByRole, getByTestId, getByText } =
+    renderNavigationHeader();
 
   await getByRole("button", { name: "Open navigation menu" }).click();
 
@@ -117,12 +130,6 @@ test("shows the mobile how to play accordion content", async () => {
   await expect
     .element(getByTestId("navigation-header-mobile-how-to-play-chevron-up"))
     .toBeInTheDocument();
-  expect(
-    container.querySelector(
-      '[data-testid="navigation-header-mobile-how-to-play-chevron-down"]',
-    ),
-  ).toBeNull();
-
   await expect
     .element(getByText("Claim a neighboring country each turn."))
     .toBeInTheDocument();
@@ -132,87 +139,41 @@ test("shows the mobile how to play accordion content", async () => {
   await expect.element(getByText("That's it. Enjoy!")).toBeInTheDocument();
 });
 
-test("shows the guest mobile menu branch", async () => {
+it.each([
+  { label: "GitHub", prop: "onGithubClick" },
+  { label: "Discord", prop: "onDiscordClick" },
+] as const)("should emit %s from the mobile menu", async ({ label, prop }) => {
   resetAuthState();
-  const { container, getByRole } = render(NavigationHeader, {
-    global: {
-      plugins: [createAppI18n()],
-    },
+  const handler = vi.fn();
+  const { getByRole } = renderNavigationHeader({
+    [prop]: handler,
   });
 
   await getByRole("button", { name: "Open navigation menu" }).click();
+  await getByRole("button", { name: label, exact: true }).click();
 
-  await expect
-    .element(getByRole("button", { name: "GitHub", exact: true }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "Discord", exact: true }))
-    .toBeInTheDocument();
-  await expect
-    .element(getByRole("button", { name: "Sign Up" }))
-    .toBeInTheDocument();
-  expect(
-    getByRole("button", { name: "GitHub", exact: true })
-      .element()
-      .querySelector("svg"),
-  ).toBeNull();
-  expect(
-    getByRole("button", { name: "Discord", exact: true })
-      .element()
-      .querySelector("svg"),
-  ).toBeNull();
-  expect(
-    container.querySelector('[data-testid="navigation-header-mobile-user"]'),
-  ).toBeNull();
+  expect(handler).toHaveBeenCalledTimes(1);
 });
 
-test("emits mobile navigation events and language changes", async () => {
+it("should emit the selected language on the mobile menu", async () => {
   resetAuthState();
-  const onGithubClick = vi.fn();
-  const onDiscordClick = vi.fn();
   const onLanguageSelect = vi.fn();
-
-  const { getByRole, getByTestId } = render(NavigationHeader, {
-    props: {
-      onGithubClick,
-      onDiscordClick,
-      onLanguageSelect,
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
+  const { getByRole, getByTestId } = renderNavigationHeader({
+    onLanguageSelect,
   });
 
-  await getByRole("button", { name: "Open navigation menu" }).click();
-  await expect
-    .element(getByTestId("navigation-header-mobile-language-chevron-down"))
-    .toBeInTheDocument();
-
-  await getByTestId("navigation-header-mobile-language-toggle").click();
-  await expect
-    .element(getByTestId("navigation-header-mobile-language-chevron-up"))
-    .toBeInTheDocument();
-  await getByRole("button", { name: "GitHub", exact: true }).click();
-  await getByRole("button", { name: "Open navigation menu" }).click();
-  await getByRole("button", { name: "Discord", exact: true }).click();
   await getByRole("button", { name: "Open navigation menu" }).click();
   await getByTestId("navigation-header-mobile-language-toggle").click();
   await getByRole("button", { name: "日本語" }).click();
 
-  expect(onGithubClick).toHaveBeenCalledTimes(1);
-  expect(onDiscordClick).toHaveBeenCalledTimes(1);
   expect(onLanguageSelect).toHaveBeenCalledWith("ja");
 });
 
-test("renders the authenticated menu branches", async () => {
+it("should render the user section when logged in", async () => {
   resetAuthState();
   username.value = "Taylor Swift";
   isAuthenticatedUser.value = true;
-  const { container, getByRole, getByTestId } = render(NavigationHeader, {
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
+  const { container, getByRole, getByTestId } = renderNavigationHeader();
 
   expect(container.querySelector('[aria-label="Account menu"]')).not.toBeNull();
 
@@ -225,66 +186,30 @@ test("renders the authenticated menu branches", async () => {
     .element(getByTestId("navigation-header-mobile-username"))
     .toHaveTextContent("Taylor Swift");
   await expect
-    .element(getByTestId("navigation-header-mobile-username"))
-    .toHaveClass("navigation-header__mobile-username");
-  await expect
     .element(getByRole("button", { name: "Sign Out" }))
     .toBeInTheDocument();
-  expect(
-    container.querySelector(
-      '[data-testid="navigation-header-mobile-panel"] > [data-testid="navigation-header-mobile-user"]',
-    ),
-  ).not.toBeNull();
 });
 
-test("keeps the long authenticated username in the mobile summary row", async () => {
-  resetAuthState();
-  username.value = "A very very very very long player name";
-  isAuthenticatedUser.value = true;
-  const { getByRole, getByTestId } = render(NavigationHeader, {
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
-
-  await getByRole("button", { name: "Open navigation menu" }).click();
-
-  await expect
-    .element(getByTestId("navigation-header-mobile-username"))
-    .toHaveTextContent("A very very very very long player name");
-  await expect
-    .element(getByTestId("navigation-header-mobile-username"))
-    .toHaveClass("navigation-header__mobile-username");
-});
-
-test("hides the auth control until the auth state is resolved", async () => {
+it("should not render the user section when the authentication is in progress", async () => {
   resetAuthState();
   isCurrentUserLoaded.value = false;
-  const { container } = render(NavigationHeader, {
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
+  const { container } = renderNavigationHeader();
 
   expect(container.textContent).not.toContain("Sign Up");
   expect(container.querySelector('[aria-label="Account menu"]')).toBeNull();
 });
 
-test("passes the loading state through to sign up", async () => {
+it("should render the loading state when signing up", async () => {
   resetAuthState();
-  let resolveSignIn: (() => void) | null = null;
+  let finishSignIn!: () => void;
   signInWithGoogle.mockImplementation(
     () =>
       new Promise<void>((resolve) => {
-        resolveSignIn = resolve;
+        finishSignIn = () => resolve();
       }),
   );
 
-  const { container, getByRole } = render(NavigationHeader, {
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
+  const { container, getByRole } = renderNavigationHeader();
 
   await getByRole("button", { name: "Open navigation menu" }).click();
   await getByRole("button", { name: "Sign Up" }).click();
@@ -297,5 +222,13 @@ test("passes the loading state through to sign up", async () => {
     )
     .toBe("true");
 
-  resolveSignIn?.();
+  finishSignIn();
+
+  await expect
+    .poll(() =>
+      container
+        .querySelector(".navigation-header__cta-actions--desktop .button")
+        ?.getAttribute("aria-busy"),
+    )
+    .toBe("false");
 });

@@ -1,10 +1,10 @@
-import { expect, test, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import RandomMatchCard from "@/components/pages/Home/RandomMatchCard.vue";
 import { createAppI18n } from "@/i18n";
 
-test("renders the title, badge, and join action", async () => {
+it("should render the default state properly", async () => {
   const { getByRole, getByText } = render(RandomMatchCard, {
     props: {
       disabled: false,
@@ -24,7 +24,7 @@ test("renders the title, badge, and join action", async () => {
     .toBeVisible();
 });
 
-test("renders singular and locale-formatted player counts", async () => {
+it("should render singular and locale-formatted player counts", async () => {
   const { getByText, rerender } = render(RandomMatchCard, {
     props: {
       disabled: false,
@@ -45,7 +45,7 @@ test("renders singular and locale-formatted player counts", async () => {
   await expect.element(getByText("1,200 players online")).toBeVisible();
 });
 
-test("emits joinRandomMatch when joining the lobby", async () => {
+it("should emit joinRandomMatch when joining the lobby", async () => {
   const onJoinRandomMatch = vi.fn();
   const { getByRole } = render(RandomMatchCard, {
     props: {
@@ -63,7 +63,7 @@ test("emits joinRandomMatch when joining the lobby", async () => {
   expect(onJoinRandomMatch).toHaveBeenCalledTimes(1);
 });
 
-test("disables join action when disabled", async () => {
+it("should disable join action when disabled", async () => {
   const { getByRole } = render(RandomMatchCard, {
     props: {
       disabled: true,

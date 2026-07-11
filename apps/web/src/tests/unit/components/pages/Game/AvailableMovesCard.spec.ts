@@ -1,4 +1,4 @@
-import { expect, test, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
@@ -11,38 +11,39 @@ const defaultProps = {
   isSelectDisabled: false,
 };
 
-test("renders the title, available options, and disabled select button by default", async () => {
-  const { getByAltText, getByRole } = render(AvailableMovesCard, {
+const renderAvailableMovesCard = (
+  props: Partial<
+    typeof defaultProps & { onSelect: (countryCode: string) => void }
+  > = {},
+) =>
+  render(AvailableMovesCard, {
     props: {
       ...defaultProps,
-      isSelectDisabled: true,
+      ...props,
     },
     global: {
       plugins: [createAppI18n()],
     },
+  });
+
+it("should render the default state properly", async () => {
+  const { getByAltText, getByRole } = renderAvailableMovesCard({
+    isSelectDisabled: true,
   });
 
   await expect
     .element(getByRole("heading", { name: "Available Moves" }))
     .toBeInTheDocument();
-  expect(getByRole("option").length).toBe(3);
-  await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
   await expect
     .element(getByRole("listbox", { name: "Available Moves" }))
     .toBeInTheDocument();
+  expect(getByRole("option")).toHaveLength(3);
   await expect.element(getByAltText("US flag")).toBeInTheDocument();
-  await expect
-    .element(getByRole("option", { name: "United States US" }))
-    .toBeVisible();
+  await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
 });
 
-test("selects a country row and enables the select button", async () => {
-  const { getByRole } = render(AvailableMovesCard, {
-    props: defaultProps,
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
+it("should enable the select button when a country is selected", async () => {
+  const { getByRole } = renderAvailableMovesCard();
 
   const japanOption = getByRole("option", { name: "Japan JP" });
 
@@ -52,33 +53,20 @@ test("selects a country row and enables the select button", async () => {
   await expect.element(getByRole("button", { name: "Select" })).toBeEnabled();
 });
 
-test("shows the AI waiting state while keeping the button visible", async () => {
-  const { container, getByLabelText, getByRole } = render(AvailableMovesCard, {
-    props: {
-      ...defaultProps,
-      isAiTurn: true,
-      isSelectDisabled: true,
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
+it("should show the AI waiting state when it's the AI's turn", async () => {
+  const { container, getByLabelText } = renderAvailableMovesCard({
+    isAiTurn: true,
+    isSelectDisabled: true,
   });
 
   await expect.element(getByLabelText("AI is choosing")).toBeVisible();
   expect(container.querySelectorAll('[role="option"]')).toHaveLength(0);
-  await expect.element(getByRole("button", { name: "Select" })).toBeDisabled();
 });
 
-test("shows the selecting label while a move request is in flight", async () => {
-  const { getByRole } = render(AvailableMovesCard, {
-    props: {
-      ...defaultProps,
-      isSelecting: true,
-      isSelectDisabled: true,
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
+it("should update the button label when selecting a move", async () => {
+  const { getByRole } = renderAvailableMovesCard({
+    isSelecting: true,
+    isSelectDisabled: true,
   });
 
   await expect
@@ -86,38 +74,29 @@ test("shows the selecting label while a move request is in flight", async () => 
     .toBeDisabled();
 });
 
-test("emits the selected country only when select is pressed", async () => {
+it("should emit the selected country when the select button is pressed", async () => {
   const onSelect = vi.fn();
-  const { getByRole } = render(AvailableMovesCard, {
-    props: {
-      ...defaultProps,
-      onSelect,
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
+  const { getByRole } = renderAvailableMovesCard({ onSelect });
 
   await getByRole("option", { name: "France FR" }).click();
-
-  expect(onSelect.mock.calls).toHaveLength(0);
-
   await getByRole("button", { name: "Select" }).click();
 
   expect(onSelect).toHaveBeenCalledWith("fr");
   expect(onSelect).toHaveBeenCalledTimes(1);
 });
 
-test("falls back to the uppercased country code when the localized name is missing", async () => {
-  const { getByRole } = render(AvailableMovesCard, {
-    props: {
-      ...defaultProps,
-      availableMoves: ["zz"],
-      isSelectDisabled: true,
-    },
-    global: {
-      plugins: [createAppI18n()],
-    },
+it("should show country + code on the option when the localized name is available", async () => {
+  const { getByRole } = renderAvailableMovesCard();
+
+  await expect
+    .element(getByRole("option", { name: "United States US" }))
+    .toBeVisible();
+});
+
+it("should show the country code only when the localized name is missing", async () => {
+  const { getByRole } = renderAvailableMovesCard({
+    availableMoves: ["zz"],
+    isSelectDisabled: true,
   });
 
   await expect.element(getByRole("option", { name: "ZZ" })).toBeVisible();

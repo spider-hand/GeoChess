@@ -1,113 +1,96 @@
-import { expect, test, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import Button from "@/components/shared/Button.vue";
 
-test("renders slot content", async () => {
-  const { getByRole } = render(Button, {
+const renderButton = (props: Record<string, unknown> = {}, label = "Action") =>
+  render(Button, {
+    props,
     slots: {
-      default: "Launch",
+      default: label,
     },
   });
 
+it("should render the default state properly", async () => {
+  const { getByRole } = renderButton();
+
   await expect
-    .element(getByRole("button", { name: "Launch" }))
+    .element(getByRole("button", { name: "Action" }))
     .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "Action" }))
+    .toHaveAttribute("type", "button");
+  await expect
+    .element(getByRole("button", { name: "Action" }))
+    .toHaveClass("button--primary");
 });
 
-test("applies variant branches", async () => {
-  const { getByRole, rerender } = render(Button, {
-    props: { variant: "primary" },
-    slots: { default: "Action" },
-  });
+it.each(["primary", "secondary", "tertiary", "success", "danger"] as const)(
+  "should apply the %s variant",
+  async (variant) => {
+    const { getByRole } = renderButton({ variant });
 
-  const button = getByRole("button", { name: "Action" });
+    await expect
+      .element(getByRole("button", { name: "Action" }))
+      .toHaveClass(`button--${variant}`);
+  },
+);
 
-  await expect.element(button).toHaveClass("button--primary");
+it("should apply the compact pill state", async () => {
+  const { getByRole } = renderButton({ size: "compact", pill: true }, "Size");
 
-  await rerender({ variant: "secondary" });
-  await expect.element(button).toHaveClass("button--secondary");
-
-  await rerender({ variant: "tertiary" });
-  await expect.element(button).toHaveClass("button--tertiary");
-
-  await rerender({ variant: "success" });
-  await expect.element(button).toHaveClass("button--success");
-
-  await rerender({ variant: "danger" });
-  await expect.element(button).toHaveClass("button--danger");
+  await expect
+    .element(getByRole("button", { name: "Size" }))
+    .toHaveClass("button--compact");
+  await expect
+    .element(getByRole("button", { name: "Size" }))
+    .toHaveClass("button--pill");
 });
 
-test("applies size and pill branches", async () => {
-  const { getByRole, rerender } = render(Button, {
-    props: { size: "compact", pill: false },
-    slots: { default: "Size" },
-  });
-
-  const button = getByRole("button", { name: "Size" });
-
-  await expect.element(button).toHaveClass("button--compact");
-  expect(button.element().classList.contains("button--pill")).toBe(false);
-
-  await rerender({ size: "compact", pill: true });
-  await expect.element(button).toHaveClass("button--pill");
-});
-
-test("forwards the native type prop", async () => {
-  const { getByRole } = render(Button, {
-    props: { type: "submit" },
-    slots: { default: "Submit" },
-  });
+it("should forward a submit type", async () => {
+  const { getByRole } = renderButton({ type: "submit" }, "Submit");
 
   await expect
     .element(getByRole("button", { name: "Submit" }))
     .toHaveAttribute("type", "submit");
 });
 
-test("emits click when enabled", async () => {
+it("should emit click when enabled", async () => {
   const onClick = vi.fn();
-  const { getByRole } = render(Button, {
-    props: {
-      onClick,
-    },
-    slots: { default: "Enabled" },
-  });
+  const { getByRole } = renderButton({ onClick }, "Enabled");
 
-  const button = getByRole("button", { name: "Enabled" });
-
-  await button.click();
+  await getByRole("button", { name: "Enabled" }).click();
 
   expect(onClick).toHaveBeenCalledTimes(1);
 });
 
-test("applies the disabled branch", async () => {
-  const { getByRole } = render(Button, {
-    props: {
-      disabled: true,
-    },
-    slots: { default: "Disabled" },
-  });
+it("should apply the disabled state", async () => {
+  const { getByRole } = renderButton({ disabled: true }, "Disabled");
 
-  const button = getByRole("button", { name: "Disabled" });
-
-  await expect.element(button).toBeDisabled();
-  await expect.element(button).toHaveClass("button--disabled");
+  await expect
+    .element(getByRole("button", { name: "Disabled" }))
+    .toBeDisabled();
+  await expect
+    .element(getByRole("button", { name: "Disabled" }))
+    .toHaveClass("button--disabled");
 });
 
-test("applies the loading branch", async () => {
+it("should apply the loading state", async () => {
   const onClick = vi.fn();
-  const { getByRole } = render(Button, {
-    props: {
+  const { getByRole } = renderButton(
+    {
       loading: true,
       onClick,
     },
-    slots: { default: "Loading" },
-  });
+    "Loading",
+  );
 
-  const button = getByRole("button", { name: "Loading" });
-
-  await expect.element(button).toBeDisabled();
-  await expect.element(button).toHaveAttribute("aria-busy", "true");
-  await expect.element(button).toHaveClass("button--loading");
+  await expect.element(getByRole("button", { name: "Loading" })).toBeDisabled();
+  await expect
+    .element(getByRole("button", { name: "Loading" }))
+    .toHaveAttribute("aria-busy", "true");
+  await expect
+    .element(getByRole("button", { name: "Loading" }))
+    .toHaveClass("button--loading");
   expect(onClick).not.toHaveBeenCalled();
 });

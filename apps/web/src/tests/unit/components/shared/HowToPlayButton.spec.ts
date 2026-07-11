@@ -1,19 +1,22 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import { render } from "vitest-browser-vue";
 
-import HowToPlayButton from "../../../../components/shared/HowToPlayButton.vue";
-import { createAppI18n } from "../../../../i18n";
+import HowToPlayButton from "@/components/shared/HowToPlayButton.vue";
+import { createAppI18n } from "@/i18n";
 
 const nextTick = async () => {
   await new Promise((resolve) => window.setTimeout(resolve, 0));
 };
 
-test("is closed by default", async () => {
-  const { getByRole, container } = render(HowToPlayButton, {
+const renderHowToPlayButton = () =>
+  render(HowToPlayButton, {
     global: {
       plugins: [createAppI18n()],
     },
   });
+
+it("should render the default state properly", async () => {
+  const { container, getByRole } = renderHowToPlayButton();
 
   await expect
     .element(getByRole("button", { name: "How to play" }))
@@ -24,12 +27,8 @@ test("is closed by default", async () => {
   expect(container.querySelector('[role="dialog"]')).toBeNull();
 });
 
-test("opens the dialog and renders the instructional lines", async () => {
-  const { getByRole, getByText } = render(HowToPlayButton, {
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
+it("should open the dialog and render the instructional lines", async () => {
+  const { getByRole, getByText } = renderHowToPlayButton();
 
   await getByRole("button", { name: "How to play" }).click();
 
@@ -48,38 +47,32 @@ test("opens the dialog and renders the instructional lines", async () => {
   await expect.element(getByText("That's it. Enjoy!")).toBeInTheDocument();
 });
 
-test("closes on toggle, outside click, and escape", async () => {
-  const { getByRole, container } = render(HowToPlayButton, {
-    global: {
-      plugins: [createAppI18n()],
-    },
-  });
-
+it("should close the dialog when the trigger is clicked again", async () => {
+  const { container, getByRole } = renderHowToPlayButton();
   const trigger = getByRole("button", { name: "How to play" });
 
   await trigger.click();
-  await expect
-    .element(getByRole("dialog", { name: "How to play" }))
-    .toBeInTheDocument();
-
   await trigger.click();
+
   expect(container.querySelector('[role="dialog"]')).toBeNull();
+});
 
-  await trigger.click();
-  await expect
-    .element(getByRole("dialog", { name: "How to play" }))
-    .toBeInTheDocument();
+it("should close the dialog on outside click", async () => {
+  const { container, getByRole } = renderHowToPlayButton();
 
+  await getByRole("button", { name: "How to play" }).click();
   document.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   await nextTick();
+
   expect(container.querySelector('[role="dialog"]')).toBeNull();
+});
 
-  await trigger.click();
-  await expect
-    .element(getByRole("dialog", { name: "How to play" }))
-    .toBeInTheDocument();
+it("should close the dialog on escape", async () => {
+  const { container, getByRole } = renderHowToPlayButton();
 
+  await getByRole("button", { name: "How to play" }).click();
   document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
   await nextTick();
+
   expect(container.querySelector('[role="dialog"]')).toBeNull();
 });

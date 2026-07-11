@@ -52,7 +52,6 @@ test("emits time-up once when the countdown reaches zero", async () => {
   const { getByText } = render(CountdownTimer, {
     props: {
       startedAtMs: nowMs,
-      bufferMs: 500,
       onTimeUp,
     },
   });

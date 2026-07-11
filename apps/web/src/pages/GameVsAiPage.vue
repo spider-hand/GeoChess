@@ -24,9 +24,6 @@ defineOptions({
   name: "GameVsAiPage",
 });
 
-const PLAYER_TURN_TIMEOUT_MS = 60_000;
-const PLAYER_TURN_TIMEOUT_BUFFER_MS = 500;
-
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
@@ -257,8 +254,6 @@ const handleExit = async () => {
           <CountdownTimer
             v-if="!isFinished"
             :started-at-ms="timerStartedAtMs"
-            :duration-ms="PLAYER_TURN_TIMEOUT_MS"
-            :buffer-ms="PLAYER_TURN_TIMEOUT_BUFFER_MS"
             @time-up="handleTimeUp"
           />
         </div>

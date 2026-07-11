@@ -5,22 +5,16 @@ defineOptions({
   name: "GameCountdownTimer",
 });
 
-const props = withDefaults(
-  defineProps<{
-    bufferMs?: number;
-    durationMs?: number;
-    startedAtMs: number;
-  }>(),
-  {
-    bufferMs: 0,
-    durationMs: 60_000,
-  },
-);
+const props = defineProps<{
+  startedAtMs: number;
+}>();
 
 const emit = defineEmits<{
   timeUp: [];
 }>();
 
+const BUFFER_MS = 500;
+const DURATION_MS = 60_000;
 const DANGER_THRESHOLD_MS = 10_000;
 const TICK_INTERVAL_MS = 100;
 
@@ -29,7 +23,7 @@ const timeoutId = ref<number | null>(null);
 const emittedDeadlineKey = ref<string | null>(null);
 
 const countdownTargetMs = computed(
-  () => props.startedAtMs + props.durationMs + props.bufferMs,
+  () => props.startedAtMs + DURATION_MS + BUFFER_MS,
 );
 const remainingMs = computed(() =>
   Math.max(0, countdownTargetMs.value - nowMs.value),

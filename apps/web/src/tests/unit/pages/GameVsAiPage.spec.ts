@@ -2,6 +2,7 @@ import { beforeEach, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { computed, ref } from "vue";
 
+const mockConfetti = vi.fn();
 const realtimeAiGame = ref({
   id: "game-123",
   userId: "user-123",
@@ -62,6 +63,10 @@ vi.mock("@/composables/useAiGameQuery", () => ({
   }),
 }));
 
+vi.mock("canvas-confetti", () => ({
+  default: (...args: unknown[]) => mockConfetti(...args),
+}));
+
 import App from "@/App.vue";
 import { createAppI18n } from "@/i18n";
 import router from "@/router";
@@ -87,6 +92,7 @@ beforeEach(() => {
   mockCreateAiGame.mockReset();
   mockCreateAiGameMove.mockReset();
   mockTimeoutAiGame.mockReset();
+  mockConfetti.mockReset();
 });
 
 test("renders the in-game player turn layout from realtime state", async () => {
@@ -211,6 +217,44 @@ test("renders the finished loss state with the result card, actions, and visible
   await expect
     .element(getByRole("button", { name: "Exit" }))
     .toBeInTheDocument();
+  expect(mockConfetti).not.toHaveBeenCalled();
+});
+
+test("fires confetti once when the page loads in a winning state", async () => {
+  realtimeAiGame.value = {
+    ...realtimeAiGame.value,
+    turn: "ai",
+    availableMoves: [],
+    moves: {
+      "move-1": {
+        country: "CC",
+        actor: "player",
+        createdAt: 1751155250000,
+      },
+      "move-2": {
+        country: "DD",
+        actor: "ai",
+        createdAt: 1751155300000,
+      },
+    },
+  };
+
+  await router.push("/game/vs-ai/game-123");
+  await router.isReady();
+
+  const { getByText } = render(App, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  await expect.element(getByText("You Win")).toBeInTheDocument();
+  expect(mockConfetti).toHaveBeenCalledTimes(1);
+  expect(mockConfetti).toHaveBeenCalledWith({
+    particleCount: 150,
+    spread: 90,
+    origin: { y: 0.6 },
+  });
 });
 
 test("clicking Play Again creates a new AI game with the same difficulty and navigates to it", async () => {

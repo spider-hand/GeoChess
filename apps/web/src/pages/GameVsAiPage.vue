@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import confetti from "canvas-confetti";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -137,6 +138,22 @@ watch(
   () => {
     isSubmittingMove.value = false;
   },
+);
+
+watch(
+  result,
+  (nextResult) => {
+    if (nextResult !== "won") {
+      return;
+    }
+
+    confetti({
+      particleCount: 150,
+      spread: 90,
+      origin: { y: 0.6 },
+    });
+  },
+  { immediate: true },
 );
 
 const handleSelect = async (countryCode: string) => {

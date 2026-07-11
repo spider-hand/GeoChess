@@ -9,3 +9,11 @@ export type PathStep = {
   owner: PathStepOwner;
   turn: number;
 };
+
+export type GameMapMarkerOwner = PathStepOwner;
+
+export type GameMapMarker = {
+  countryCode: string;
+  owner: GameMapMarkerOwner;
+  label: string;
+};

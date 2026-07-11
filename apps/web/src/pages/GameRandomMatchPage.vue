@@ -23,7 +23,7 @@ defineOptions({
       <CountdownTimer :started-at-ms="Date.now()" />
 
       <div class="game-page__map-card-row">
-        <GameMap class="game-page__map" :show-place-labels="false" />
+        <GameMap class="game-page__map" :is-finished="false" :markers="[]" />
         <AvailableMovesCard
           :available-moves="['us', 'jp']"
           :is-ai-turn="false"
@@ -35,7 +35,7 @@ defineOptions({
       <PathHistoryCard :history-steps="[]" />
 
       <div class="game-page__map-card-row">
-        <GameMap class="game-page__map" :show-place-labels="true" />
+        <GameMap class="game-page__map" :is-finished="true" :markers="[]" />
         <PathResultCard :result-steps="[]" />
       </div>
 

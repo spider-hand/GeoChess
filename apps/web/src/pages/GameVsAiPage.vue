@@ -18,7 +18,7 @@ import TurnStatusStrip from "@/components/pages/Game/TurnStatusStrip.vue";
 import Button from "@/components/shared/Button.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
-import type { PathStep, TurnStatus } from "@/types/game";
+import type { GameMapMarker, PathStep, TurnStatus } from "@/types/game";
 
 defineOptions({
   name: "GameVsAiPage",
@@ -102,6 +102,19 @@ const historySteps = computed<Array<PathStep>>(() => {
     })),
   ];
 });
+
+const mapMarkers = computed<Array<GameMapMarker>>(() =>
+  historySteps.value.map((step) => ({
+    countryCode: step.countryCode,
+    owner: step.owner,
+    label:
+      step.owner === "player"
+        ? username.value
+        : step.owner === "ai"
+          ? t("components.pages.Game.PlayerMatchupCard.ai")
+          : t("components.pages.Game.PathResultCard.start"),
+  })),
+);
 
 // Leave the page when the realtime game could not be loaded.
 watch(
@@ -265,7 +278,11 @@ const handleExit = async () => {
           'game-page__map-card-row--fill-remaining': isFinished,
         }"
       >
-        <GameMap class="game-page__map" :show-place-labels="isFinished" />
+        <GameMap
+          class="game-page__map"
+          :is-finished="isFinished"
+          :markers="mapMarkers"
+        />
         <AvailableMovesCard
           v-if="!isFinished"
           :available-moves="realtimeAiGame.availableMoves"

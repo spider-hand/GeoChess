@@ -41,9 +41,9 @@ vi.mock("@/composables/useAuth", () => ({
 vi.mock("@/components/pages/Game/GameMap.vue", () => ({
   default: {
     name: "GameMap",
-    props: ["showPlaceLabels"],
+    props: ["isFinished", "markers"],
     template:
-      '<div class="game-map" :data-show-place-labels="String(showPlaceLabels)" data-testid="game-map" />',
+      '<div class="game-map" :data-is-finished="String(isFinished)" :data-markers="JSON.stringify(markers)" data-testid="game-map" />',
   },
 }));
 
@@ -131,8 +131,15 @@ test("renders the in-game player turn layout from realtime state", async () => {
   expect(
     container
       .querySelector('[data-testid="game-map"]')
-      ?.getAttribute("data-show-place-labels"),
+      ?.getAttribute("data-is-finished"),
   ).toBe("false");
+  expect(
+    container
+      .querySelector('[data-testid="game-map"]')
+      ?.getAttribute("data-markers"),
+  ).toBe(
+    JSON.stringify([{ countryCode: "BB", owner: "neutral", label: "Start" }]),
+  );
 });
 
 test("renders the AI waiting state and keeps the timer visible", async () => {
@@ -209,8 +216,18 @@ test("renders the finished loss state with the result card, actions, and visible
   expect(
     container
       .querySelector('[data-testid="game-map"]')
-      ?.getAttribute("data-show-place-labels"),
+      ?.getAttribute("data-is-finished"),
   ).toBe("true");
+  expect(
+    container
+      .querySelector('[data-testid="game-map"]')
+      ?.getAttribute("data-markers"),
+  ).toBe(
+    JSON.stringify([
+      { countryCode: "BB", owner: "neutral", label: "Start" },
+      { countryCode: "CC", owner: "player", label: "Taylor Swift" },
+    ]),
+  );
   await expect
     .element(getByRole("button", { name: "Play Again" }))
     .toBeInTheDocument();
@@ -242,13 +259,24 @@ test("fires confetti once when the page loads in a winning state", async () => {
   await router.push("/game/vs-ai/game-123");
   await router.isReady();
 
-  const { getByText } = render(App, {
+  const { container, getByText } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
   });
 
   await expect.element(getByText("You Win")).toBeInTheDocument();
+  expect(
+    container
+      .querySelector('[data-testid="game-map"]')
+      ?.getAttribute("data-markers"),
+  ).toBe(
+    JSON.stringify([
+      { countryCode: "BB", owner: "neutral", label: "Start" },
+      { countryCode: "CC", owner: "player", label: "Taylor Swift" },
+      { countryCode: "DD", owner: "ai", label: "AI" },
+    ]),
+  );
   expect(mockConfetti).toHaveBeenCalledTimes(1);
   expect(mockConfetti).toHaveBeenCalledWith({
     particleCount: 150,

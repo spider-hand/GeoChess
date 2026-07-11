@@ -8,22 +8,12 @@ defineOptions({
 const { t } = useI18n();
 
 const emit = defineEmits<{
-  githubClick: [event: MouseEvent];
-  discordClick: [event: MouseEvent];
   privacyClick: [event: MouseEvent];
   termsClick: [event: MouseEvent];
   contactClick: [event: MouseEvent];
 }>();
 
 const year = new Date().getFullYear();
-
-const emitGithubClick = (event: MouseEvent) => {
-  emit("githubClick", event);
-};
-
-const emitDiscordClick = (event: MouseEvent) => {
-  emit("discordClick", event);
-};
 
 const emitPrivacyClick = (event: MouseEvent) => {
   emit("privacyClick", event);
@@ -49,20 +39,6 @@ const emitContactClick = (event: MouseEvent) => {
         class="navigation-footer__actions"
         :aria-label="t('components.shared.NavigationFooter.navigationLabel')"
       >
-        <button
-          class="navigation-footer__action"
-          type="button"
-          @click="emitGithubClick"
-        >
-          {{ t("components.shared.NavigationFooter.github") }}
-        </button>
-        <button
-          class="navigation-footer__action"
-          type="button"
-          @click="emitDiscordClick"
-        >
-          {{ t("components.shared.NavigationFooter.discord") }}
-        </button>
         <button
           class="navigation-footer__action"
           type="button"

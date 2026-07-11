@@ -24,6 +24,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const AlternateColor: Story = {
+  args: {
+    name: "Olivia Rodrigo",
+  },
+};
+
 export const SingleWord: Story = {
   args: {
     name: "Taylor",

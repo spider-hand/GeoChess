@@ -12,10 +12,10 @@ const props = defineProps<{
   size: AvatarSize;
 }>();
 
-const initials = computed(() => {
-  const normalizedName = props.name.trim();
+const normalizedName = computed(() => props.name.trim());
 
-  const words = normalizedName
+const initials = computed(() => {
+  const words = normalizedName.value
     .split(/\s+/)
     .map((word) => word.replace(/[^\p{L}\p{N}]/gu, ""))
     .filter(Boolean);
@@ -30,10 +30,35 @@ const initials = computed(() => {
 
   return `${words[0][0]}${words[1][0]}`.toUpperCase();
 });
+
+const backgroundColor = computed(() => {
+  const colorKey = normalizedName.value.toLocaleLowerCase();
+
+  if (colorKey.length === 0) {
+    return "var(--surface-card-dark)";
+  }
+
+  let hash = 0;
+
+  for (const character of colorKey) {
+    hash = (hash * 31 + character.codePointAt(0)!) >>> 0;
+  }
+
+  const hue = hash % 360;
+  const saturation = 68 + (hash % 11);
+  const lightness = 40 + ((hash >> 4) % 8);
+
+  return `hsl(${hue} ${saturation}% ${lightness}%)`;
+});
 </script>
 
 <template>
-  <span class="avatar" :class="`avatar--${props.size}`" aria-hidden="true">
+  <span
+    class="avatar"
+    :class="`avatar--${props.size}`"
+    :style="{ backgroundColor }"
+    aria-hidden="true"
+  >
     {{ initials }}
   </span>
 </template>
@@ -44,7 +69,6 @@ const initials = computed(() => {
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-token-full);
-  background-color: var(--surface-card-dark);
   color: var(--on-dark);
   font-family: var(--font-body);
   font-weight: var(--font-weight-semibold);

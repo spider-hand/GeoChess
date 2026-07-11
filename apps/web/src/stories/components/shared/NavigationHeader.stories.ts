@@ -24,3 +24,19 @@ export const MobileMenuOpen: Story = {
     );
   },
 };
+
+export const MobileMenuWithAccordionOpen: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open navigation menu" }),
+    );
+    await userEvent.click(
+      canvas.getByTestId("navigation-header-mobile-how-to-play-toggle"),
+    );
+    await userEvent.click(
+      canvas.getByTestId("navigation-header-mobile-language-toggle"),
+    );
+  },
+};

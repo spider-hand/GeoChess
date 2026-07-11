@@ -92,14 +92,36 @@ test("opens and closes the mobile menu", async () => {
 
 test("shows the mobile how to play accordion content", async () => {
   resetAuthState();
-  const { getByRole, getByTestId, getByText } = render(NavigationHeader, {
-    global: {
-      plugins: [createAppI18n()],
+  const { container, getByRole, getByTestId, getByText } = render(
+    NavigationHeader,
+    {
+      global: {
+        plugins: [createAppI18n()],
+      },
     },
-  });
+  );
 
   await getByRole("button", { name: "Open navigation menu" }).click();
+
+  await expect
+    .element(getByTestId("navigation-header-mobile-how-to-play-chevron-down"))
+    .toBeInTheDocument();
+  expect(
+    container.querySelector(
+      '[data-testid="navigation-header-mobile-how-to-play-chevron-up"]',
+    ),
+  ).toBeNull();
+
   await getByTestId("navigation-header-mobile-how-to-play-toggle").click();
+
+  await expect
+    .element(getByTestId("navigation-header-mobile-how-to-play-chevron-up"))
+    .toBeInTheDocument();
+  expect(
+    container.querySelector(
+      '[data-testid="navigation-header-mobile-how-to-play-chevron-down"]',
+    ),
+  ).toBeNull();
 
   await expect
     .element(getByText("Claim a neighboring country each turn."))
@@ -130,6 +152,16 @@ test("shows the guest mobile menu branch", async () => {
     .element(getByRole("button", { name: "Sign Up" }))
     .toBeInTheDocument();
   expect(
+    getByRole("button", { name: "GitHub", exact: true })
+      .element()
+      .querySelector("svg"),
+  ).toBeNull();
+  expect(
+    getByRole("button", { name: "Discord", exact: true })
+      .element()
+      .querySelector("svg"),
+  ).toBeNull();
+  expect(
     container.querySelector('[data-testid="navigation-header-mobile-user"]'),
   ).toBeNull();
 });
@@ -152,6 +184,14 @@ test("emits mobile navigation events and language changes", async () => {
   });
 
   await getByRole("button", { name: "Open navigation menu" }).click();
+  await expect
+    .element(getByTestId("navigation-header-mobile-language-chevron-down"))
+    .toBeInTheDocument();
+
+  await getByTestId("navigation-header-mobile-language-toggle").click();
+  await expect
+    .element(getByTestId("navigation-header-mobile-language-chevron-up"))
+    .toBeInTheDocument();
   await getByRole("button", { name: "GitHub", exact: true }).click();
   await getByRole("button", { name: "Open navigation menu" }).click();
   await getByRole("button", { name: "Discord", exact: true }).click();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Menu, X } from "@lucide/vue";
+import { ChevronDown, ChevronUp, Menu, X } from "@lucide/vue";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -270,9 +270,23 @@ useOnClickOutside({
               :aria-expanded="isMobileHowToPlayOpen"
               @click="toggleMobileHowToPlay"
             >
-              {{
-                t("components.shared.NavigationHeader.howToPlayTriggerLabel")
-              }}
+              <span>
+                {{
+                  t("components.shared.NavigationHeader.howToPlayTriggerLabel")
+                }}
+              </span>
+              <ChevronUp
+                v-if="isMobileHowToPlayOpen"
+                :size="18"
+                aria-hidden="true"
+                data-testid="navigation-header-mobile-how-to-play-chevron-up"
+              />
+              <ChevronDown
+                v-else
+                :size="18"
+                aria-hidden="true"
+                data-testid="navigation-header-mobile-how-to-play-chevron-down"
+              />
             </button>
 
             <div
@@ -325,7 +339,21 @@ useOnClickOutside({
               :aria-expanded="isMobileLanguageOpen"
               @click="toggleMobileLanguage"
             >
-              {{ t("components.shared.NavigationHeader.languageLabel") }}
+              <span>{{
+                t("components.shared.NavigationHeader.languageLabel")
+              }}</span>
+              <ChevronUp
+                v-if="isMobileLanguageOpen"
+                :size="18"
+                aria-hidden="true"
+                data-testid="navigation-header-mobile-language-chevron-up"
+              />
+              <ChevronDown
+                v-else
+                :size="18"
+                aria-hidden="true"
+                data-testid="navigation-header-mobile-language-chevron-down"
+              />
             </button>
 
             <div
@@ -459,6 +487,8 @@ useOnClickOutside({
 }
 
 .navigation-header__mobile-row {
+  display: flex;
+  align-items: center;
   border: 0;
   border-radius: var(--radius-token-md);
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -473,6 +503,10 @@ useOnClickOutside({
   transition:
     background-color 160ms ease,
     color 160ms ease;
+}
+
+.navigation-header__mobile-row--accordion {
+  justify-content: space-between;
 }
 
 .navigation-header__mobile-row:hover {

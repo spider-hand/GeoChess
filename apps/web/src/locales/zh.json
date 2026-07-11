@@ -104,8 +104,6 @@
       "NavigationFooter": {
         "navigationLabel": "页脚导航",
         "credit": "© {year} GeoChess 版权所有。",
-        "github": "GitHub",
-        "discord": "Discord",
         "privacy": "隐私",
         "terms": "条款",
         "contact": "联系"

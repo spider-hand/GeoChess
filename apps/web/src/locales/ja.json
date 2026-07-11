@@ -104,8 +104,6 @@
       "NavigationFooter": {
         "navigationLabel": "フッターナビゲーション",
         "credit": "© {year} GeoChess All rights reserved.",
-        "github": "GitHub",
-        "discord": "Discord",
         "privacy": "プライバシー",
         "terms": "利用規約",
         "contact": "お問い合わせ"

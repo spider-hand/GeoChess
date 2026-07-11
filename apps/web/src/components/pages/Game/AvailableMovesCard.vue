@@ -3,7 +3,7 @@ import { Waypoints } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { countryFlagSrc } from "@/utils/game";
+import useCountry from "@/composables/useCountry";
 import Button from "@/components/shared/Button.vue";
 
 defineOptions({
@@ -22,6 +22,13 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const {
+  countryCode: formatCountryCode,
+  countryFlagAlt,
+  countryFlagSrc,
+  countryLabel,
+  countryName,
+} = useCountry();
 const selectedCountryCode = ref<string | null>(null);
 
 const isWaiting = computed(() => props.isAiTurn);
@@ -89,19 +96,31 @@ const emitSelect = () => {
         }"
         type="button"
         role="option"
+        :aria-label="countryLabel(countryCode)"
         :aria-selected="selectedCountryCode === countryCode"
         @click="selectCountry(countryCode)"
       >
         <img
           class="available-moves-card__flag"
           :src="countryFlagSrc(countryCode)"
-          :alt="`${countryCode} flag`"
+          :alt="countryFlagAlt(countryCode)"
           width="24"
           height="18"
         />
-        <span class="available-moves-card__option-label">{{
-          countryCode
-        }}</span>
+        <span
+          class="available-moves-card__option-label"
+          :title="countryLabel(countryCode)"
+        >
+          <span class="available-moves-card__option-name">
+            {{ countryName(countryCode) ?? formatCountryCode(countryCode) }}
+          </span>
+          <span
+            v-if="countryName(countryCode)"
+            class="available-moves-card__option-code"
+          >
+            {{ formatCountryCode(countryCode) }}
+          </span>
+        </span>
       </button>
     </div>
 
@@ -225,10 +244,31 @@ const emitSelect = () => {
 }
 
 .available-moves-card__option-label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.available-moves-card__option-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-family: var(--font-body);
   font-size: var(--font-size-body-md);
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-body);
+}
+
+.available-moves-card__option-code {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-copy);
 }
 
 .available-moves-card__button {

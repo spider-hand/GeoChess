@@ -3,8 +3,8 @@ import { History } from "@lucide/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import useCountry from "@/composables/useCountry";
 import type { PathStep } from "@/types/game";
-import { countryFlagSrc } from "@/utils/game";
 
 defineOptions({
   name: "GamePathResultCard",
@@ -15,6 +15,13 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
+const {
+  countryCode: formatCountryCode,
+  countryFlagAlt,
+  countryFlagSrc,
+  countryLabel,
+  countryName,
+} = useCountry();
 
 const legendItems = computed(() => [
   {
@@ -101,12 +108,26 @@ const turnLabel = (turn: number) =>
             <img
               class="path-result-card__flag"
               :src="countryFlagSrc(step.countryCode)"
-              :alt="`${step.countryCode} flag`"
+              :alt="countryFlagAlt(step.countryCode)"
               width="24"
               height="18"
             />
-            <span class="path-result-card__country-name">
-              {{ step.countryCode }}
+            <span
+              class="path-result-card__country-name"
+              :title="countryLabel(step.countryCode)"
+            >
+              <span class="path-result-card__country-name-text">
+                {{
+                  countryName(step.countryCode) ??
+                  formatCountryCode(step.countryCode)
+                }}
+              </span>
+              <span
+                v-if="countryName(step.countryCode)"
+                class="path-result-card__country-code"
+              >
+                {{ formatCountryCode(step.countryCode) }}
+              </span>
             </span>
           </div>
         </article>
@@ -281,9 +302,30 @@ const turnLabel = (turn: number) =>
 }
 
 .path-result-card__country-name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.path-result-card__country-name-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-family: var(--font-body);
   font-size: var(--font-size-body-md);
   font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-copy);
+}
+
+.path-result-card__country-code {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-medium);
   line-height: var(--line-height-copy);
 }
 

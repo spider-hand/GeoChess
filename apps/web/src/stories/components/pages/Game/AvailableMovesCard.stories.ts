@@ -25,7 +25,7 @@ export const CountrySelected: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(canvas.getByRole("option", { name: /JP flag JP/i }));
+    await userEvent.click(canvas.getByRole("option", { name: "Japan JP" }));
 
     await expect(canvas.getByRole("button", { name: "Select" })).toBeEnabled();
   },

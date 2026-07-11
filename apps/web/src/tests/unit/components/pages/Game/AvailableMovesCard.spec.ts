@@ -31,6 +31,9 @@ test("renders the title, available options, and disabled select button by defaul
     .element(getByRole("listbox", { name: "Available Moves" }))
     .toBeInTheDocument();
   await expect.element(getByAltText("US flag")).toBeInTheDocument();
+  await expect
+    .element(getByRole("option", { name: "United States US" }))
+    .toBeVisible();
 });
 
 test("selects a country row and enables the select button", async () => {
@@ -41,7 +44,7 @@ test("selects a country row and enables the select button", async () => {
     },
   });
 
-  const japanOption = getByRole("option", { name: /JP flag JP/i });
+  const japanOption = getByRole("option", { name: "Japan JP" });
 
   await japanOption.click();
 
@@ -95,7 +98,7 @@ test("emits the selected country only when select is pressed", async () => {
     },
   });
 
-  await getByRole("option", { name: /FR flag FR/i }).click();
+  await getByRole("option", { name: "France FR" }).click();
 
   expect(onSelect.mock.calls).toHaveLength(0);
 
@@ -103,4 +106,19 @@ test("emits the selected country only when select is pressed", async () => {
 
   expect(onSelect).toHaveBeenCalledWith("fr");
   expect(onSelect).toHaveBeenCalledTimes(1);
+});
+
+test("falls back to the uppercased country code when the localized name is missing", async () => {
+  const { getByRole } = render(AvailableMovesCard, {
+    props: {
+      ...defaultProps,
+      availableMoves: ["zz"],
+      isSelectDisabled: true,
+    },
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
+
+  await expect.element(getByRole("option", { name: "ZZ" })).toBeVisible();
 });

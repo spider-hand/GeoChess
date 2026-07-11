@@ -9,8 +9,8 @@ test("renders the shared header, legend, and realtime result steps", async () =>
     props: {
       resultSteps: [
         { countryCode: "bb", owner: "neutral", turn: 0 },
-        { countryCode: "cc", owner: "player", turn: 1 },
-        { countryCode: "dd", owner: "ai", turn: 2 },
+        { countryCode: "jp", owner: "player", turn: 1 },
+        { countryCode: "fr", owner: "ai", turn: 2 },
       ],
     },
     global: {
@@ -26,9 +26,23 @@ test("renders the shared header, legend, and realtime result steps", async () =>
   await expect.element(getByText("Start")).toBeVisible();
   await expect.element(getByText("Turn 1")).toBeVisible();
   await expect.element(getByText("Turn 2")).toBeVisible();
-  await expect.element(getByText("BB")).toBeVisible();
-  await expect.element(getByText("DD")).toBeVisible();
+  await expect.element(getByText("Barbados")).toBeVisible();
+  await expect.element(getByText("JP")).toBeVisible();
+  await expect.element(getByText("France")).toBeVisible();
   expect(getByRole("listitem").length).toBe(3);
   expect(getByTestId("path-result-card-line").length).toBe(2);
   await expect.element(getByRole("list")).toBeInTheDocument();
+});
+
+test("falls back to the uppercased country code when the localized name is missing", async () => {
+  const { getByText } = render(PathResultCard, {
+    props: {
+      resultSteps: [{ countryCode: "zz", owner: "neutral", turn: 0 }],
+    },
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
+
+  await expect.element(getByText("ZZ")).toBeVisible();
 });

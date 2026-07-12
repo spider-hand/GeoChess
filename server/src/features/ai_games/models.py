@@ -7,6 +7,7 @@ Difficulty = Literal["easy", "medium", "hard"]
 AiGameResult = Literal["win", "lose", "cancelled"]
 AiGameTurn = Literal["player", "ai"]
 AiGameMoveActor = Literal["player", "ai"]
+AiGameHistoryMoveActor = Literal["start", "player", "ai"]
 
 
 class AiGameRecord(BaseModel):
@@ -54,3 +55,12 @@ class RealtimeAiGameRecord(BaseModel):
     moves: dict[str, RealtimeAiGameMoveRecord] = Field(default_factory=dict)
     created_at: int = Field(alias="createdAt")
     updated_at: int = Field(alias="updatedAt")
+
+
+class AiGameHistoryMoveRecord(BaseModel):
+    id: str
+    game_id: str = Field(alias="gameId")
+    move_index: int = Field(alias="moveIndex")
+    country: str
+    actor: AiGameHistoryMoveActor
+    user_id: str | None = Field(alias="userId", default=None)

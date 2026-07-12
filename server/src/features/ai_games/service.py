@@ -11,6 +11,7 @@ from core.firebase import FIREBASE_SERVER_TIMESTAMP, get_firebase_app
 from core.http import ApiError
 from features.ai_games.ai_move_selector import choose_ai_move
 from features.ai_games.models import (
+    AiGameHistoryMoveRecord,
     AiGameMoveActor,
     AiGameRecord,
     AiGameResult,
@@ -40,6 +41,73 @@ class AiGamesService:
 
     def _get_game_ref(self, game_id: str):
         return self._get_ai_games_ref().child(game_id)
+
+    def _build_history_moves(
+        self,
+        realtime_ai_game: RealtimeAiGameRecord,
+        final_move: AiGameHistoryMoveRecord | None = None,
+    ) -> list[AiGameHistoryMoveRecord]:
+        history_moves = [
+            AiGameHistoryMoveRecord(
+                id=f"{realtime_ai_game.id}:0",
+                gameId=realtime_ai_game.id,
+                moveIndex=0,
+                country=realtime_ai_game.start,
+                actor="start",
+                userId=None,
+            )
+        ]
+        sorted_moves = sorted(
+            realtime_ai_game.moves.items(),
+            key=lambda item: (item[1].created_at, item[0]),
+        )
+
+        for move_index, (move_id, move) in enumerate(sorted_moves, start=1):
+            history_moves.append(
+                AiGameHistoryMoveRecord(
+                    id=move_id,
+                    gameId=realtime_ai_game.id,
+                    moveIndex=move_index,
+                    country=move.country,
+                    actor=move.actor,
+                    userId=realtime_ai_game.user_id if move.actor == "player" else None,
+                )
+            )
+
+        if final_move is not None:
+            history_moves.append(final_move)
+
+        return history_moves
+
+    def _finish_game(
+        self,
+        result: AiGameResult,
+        realtime_ai_game: RealtimeAiGameRecord,
+        final_move: AiGameHistoryMoveRecord | None = None,
+    ) -> bool:
+        return self.ai_games_repository.finish_game(
+            realtime_ai_game.id,
+            result,
+            self._build_history_moves(realtime_ai_game, final_move),
+        )
+
+    def _build_final_move(
+        self,
+        realtime_ai_game: RealtimeAiGameRecord,
+        move_id: str,
+        country_code: str,
+        actor: AiGameMoveActor,
+    ) -> AiGameHistoryMoveRecord:
+        # Firebase returns unresolved server-timestamp placeholders after a terminal transaction,
+        # so we append the last move from inputs that has already been validated.
+        return AiGameHistoryMoveRecord(
+            id=move_id,
+            gameId=realtime_ai_game.id,
+            moveIndex=len(realtime_ai_game.moves) + 1,
+            country=country_code,
+            actor=actor,
+            userId=realtime_ai_game.user_id if actor == "player" else None,
+        )
 
     def _compute_available_moves(
         self, country_code: str, used_countries: list[str]
@@ -221,9 +289,11 @@ class AiGamesService:
         move_key = uuid4().hex
 
         terminal_result: AiGameResult | None = None
+        terminal_realtime_game: RealtimeAiGameRecord | None = None
+        final_move: AiGameHistoryMoveRecord | None = None
 
         def apply_player_move(current_value: dict[str, object] | None):
-            nonlocal terminal_result
+            nonlocal final_move, terminal_realtime_game, terminal_result
 
             if current_value is None:
                 raise ApiError(
@@ -253,13 +323,22 @@ class AiGamesService:
                 move_key=move_key,
             )
             terminal_result = next_terminal_result
+            if terminal_result is not None:
+                terminal_realtime_game = realtime_ai_game
+                final_move = self._build_final_move(
+                    realtime_ai_game,
+                    move_key,
+                    create_move_input.country_code,
+                    "player",
+                )
 
             return updated_game
 
         game_ref.transaction(apply_player_move)
 
         if terminal_result is not None:
-            self.ai_games_repository.finish_game(game_id, terminal_result)
+            if terminal_realtime_game is not None:
+                self._finish_game(terminal_result, terminal_realtime_game, final_move)
             return
 
         enqueue_ai_game_move(game_id)
@@ -270,9 +349,10 @@ class AiGamesService:
         game_ref = self._get_game_ref(game_id)
         current_time_ms = int(time() * 1000)
         did_timeout = False
+        final_realtime_game: RealtimeAiGameRecord | None = None
 
         def apply_timeout(current_value: dict[str, object] | None):
-            nonlocal did_timeout
+            nonlocal did_timeout, final_realtime_game
 
             if current_value is None:
                 raise ApiError(
@@ -307,12 +387,13 @@ class AiGamesService:
                 )
 
             did_timeout = True
+            final_realtime_game = realtime_ai_game
             return self._apply_timeout_loss(realtime_ai_game)
 
         game_ref.transaction(apply_timeout)
 
-        if did_timeout:
-            self.ai_games_repository.finish_game(game_id, "lose")
+        if did_timeout and final_realtime_game is not None:
+            self._finish_game("lose", final_realtime_game)
 
     def process_ai_game_move(self, game_id: str) -> None:
         ai_game = self.ai_games_repository.get_by_id(game_id)
@@ -323,9 +404,11 @@ class AiGamesService:
         move_key = uuid4().hex
 
         terminal_result: AiGameResult | None = None
+        terminal_realtime_game: RealtimeAiGameRecord | None = None
+        final_move: AiGameHistoryMoveRecord | None = None
 
         def apply_ai_move(current_value: dict[str, object] | None):
-            nonlocal terminal_result
+            nonlocal final_move, terminal_realtime_game, terminal_result
 
             if current_value is None:
                 return current_value
@@ -336,6 +419,7 @@ class AiGamesService:
 
             if not realtime_ai_game.available_moves:
                 terminal_result = "win"
+                terminal_realtime_game = realtime_ai_game
                 return current_value
 
             country_code = choose_ai_move(realtime_ai_game)
@@ -346,13 +430,22 @@ class AiGamesService:
                 move_key=move_key,
             )
             terminal_result = next_terminal_result
+            if terminal_result is not None:
+                terminal_realtime_game = realtime_ai_game
+                final_move = self._build_final_move(
+                    realtime_ai_game,
+                    move_key,
+                    country_code,
+                    "ai",
+                )
 
             return updated_game
 
         game_ref.transaction(apply_ai_move)
 
         if terminal_result is not None:
-            self.ai_games_repository.finish_game(game_id, terminal_result)
+            if terminal_realtime_game is not None:
+                self._finish_game(terminal_result, terminal_realtime_game, final_move)
             return
 
     def delete_expired_ai_games(self) -> int:

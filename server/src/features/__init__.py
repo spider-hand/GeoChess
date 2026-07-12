@@ -1,4 +1,5 @@
 from features.ai_games import (
+    AiGameHistoryMoveRecord,
     AiGameRecord,
     AiGamesRepository,
     AiGamesService,
@@ -10,6 +11,7 @@ from features.ai_games import (
 from features.users import CreateUserInput, UpdateUserInput, UserRecord, UsersRepository, UsersService
 
 __all__ = [
+    "AiGameHistoryMoveRecord",
     "AiGameRecord",
     "RealtimeAiGameRecord",
     "RealtimeAiGameMoveRecord",

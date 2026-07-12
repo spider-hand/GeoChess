@@ -3,7 +3,11 @@ from unittest.mock import ANY, MagicMock
 import pytest
 
 from core.http import ApiError
-from features.ai_games.models import AiGameRecord, RealtimeAiGameRecord
+from features.ai_games.models import (
+    AiGameHistoryMoveRecord,
+    AiGameRecord,
+    RealtimeAiGameRecord,
+)
 from features.ai_games.service import AiGamesService
 
 
@@ -359,11 +363,14 @@ def test_create_ai_game_move_finishes_game_for_terminal_player_move():
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)
     game_ref = MagicMock()
-    game_ref.transaction.side_effect = lambda callback: callback(
-        make_realtime_ai_game(turn="player", available_moves=["CC"]).model_dump(
-            by_alias=True, mode="json"
-        )
-    )
+
+    def transaction(callback):
+        current = make_realtime_ai_game(
+            turn="player", available_moves=["CC"]
+        ).model_dump(by_alias=True, mode="json")
+        return callback(current)
+
+    game_ref.transaction.side_effect = transaction
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
@@ -388,7 +395,32 @@ def test_create_ai_game_move_finishes_game_for_terminal_player_move():
 
         service.create_ai_game_move("user-123", "game-123", {"countryCode": "CC"})
 
-    ai_games_repository.finish_game.assert_called_once_with("game-123", "win")
+    ai_games_repository.finish_game.assert_called_once()
+    finished_game_id, result, history_moves = ai_games_repository.finish_game.call_args.args
+    assert finished_game_id == "game-123"
+    assert result == "win"
+    assert history_moves == [
+        AiGameHistoryMoveRecord.model_validate(
+            {
+                "id": "game-123:0",
+                "gameId": "game-123",
+                "moveIndex": 0,
+                "country": "BB",
+                "actor": "start",
+                "userId": None,
+            }
+        ),
+        AiGameHistoryMoveRecord.model_validate(
+            {
+                "id": "move-1",
+                "gameId": "game-123",
+                "moveIndex": 1,
+                "country": "CC",
+                "actor": "player",
+                "userId": "user-123",
+            }
+        ),
+    ]
     enqueue_mock.assert_not_called()
 
 
@@ -462,6 +494,7 @@ def test_timeout_ai_game_marks_loss_after_expiry():
             turn="player", available_moves=["CC"]
         ).model_dump(by_alias=True, mode="json")
         updated_state["value"] = callback(current)
+        return updated_state["value"]
 
     game_ref.transaction.side_effect = transaction
 
@@ -482,7 +515,22 @@ def test_timeout_ai_game_marks_loss_after_expiry():
 
     assert updated_state["value"]["turn"] == "player"
     assert "availableMoves" not in updated_state["value"]
-    ai_games_repository.finish_game.assert_called_once_with("game-123", "lose")
+    ai_games_repository.finish_game.assert_called_once()
+    finished_game_id, result, history_moves = ai_games_repository.finish_game.call_args.args
+    assert finished_game_id == "game-123"
+    assert result == "lose"
+    assert history_moves == [
+        AiGameHistoryMoveRecord.model_validate(
+            {
+                "id": "game-123:0",
+                "gameId": "game-123",
+                "moveIndex": 0,
+                "country": "BB",
+                "actor": "start",
+                "userId": None,
+            }
+        )
+    ]
 
 
 @pytest.mark.parametrize(
@@ -592,8 +640,13 @@ def test_process_ai_game_move_finishes_game_when_ai_has_no_available_moves():
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)
     game_ref = MagicMock()
-    game_ref.transaction.side_effect = lambda callback: callback(
-        make_realtime_ai_game(turn="ai", available_moves=[]).model_dump(
+    game_ref.transaction.side_effect = lambda callback: (
+        callback(
+            make_realtime_ai_game(turn="ai", available_moves=[]).model_dump(
+                by_alias=True, mode="json"
+            )
+        )
+        or make_realtime_ai_game(turn="ai", available_moves=[]).model_dump(
             by_alias=True, mode="json"
         )
     )
@@ -612,7 +665,22 @@ def test_process_ai_game_move_finishes_game_when_ai_has_no_available_moves():
         )
 
         service.process_ai_game_move("game-123")
-    ai_games_repository.finish_game.assert_called_once_with("game-123", "win")
+    ai_games_repository.finish_game.assert_called_once()
+    finished_game_id, result, history_moves = ai_games_repository.finish_game.call_args.args
+    assert finished_game_id == "game-123"
+    assert result == "win"
+    assert history_moves == [
+        AiGameHistoryMoveRecord.model_validate(
+            {
+                "id": "game-123:0",
+                "gameId": "game-123",
+                "moveIndex": 0,
+                "country": "BB",
+                "actor": "start",
+                "userId": None,
+            }
+        )
+    ]
 
 
 def test_delete_expired_ai_games_returns_deleted_count():

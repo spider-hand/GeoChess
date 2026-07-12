@@ -133,7 +133,7 @@ def test_create_ai_game_creates_guest_user_and_enqueues_when_ai_starts():
     assert result.start == "BB"
     assert result.available_moves == ["CC", "DD"]
     assert result.moves == {}
-    users_repository.create.assert_called_once_with("user-123", "Guest")
+    users_repository.create.assert_called_once_with("user-123", "Guest", None)
     ai_games_repository.create_after_cancelling_incomplete_games.assert_called_once_with(
         ANY, "user-123", "medium"
     )

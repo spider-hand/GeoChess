@@ -182,7 +182,7 @@ class AiGamesService:
 
         # Create a record for anonymous user if the user does not exist in PostgreSQL
         if user is None:
-            self.users_repository.create(user_id, "Guest")
+            self.users_repository.create(user_id, "Guest", None)
 
         # Update incomplete games and save a new game record into PostgreSQL
         created_ai_game = (

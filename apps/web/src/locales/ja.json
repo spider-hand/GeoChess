@@ -95,6 +95,12 @@
         "githubRepositoryLink": "GitHub リポジトリへのリンク",
         "discordServerLink": "Discord サーバーへのリンク"
       },
+      "SignUpPromptModal": {
+        "title": "GeoChessへようこそ",
+        "description": "フレンド対戦やオンライン対戦に参加するにはサインアップしてください。",
+        "signUp": "サインアップ",
+        "close": "サインアップ案内を閉じる"
+      },
       "UserAvatarMenu": {
         "triggerLabel": "アカウントメニュー",
         "menuLabel": "アカウントメニュー",

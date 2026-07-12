@@ -11,11 +11,19 @@ import PlayWithFriendsCard from "@/components/pages/Home/PlayWithFriendsCard.vue
 import RandomMatchCard from "@/components/pages/Home/RandomMatchCard.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
+import SignUpPromptModal from "@/components/shared/SignUpPromptModal.vue";
 
 const router = useRouter();
-const { signInAnonymously } = useAuth();
+const {
+  isCurrentUserLoaded,
+  isRegisteredUser,
+  signInAnonymously,
+  signInWithGoogle,
+} = useAuth();
 const { createAiGame } = useAiGameQuery();
 const isStartingAiGame = ref(false);
+const isSignUpPromptOpen = ref(false);
+const isSigningUp = ref(false);
 
 const handleStartAiMatch = async (difficulty: Difficulty) => {
   if (isStartingAiGame.value) {
@@ -34,6 +42,55 @@ const handleStartAiMatch = async (difficulty: Difficulty) => {
     isStartingAiGame.value = false;
   }
 };
+
+const openSignUpPrompt = () => {
+  isSignUpPromptOpen.value = true;
+};
+
+const closeSignUpPrompt = () => {
+  isSignUpPromptOpen.value = false;
+};
+
+const handleProtectedNavigation = async (path: string) => {
+  if (!isCurrentUserLoaded.value || !isRegisteredUser.value) {
+    openSignUpPrompt();
+    return;
+  }
+
+  await router.push(path);
+};
+
+const handleCreateFriendsRoom = async () => {
+  await handleProtectedNavigation("/game/with-friends");
+};
+
+const handleEnterFriendsRoom = async (roomKey: string) => {
+  await handleProtectedNavigation(
+    `/game/with-friends?roomKey=${encodeURIComponent(roomKey)}`,
+  );
+};
+
+const handleJoinRandomMatch = async () => {
+  await handleProtectedNavigation("/game/random-match");
+};
+
+const handleSignUp = async () => {
+  if (isSigningUp.value) {
+    return;
+  }
+
+  isSigningUp.value = true;
+
+  try {
+    await signInWithGoogle();
+    closeSignUpPrompt();
+    await router.push("/");
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isSigningUp.value = false;
+  }
+};
 </script>
 
 <template>
@@ -50,10 +107,26 @@ const handleStartAiMatch = async (difficulty: Difficulty) => {
           :is-starting-game="isStartingAiGame"
           @start-ai-match="handleStartAiMatch"
         />
-        <PlayWithFriendsCard :disabled="isStartingAiGame" />
-        <RandomMatchCard :disabled="isStartingAiGame" :online-players="40" />
+        <PlayWithFriendsCard
+          :disabled="isStartingAiGame"
+          @create-friends-room="handleCreateFriendsRoom"
+          @enter-friends-room="handleEnterFriendsRoom"
+        />
+        <RandomMatchCard
+          :disabled="isStartingAiGame"
+          :online-players="40"
+          @join-random-match="handleJoinRandomMatch"
+        />
       </div>
     </section>
+
+    <SignUpPromptModal
+      v-if="isSignUpPromptOpen"
+      :is-open="isSignUpPromptOpen"
+      :is-signing-up="isSigningUp"
+      @close="closeSignUpPrompt"
+      @sign-up="handleSignUp"
+    />
 
     <NavigationFooter />
   </main>

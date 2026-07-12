@@ -26,3 +26,15 @@ export const DifficultySelected: Story = {
     );
   },
 };
+
+export const SignUpPromptOpen: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByRole("button", { name: "Create Room" }));
+
+    await expect(
+      canvas.getByRole("dialog", { name: "Welcome to GeoChess" }),
+    ).toBeVisible();
+  },
+};

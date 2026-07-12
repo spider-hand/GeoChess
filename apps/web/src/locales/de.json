@@ -95,6 +95,12 @@
         "githubRepositoryLink": "GitHub-Repository-Link",
         "discordServerLink": "Discord-Server-Link"
       },
+      "SignUpPromptModal": {
+        "title": "Willkommen bei GeoChess",
+        "description": "Registriere dich, um mit Freunden zu spielen und Online-Matches beizutreten.",
+        "signUp": "Registrieren",
+        "close": "Registrierungsdialog schließen"
+      },
       "UserAvatarMenu": {
         "triggerLabel": "Kontomenü",
         "menuLabel": "Kontomenü",

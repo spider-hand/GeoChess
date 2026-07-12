@@ -1,9 +1,11 @@
 import { beforeEach, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 const mockCreateAiGame = vi.fn();
 const mockSignInAnonymously = vi.fn();
+const mockSignInWithGoogle = vi.fn();
+const currentUser = ref<null | { isAnonymous: boolean }>(null);
 const realtimeAiGame = ref({
   id: "game-123",
   userId: "user-123",
@@ -25,12 +27,15 @@ vi.mock("@/composables/useAuth", () => ({
   useAuth: () => ({
     username: "Guest",
     userCountry: undefined,
-    currentUser: { value: null },
-    isAnonymousUser: false,
-    isAuthenticatedUser: false,
-    isCurrentUserLoaded: true,
+    currentUser,
+    isAnonymousUser: computed(() => currentUser.value?.isAnonymous ?? false),
+    isAuthenticatedUser: computed(() => !!currentUser.value),
+    isRegisteredUser: computed(
+      () => !!currentUser.value && !currentUser.value.isAnonymous,
+    ),
+    isCurrentUserLoaded: ref(true),
     signInAnonymously: (...args: unknown[]) => mockSignInAnonymously(...args),
-    signInWithGoogle: vi.fn(),
+    signInWithGoogle: (...args: unknown[]) => mockSignInWithGoogle(...args),
     signOutUser: vi.fn(),
   }),
 }));
@@ -64,8 +69,9 @@ vi.mock("@/components/pages/Home/PlayWithFriendsCard.vue", () => ({
   default: {
     name: "PlayWithFriendsCard",
     props: ["disabled"],
+    emits: ["create-friends-room", "enter-friends-room"],
     template:
-      '<div data-testid="play-with-friends-card" :data-disabled="String(disabled)" />',
+      '<div data-testid="play-with-friends-card" :data-disabled="String(disabled)"><button @click="$emit(\'create-friends-room\')">Create Room</button><button @click="$emit(\'enter-friends-room\', \'654321\')">Enter Room</button></div>',
   },
 }));
 
@@ -73,19 +79,33 @@ vi.mock("@/components/pages/Home/RandomMatchCard.vue", () => ({
   default: {
     name: "RandomMatchCard",
     props: ["disabled", "onlinePlayers"],
+    emits: ["join-random-match"],
     template:
-      '<div data-testid="random-match-card" :data-disabled="String(disabled)" :data-online-players="String(onlinePlayers)" />',
+      '<div data-testid="random-match-card" :data-disabled="String(disabled)" :data-online-players="String(onlinePlayers)"><button @click="$emit(\'join-random-match\')">Join Lobby</button></div>',
   },
 }));
 
-import App from "@/App.vue";
+vi.mock("@/components/shared/SignUpPromptModal.vue", () => ({
+  default: {
+    name: "SignUpPromptModal",
+    props: ["isOpen", "isSigningUp"],
+    emits: ["close", "sign-up"],
+    template:
+      '<div v-if="isOpen" data-testid="sign-up-prompt-modal" :data-is-signing-up="String(isSigningUp)"><button @click="$emit(\'sign-up\')">Sign Up</button><button @click="$emit(\'close\')">Close sign up prompt</button></div>',
+  },
+}));
+
 import { createAppI18n } from "@/i18n";
+import HomePage from "@/pages/HomePage.vue";
 import router from "@/router";
 
 beforeEach(() => {
   mockCreateAiGame.mockReset();
   mockSignInAnonymously.mockReset();
+  mockSignInWithGoogle.mockReset();
   mockSignInAnonymously.mockResolvedValue({ isAnonymous: true });
+  mockSignInWithGoogle.mockResolvedValue({ user: { uid: "user-123" } });
+  currentUser.value = null;
   realtimeAiGame.value = {
     id: "game-123",
     userId: "user-123",
@@ -107,7 +127,7 @@ it("should render the default state properly", async () => {
   await router.push("/");
   await router.isReady();
 
-  const { container } = render(App, {
+  const { container } = render(HomePage, {
     global: {
       plugins: [createAppI18n(), router],
     },
@@ -136,7 +156,7 @@ it("should create an ai game with the selected difficulty and navigate to the ga
   await router.push("/");
   await router.isReady();
 
-  const { getByRole } = render(App, {
+  const { getByRole } = render(HomePage, {
     global: {
       plugins: [createAppI18n(), router],
     },
@@ -149,4 +169,68 @@ it("should create an ai game with the selected difficulty and navigate to the ga
   await expect
     .poll(() => router.currentRoute.value.path)
     .toBe("/game/vs-ai/game-123");
+});
+
+it("should show the sign up prompt when an unauthenticated user tries to access multiplayer actions", async () => {
+  await router.push("/");
+  await router.isReady();
+
+  const { getByRole, getByTestId } = render(HomePage, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  await getByRole("button", { name: "Create Room" }).click();
+
+  await expect.element(getByTestId("sign-up-prompt-modal")).toBeVisible();
+});
+
+it.each([
+  ["Create Room", "/game/with-friends"],
+  ["Enter Room", "/game/with-friends"],
+  ["Join Lobby", "/game/random-match"],
+])(
+  "should navigate authenticated users to %s destination without opening the sign up prompt",
+  async (actionName, expectedPath) => {
+    currentUser.value = { isAnonymous: false };
+
+    await router.push("/");
+    await router.isReady();
+
+    const { container, getByRole } = render(HomePage, {
+      global: {
+        plugins: [createAppI18n(), router],
+      },
+    });
+
+    await getByRole("button", { name: actionName }).click();
+
+    expect(
+      container.querySelector('[data-testid="sign-up-prompt-modal"]'),
+    ).toBe(null);
+    await expect.poll(() => router.currentRoute.value.path).toBe(expectedPath);
+  },
+);
+
+it("should start the normal sign up flow from the prompt", async () => {
+  await router.push("/");
+  await router.isReady();
+
+  const { container, getByRole, getByTestId } = render(HomePage, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  await getByRole("button", { name: "Join Lobby" }).click();
+  await expect.element(getByTestId("sign-up-prompt-modal")).toBeVisible();
+
+  await getByRole("button", { name: "Sign Up", exact: true }).click();
+
+  expect(mockSignInWithGoogle).toHaveBeenCalledTimes(1);
+  await expect
+    .poll(() => container.querySelector('[data-testid="sign-up-prompt-modal"]'))
+    .toBeNull();
+  await expect.poll(() => router.currentRoute.value.path).toBe("/");
 });

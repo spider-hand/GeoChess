@@ -61,6 +61,7 @@ it.each([
     expectedCountry: undefined,
     isAnonymousUser: false,
     isAuthenticatedUser: true,
+    isRegisteredUser: true,
   },
   {
     currentUser: { uid: "guest-123", isAnonymous: true },
@@ -68,6 +69,7 @@ it.each([
     expectedCountry: undefined,
     isAnonymousUser: true,
     isAuthenticatedUser: true,
+    isRegisteredUser: false,
   },
   {
     currentUser: { uid: "user-456", displayName: "  Taylor Swift  " },
@@ -75,6 +77,7 @@ it.each([
     expectedCountry: undefined,
     isAnonymousUser: false,
     isAuthenticatedUser: true,
+    isRegisteredUser: true,
   },
   {
     currentUser: { uid: "user-789", displayName: "Ignored Firebase Name" },
@@ -82,6 +85,7 @@ it.each([
     expectedCountry: "JP",
     isAnonymousUser: false,
     isAuthenticatedUser: true,
+    isRegisteredUser: true,
     user: { displayName: "Taylor Swift", country: "JP" },
   },
 ])(
@@ -92,6 +96,7 @@ it.each([
     expectedCountry,
     isAnonymousUser,
     isAuthenticatedUser,
+    isRegisteredUser,
     user: nextUser,
   }) => {
     currentUser.value = nextCurrentUser;
@@ -105,6 +110,7 @@ it.each([
     expect(auth.userCountry.value).toBe(expectedCountry);
     expect(auth.isAnonymousUser.value).toBe(isAnonymousUser);
     expect(auth.isAuthenticatedUser.value).toBe(isAuthenticatedUser);
+    expect(auth.isRegisteredUser.value).toBe(isRegisteredUser);
     expect(auth.isCurrentUserLoaded.value).toBe(true);
   },
 );

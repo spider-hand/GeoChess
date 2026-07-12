@@ -35,6 +35,9 @@ export const useAuth = () => {
   const isAnonymousUser = computed(
     () => currentUser.value?.isAnonymous ?? false,
   );
+  const isRegisteredUser = computed(
+    () => isAuthenticatedUser.value && !isAnonymousUser.value,
+  );
   const username = computed(() => {
     if (currentUser.value?.isAnonymous) {
       return "Guest";
@@ -100,6 +103,7 @@ export const useAuth = () => {
     currentUser,
     isAnonymousUser,
     isAuthenticatedUser,
+    isRegisteredUser,
     isCreatingUser,
     isCurrentUserLoaded,
     signInAnonymously,

@@ -80,7 +80,7 @@ class AiGamesRepository:
                     updated_at = NOW()
                 WHERE id = %s
                   AND result IS NULL
-                RETURNING user_id
+                RETURNING user_id, difficulty
                 """,
                 (result, game_id),
             )
@@ -109,17 +109,26 @@ class AiGamesRepository:
                 )
 
             if result in ("win", "lose"):
+                difficulty = row["difficulty"]
                 cursor.execute(
                     """
                     UPDATE users
-                    SET ai_game_total_win = ai_game_total_win + %s,
-                        ai_game_total_lose = ai_game_total_lose + %s,
+                    SET ai_easy_total_win = ai_easy_total_win + %s,
+                        ai_easy_total_lose = ai_easy_total_lose + %s,
+                        ai_medium_total_win = ai_medium_total_win + %s,
+                        ai_medium_total_lose = ai_medium_total_lose + %s,
+                        ai_hard_total_win = ai_hard_total_win + %s,
+                        ai_hard_total_lose = ai_hard_total_lose + %s,
                         updated_at = NOW()
                     WHERE user_id = %s
                     """,
                     (
-                        1 if result == "win" else 0,
-                        1 if result == "lose" else 0,
+                        1 if difficulty == "easy" and result == "win" else 0,
+                        1 if difficulty == "easy" and result == "lose" else 0,
+                        1 if difficulty == "medium" and result == "win" else 0,
+                        1 if difficulty == "medium" and result == "lose" else 0,
+                        1 if difficulty == "hard" and result == "win" else 0,
+                        1 if difficulty == "hard" and result == "lose" else 0,
                         row["user_id"],
                     ),
                 )

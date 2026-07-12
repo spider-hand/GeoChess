@@ -33,7 +33,7 @@ def make_history_move(
 
 def test_finish_game_updates_result_and_persists_history_once():
     connection, cursor = make_connection_and_cursor()
-    cursor.fetchone.return_value = {"user_id": "user-123"}
+    cursor.fetchone.return_value = {"user_id": "user-123", "difficulty": "medium"}
     history_moves = [
         make_history_move(),
         make_history_move(
@@ -62,7 +62,7 @@ def test_finish_game_updates_result_and_persists_history_once():
                     updated_at = NOW()
                 WHERE id = %s
                   AND result IS NULL
-                RETURNING user_id
+                RETURNING user_id, difficulty
                 """,
                 ("win", "game-123"),
             ),
@@ -72,12 +72,16 @@ def test_finish_game_updates_result_and_persists_history_once():
             (
                 """
                     UPDATE users
-                    SET ai_game_total_win = ai_game_total_win + %s,
-                        ai_game_total_lose = ai_game_total_lose + %s,
+                    SET ai_easy_total_win = ai_easy_total_win + %s,
+                        ai_easy_total_lose = ai_easy_total_lose + %s,
+                        ai_medium_total_win = ai_medium_total_win + %s,
+                        ai_medium_total_lose = ai_medium_total_lose + %s,
+                        ai_hard_total_win = ai_hard_total_win + %s,
+                        ai_hard_total_lose = ai_hard_total_lose + %s,
                         updated_at = NOW()
                     WHERE user_id = %s
                     """,
-                (1, 0, "user-123"),
+                (0, 0, 1, 0, 0, 0, "user-123"),
             ),
             {},
         ),
@@ -120,7 +124,7 @@ def test_finish_game_returns_false_when_game_was_already_finished():
                     updated_at = NOW()
                 WHERE id = %s
                   AND result IS NULL
-                RETURNING user_id
+                RETURNING user_id, difficulty
                 """,
         ("win", "game-123"),
     )
@@ -128,7 +132,7 @@ def test_finish_game_returns_false_when_game_was_already_finished():
 
 def test_finish_game_skips_user_stats_for_cancelled_games():
     connection, cursor = make_connection_and_cursor()
-    cursor.fetchone.return_value = {"user_id": "user-123"}
+    cursor.fetchone.return_value = {"user_id": "user-123", "difficulty": "medium"}
     history_move = make_history_move()
 
     with patch("features.ai_games.repository.get_connection", return_value=connection):

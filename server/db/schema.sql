@@ -71,8 +71,12 @@ CREATE TABLE public.users (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     country text,
-    ai_game_total_win integer DEFAULT 0 NOT NULL,
-    ai_game_total_lose integer DEFAULT 0 NOT NULL,
+    ai_easy_total_win integer DEFAULT 0 NOT NULL,
+    ai_easy_total_lose integer DEFAULT 0 NOT NULL,
+    ai_medium_total_win integer DEFAULT 0 NOT NULL,
+    ai_medium_total_lose integer DEFAULT 0 NOT NULL,
+    ai_hard_total_win integer DEFAULT 0 NOT NULL,
+    ai_hard_total_lose integer DEFAULT 0 NOT NULL,
     CONSTRAINT users_display_name_check CHECK ((btrim(display_name) <> ''::text))
 );
 
@@ -156,4 +160,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260628013427'),
     ('20260629000000'),
     ('20260712000000'),
-    ('20260713000000');
+    ('20260713000000'),
+    ('20260713000001');

@@ -25,6 +25,12 @@ export interface UpdateUserRequest {
    * @memberof UpdateUserRequest
    */
   displayName: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateUserRequest
+   */
+  country?: string;
 }
 
 /**
@@ -51,6 +57,7 @@ export function UpdateUserRequestFromJSONTyped(
   }
   return {
     displayName: json["displayName"],
+    country: json["country"] == null ? undefined : json["country"],
   };
 }
 
@@ -68,5 +75,6 @@ export function UpdateUserRequestToJSONTyped(
 
   return {
     displayName: value["displayName"],
+    country: value["country"],
   };
 }

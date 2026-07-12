@@ -33,6 +33,12 @@ export interface CreateUserResponse {
   displayName: string;
   /**
    *
+   * @type {string}
+   * @memberof CreateUserResponse
+   */
+  country?: string;
+  /**
+   *
    * @type {Date}
    * @memberof CreateUserResponse
    */
@@ -73,6 +79,7 @@ export function CreateUserResponseFromJSONTyped(
   return {
     userId: json["userId"],
     displayName: json["displayName"],
+    country: json["country"] == null ? undefined : json["country"],
     createdAt: new Date(json["createdAt"]),
     updatedAt: new Date(json["updatedAt"]),
   };
@@ -93,6 +100,7 @@ export function CreateUserResponseToJSONTyped(
   return {
     userId: value["userId"],
     displayName: value["displayName"],
+    country: value["country"],
     createdAt: value["createdAt"].toISOString(),
     updatedAt: value["updatedAt"].toISOString(),
   };

@@ -9,6 +9,7 @@ def _map_user_row(row: dict[str, Any]) -> UserRecord:
         {
             "userId": row["user_id"],
             "displayName": row["display_name"],
+            "country": row["country"],
             "createdAt": row["created_at"],
             "updatedAt": row["updated_at"],
         }
@@ -20,7 +21,7 @@ class UsersRepository:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT user_id, display_name, created_at, updated_at
+                SELECT user_id, display_name, country, created_at, updated_at
                 FROM users
                 WHERE user_id = %s
                 """,
@@ -33,31 +34,32 @@ class UsersRepository:
 
         return _map_user_row(row)
 
-    def create(self, user_id: str, display_name: str) -> UserRecord:
+    def create(self, user_id: str, display_name: str, country: str | None) -> UserRecord:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO users (user_id, display_name)
-                VALUES (%s, %s)
-                RETURNING user_id, display_name, created_at, updated_at
+                INSERT INTO users (user_id, display_name, country)
+                VALUES (%s, %s, %s)
+                RETURNING user_id, display_name, country, created_at, updated_at
                 """,
-                (user_id, display_name),
+                (user_id, display_name, country),
             )
             row = cursor.fetchone()
 
         return _map_user_row(row)
 
-    def update_display_name(self, user_id: str, display_name: str) -> UserRecord | None:
+    def update(self, user_id: str, display_name: str, country: str | None) -> UserRecord | None:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute(
                 """
                 UPDATE users
                 SET display_name = %s,
+                    country = %s,
                     updated_at = NOW()
                 WHERE user_id = %s
-                RETURNING user_id, display_name, created_at, updated_at
+                RETURNING user_id, display_name, country, created_at, updated_at
                 """,
-                (display_name, user_id),
+                (display_name, country, user_id),
             )
             row = cursor.fetchone()
 

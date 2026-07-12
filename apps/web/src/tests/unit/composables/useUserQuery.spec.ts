@@ -1,6 +1,8 @@
 import { beforeEach, expect, it, vi } from "vitest";
+import { ref } from "vue";
 
 const mockDefaultCreateUser = vi.fn();
+const mockDefaultGetUser = vi.fn();
 const mockSetQueryData = vi.fn();
 const mockConfiguration = vi.fn();
 
@@ -22,6 +24,29 @@ vi.mock("@tanstack/vue-query", () => ({
   }),
   useQueryClient: () => ({
     setQueryData: mockSetQueryData,
+  }),
+  useQuery: ({
+    queryFn,
+    enabled,
+  }: {
+    queryFn: () => Promise<unknown>;
+    enabled: { value: boolean };
+  }) => ({
+    data: ref(undefined),
+    isLoading: ref(false),
+    refetch: async () => {
+      if (!enabled.value) {
+        return { data: undefined };
+      }
+
+      return { data: await queryFn() };
+    },
+  }),
+}));
+
+vi.mock("@/composables/useApi", () => ({
+  default: () => ({
+    apiConfig: { basePath: "https://example.com" },
   }),
 }));
 
@@ -53,12 +78,17 @@ vi.mock("@/services", async () => {
       createUser(args: unknown) {
         return mockDefaultCreateUser(args);
       }
+
+      getUser(args: unknown) {
+        return mockDefaultGetUser(args);
+      }
     },
   };
 });
 
 beforeEach(() => {
   mockDefaultCreateUser.mockReset();
+  mockDefaultGetUser.mockReset();
   mockSetQueryData.mockReset();
   mockConfiguration.mockReset();
 });
@@ -98,4 +128,22 @@ it("should create a user with the provided id token and cache the created user",
     ["user", "user-123"],
     createdUser,
   );
+});
+
+it("should fetch a user with the provided user id", async () => {
+  const fetchedUser = {
+    userId: "user-123",
+    displayName: "Taylor Swift",
+    country: "JP",
+    createdAt: new Date("2026-06-29T00:00:00Z"),
+    updatedAt: new Date("2026-06-29T00:00:00Z"),
+  };
+  mockDefaultGetUser.mockResolvedValue(fetchedUser);
+
+  const { default: useUserQuery } = await import("@/composables/useUserQuery");
+
+  const { refetchUser } = useUserQuery("user-123");
+
+  await expect(refetchUser()).resolves.toEqual({ data: fetchedUser });
+  expect(mockDefaultGetUser).toHaveBeenCalledWith({ userId: "user-123" });
 });

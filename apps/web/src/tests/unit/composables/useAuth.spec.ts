@@ -14,6 +14,9 @@ const mockSignInAnonymously = vi.fn();
 const mockSignInWithPopup = vi.fn();
 const mockSignOut = vi.fn();
 const mockCreateUserAsync = vi.fn();
+const user = ref<{ displayName: string; country?: string } | undefined>(
+  undefined,
+);
 
 vi.mock("vuefire", () => ({
   getCurrentUser: () => mockGetCurrentUser(),
@@ -36,6 +39,8 @@ vi.mock("@/composables/useUserQuery", () => ({
   default: () => ({
     createUserAsync: (...args: unknown[]) => mockCreateUserAsync(...args),
     isCreatingUser: ref(false),
+    refetchUser: vi.fn(),
+    user,
   }),
 }));
 
@@ -46,42 +51,58 @@ beforeEach(() => {
   mockSignInWithPopup.mockReset();
   mockSignOut.mockReset();
   mockCreateUserAsync.mockReset();
+  user.value = undefined;
 });
 
 it.each([
   {
     currentUser: { uid: "user-123" },
     expectedUsername: "Guest",
+    expectedCountry: undefined,
     isAnonymousUser: false,
     isAuthenticatedUser: true,
   },
   {
     currentUser: { uid: "guest-123", isAnonymous: true },
     expectedUsername: "Guest",
+    expectedCountry: undefined,
     isAnonymousUser: true,
     isAuthenticatedUser: true,
   },
   {
     currentUser: { uid: "user-456", displayName: "  Taylor Swift  " },
     expectedUsername: "Taylor Swift",
+    expectedCountry: undefined,
     isAnonymousUser: false,
     isAuthenticatedUser: true,
+  },
+  {
+    currentUser: { uid: "user-789", displayName: "Ignored Firebase Name" },
+    expectedUsername: "Taylor Swift",
+    expectedCountry: "JP",
+    isAnonymousUser: false,
+    isAuthenticatedUser: true,
+    user: { displayName: "Taylor Swift", country: "JP" },
   },
 ])(
   "should expose the public auth state for $expectedUsername",
   async ({
     currentUser: nextCurrentUser,
     expectedUsername,
+    expectedCountry,
     isAnonymousUser,
     isAuthenticatedUser,
+    user: nextUser,
   }) => {
     currentUser.value = nextCurrentUser;
+    user.value = nextUser;
 
     const { useAuth } = await import("@/composables/useAuth");
 
     const auth = useAuth();
 
     expect(auth.username.value).toBe(expectedUsername);
+    expect(auth.userCountry.value).toBe(expectedCountry);
     expect(auth.isAnonymousUser.value).toBe(isAnonymousUser);
     expect(auth.isAuthenticatedUser.value).toBe(isAuthenticatedUser);
     expect(auth.isCurrentUserLoaded.value).toBe(true);

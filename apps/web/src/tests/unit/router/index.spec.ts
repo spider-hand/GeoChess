@@ -6,6 +6,7 @@ vi.mock("@/composables/useAuth", () => ({
   signInAnonymouslyIfNeeded: mockEnsureVsAiAccess,
   useAuth: () => ({
     username: null,
+    userCountry: undefined,
     currentUser: { value: null },
     isAnonymousUser: false,
     isAuthenticatedUser: false,

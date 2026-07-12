@@ -18,11 +18,12 @@ def make_event(body=None, user_id="user-123", authenticated_uid="user-123"):
     )
 
 
-def make_user(display_name="Taylor Swift"):
+def make_user(display_name="Taylor Swift", country=None):
     return UserRecord.model_validate(
         {
             "userId": "user-123",
             "displayName": display_name,
+            "country": country,
             "createdAt": "2026-06-28T00:00:00Z",
             "updatedAt": "2026-06-28T00:00:00Z",
         }
@@ -30,12 +31,13 @@ def make_user(display_name="Taylor Swift"):
 
 
 def test_get_user_returns_200_for_owner():
-    with patch.object(handler._users_service, "get_user", return_value=make_user()):
+    with patch.object(handler._users_service, "get_user", return_value=make_user(country="JP")):
         response = handler.get_user(make_event(), MagicMock())
 
     assert response["statusCode"] == 200
     body = json.loads(response["body"])
     assert body["userId"] == "user-123"
+    assert body["country"] == "JP"
 
 
 def test_create_user_returns_existing_row_without_validating_body():
@@ -48,15 +50,20 @@ def test_create_user_returns_existing_row_without_validating_body():
 
 
 def test_create_user_returns_201_for_new_user():
-    with patch.object(handler._users_service, "create_user", return_value=(make_user(), 201)):
+    with patch.object(
+        handler._users_service,
+        "create_user",
+        return_value=(make_user(country="JP"), 201),
+    ):
         response = handler.create_user(
-            make_event(body={"displayName": "Taylor Swift"}),
+            make_event(body={"displayName": "Taylor Swift", "country": "JP"}),
             MagicMock(),
         )
 
     assert response["statusCode"] == 201
     body = json.loads(response["body"])
     assert body["displayName"] == "Taylor Swift"
+    assert body["country"] == "JP"
 
 
 def test_create_user_returns_400_when_new_user_payload_is_invalid():
@@ -73,17 +80,18 @@ def test_create_user_returns_400_when_new_user_payload_is_invalid():
 
 
 def test_update_user_returns_existing_row_for_no_op():
-    existing_user = make_user()
+    existing_user = make_user(country="JP")
 
     with patch.object(handler._users_service, "update_user", return_value=existing_user):
         response = handler.update_user(
-            make_event(body={"displayName": "Taylor Swift"}),
+            make_event(body={"displayName": "Taylor Swift", "country": "JP"}),
             MagicMock(),
         )
 
     assert response["statusCode"] == 200
     body = json.loads(response["body"])
     assert body["updatedAt"] == "2026-06-28T00:00:00Z"
+    assert body["country"] == "JP"
 
 
 def test_delete_user_returns_404_when_missing():

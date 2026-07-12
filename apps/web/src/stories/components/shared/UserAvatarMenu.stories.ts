@@ -18,6 +18,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const WithCountry: Story = {
+  args: {
+    country: "JP",
+  },
+};
+
 export const Open: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

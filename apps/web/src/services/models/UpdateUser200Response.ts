@@ -16,47 +16,41 @@ import { mapValues } from "../runtime";
 /**
  *
  * @export
- * @interface GetUserResponse
+ * @interface UpdateUser200Response
  */
-export interface GetUserResponse {
+export interface UpdateUser200Response {
   /**
    *
    * @type {string}
-   * @memberof GetUserResponse
+   * @memberof UpdateUser200Response
    */
   userId: string;
   /**
    *
    * @type {string}
-   * @memberof GetUserResponse
+   * @memberof UpdateUser200Response
    */
   displayName: string;
   /**
    *
-   * @type {string}
-   * @memberof GetUserResponse
-   */
-  country?: string;
-  /**
-   *
    * @type {Date}
-   * @memberof GetUserResponse
+   * @memberof UpdateUser200Response
    */
   createdAt: Date;
   /**
    *
    * @type {Date}
-   * @memberof GetUserResponse
+   * @memberof UpdateUser200Response
    */
   updatedAt: Date;
 }
 
 /**
- * Check if a given object implements the GetUserResponse interface.
+ * Check if a given object implements the UpdateUser200Response interface.
  */
-export function instanceOfGetUserResponse(
+export function instanceOfUpdateUser200Response(
   value: object,
-): value is GetUserResponse {
+): value is UpdateUser200Response {
   if (!("userId" in value) || value["userId"] === undefined) return false;
   if (!("displayName" in value) || value["displayName"] === undefined)
     return false;
@@ -65,32 +59,33 @@ export function instanceOfGetUserResponse(
   return true;
 }
 
-export function GetUserResponseFromJSON(json: any): GetUserResponse {
-  return GetUserResponseFromJSONTyped(json, false);
+export function UpdateUser200ResponseFromJSON(
+  json: any,
+): UpdateUser200Response {
+  return UpdateUser200ResponseFromJSONTyped(json, false);
 }
 
-export function GetUserResponseFromJSONTyped(
+export function UpdateUser200ResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): GetUserResponse {
+): UpdateUser200Response {
   if (json == null) {
     return json;
   }
   return {
     userId: json["userId"],
     displayName: json["displayName"],
-    country: json["country"] == null ? undefined : json["country"],
     createdAt: new Date(json["createdAt"]),
     updatedAt: new Date(json["updatedAt"]),
   };
 }
 
-export function GetUserResponseToJSON(json: any): GetUserResponse {
-  return GetUserResponseToJSONTyped(json, false);
+export function UpdateUser200ResponseToJSON(json: any): UpdateUser200Response {
+  return UpdateUser200ResponseToJSONTyped(json, false);
 }
 
-export function GetUserResponseToJSONTyped(
-  value?: GetUserResponse | null,
+export function UpdateUser200ResponseToJSONTyped(
+  value?: UpdateUser200Response | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {
@@ -100,7 +95,6 @@ export function GetUserResponseToJSONTyped(
   return {
     userId: value["userId"],
     displayName: value["displayName"],
-    country: value["country"],
     createdAt: value["createdAt"].toISOString(),
     updatedAt: value["updatedAt"].toISOString(),
   };

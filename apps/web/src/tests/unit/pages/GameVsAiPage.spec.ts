@@ -19,6 +19,7 @@ const realtimeAiGame = ref({
 const realtimeAiGameError = ref<Error | null>(null);
 const isLoadingRealtimeAiGame = ref(false);
 const username = ref<string | null>("Taylor Swift");
+const userCountry = ref<string | undefined>(undefined);
 const isAnonymousUser = ref(false);
 const mockCreateAiGame = vi.fn();
 const mockCreateAiGameMove = vi.fn();
@@ -28,6 +29,7 @@ vi.mock("@/composables/useAuth", () => ({
   signInAnonymouslyIfNeeded: vi.fn().mockResolvedValue({ isAnonymous: true }),
   useAuth: () => ({
     username: computed(() => username.value),
+    userCountry: computed(() => userCountry.value),
     currentUser: { value: null },
     isAnonymousUser: computed(() => isAnonymousUser.value),
     isAuthenticatedUser: false,
@@ -41,9 +43,9 @@ vi.mock("@/composables/useAuth", () => ({
 vi.mock("@/components/pages/Game/PlayerMatchupCard.vue", () => ({
   default: {
     name: "PlayerMatchupCard",
-    props: ["playerName"],
+    props: ["playerName", "playerCountry"],
     template:
-      '<div data-testid="player-matchup-card" :data-player-name="playerName ?? \'\'" />',
+      '<div data-testid="player-matchup-card" :data-player-name="playerName ?? \'\'" :data-player-country="playerCountry ?? \'\'" />',
   },
 }));
 
@@ -150,6 +152,7 @@ beforeEach(() => {
   realtimeAiGameError.value = null;
   isLoadingRealtimeAiGame.value = false;
   username.value = "Taylor Swift";
+  userCountry.value = undefined;
   isAnonymousUser.value = false;
   mockCreateAiGame.mockReset();
   mockCreateAiGameMove.mockReset();
@@ -170,6 +173,11 @@ it("should render the active game layout for the default state", async () => {
   expect(
     container.querySelector('[data-testid="player-matchup-card"]'),
   ).not.toBeNull();
+  expect(
+    container
+      .querySelector('[data-testid="player-matchup-card"]')
+      ?.getAttribute("data-player-country"),
+  ).toBe("");
   expect(
     container.querySelector('[data-testid="turn-status-strip"]'),
   ).not.toBeNull();

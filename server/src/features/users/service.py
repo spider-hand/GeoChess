@@ -33,10 +33,14 @@ class UsersService:
             raise ApiError(
                 status_code=HTTPStatus.BAD_REQUEST,
                 code="invalid_request_body",
-                message="displayName is required.",
+                message="displayName is required and country must be a 2-letter code when provided.",
             ) from error
 
-        created_user = self.users_repository.create(user_id, create_user_input.display_name)
+        created_user = self.users_repository.create(
+            user_id,
+            create_user_input.display_name,
+            create_user_input.country,
+        )
         return created_user, HTTPStatus.CREATED
 
     def update_user(self, user_id: str, payload: dict[str, object]) -> UserRecord:
@@ -48,13 +52,26 @@ class UsersService:
             raise ApiError(
                 status_code=HTTPStatus.BAD_REQUEST,
                 code="invalid_request_body",
-                message="displayName is required.",
+                message="displayName is required and country must be a 2-letter code when provided.",
             ) from error
 
-        if existing_user.display_name == update_user_input.display_name:
+        next_country = (
+            update_user_input.country
+            if "country" in update_user_input.model_fields_set
+            else existing_user.country
+        )
+
+        if (
+            existing_user.display_name == update_user_input.display_name
+            and existing_user.country == next_country
+        ):
             return existing_user
 
-        updated_user = self.users_repository.update_display_name(user_id, update_user_input.display_name)
+        updated_user = self.users_repository.update(
+            user_id,
+            update_user_input.display_name,
+            next_country,
+        )
         if updated_user is None:
             raise ApiError(
                 status_code=HTTPStatus.NOT_FOUND,

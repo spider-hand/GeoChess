@@ -20,6 +20,7 @@ import type {
   CreateAiGameRequest,
   CreateUserRequest,
   GetUser200Response,
+  UpdateUser200Response,
 } from "../models/index";
 import {
   CreateAiGame201ResponseFromJSON,
@@ -34,6 +35,8 @@ import {
   CreateUserRequestToJSON,
   GetUser200ResponseFromJSON,
   GetUser200ResponseToJSON,
+  UpdateUser200ResponseFromJSON,
+  UpdateUser200ResponseToJSON,
 } from "../models/index";
 
 export interface CreateAiGameOperationRequest {
@@ -441,7 +444,7 @@ export class DefaultApi extends runtime.BaseAPI {
   async updateUserRaw(
     requestParameters: UpdateUserRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetUser200Response>> {
+  ): Promise<runtime.ApiResponse<UpdateUser200Response>> {
     if (requestParameters["userId"] == null) {
       throw new runtime.RequiredError(
         "userId",
@@ -489,7 +492,7 @@ export class DefaultApi extends runtime.BaseAPI {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetUser200ResponseFromJSON(jsonValue),
+      UpdateUser200ResponseFromJSON(jsonValue),
     );
   }
 
@@ -499,7 +502,7 @@ export class DefaultApi extends runtime.BaseAPI {
   async updateUser(
     requestParameters: UpdateUserRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetUser200Response> {
+  ): Promise<UpdateUser200Response> {
     const response = await this.updateUserRaw(requestParameters, initOverrides);
     return await response.value();
   }

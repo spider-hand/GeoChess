@@ -64,3 +64,15 @@ it("should close the menu on escape", async () => {
 
   expect(container.querySelector('[role="menu"]')).toBeNull();
 });
+
+it("should show the country flag when a country is provided", async () => {
+  const { getByRole, container } = renderUserAvatarMenu({
+    country: "JP",
+  });
+
+  await getByRole("button", { name: "Account menu" }).click();
+
+  await expect
+    .element(container.querySelector(".user-avatar-menu__flag")!)
+    .toHaveAttribute("src", "/flags/jp.webp");
+});

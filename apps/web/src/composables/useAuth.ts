@@ -22,7 +22,14 @@ export const signInAnonymouslyIfNeeded = async () => {
 export const useAuth = () => {
   const currentUser = useCurrentUser();
   const isCurrentUserLoaded = useIsCurrentUserLoaded();
-  const { createUserAsync, isCreatingUser } = useUserQuery();
+  const userId = computed(() => {
+    if (!currentUser.value || currentUser.value.isAnonymous) {
+      return null;
+    }
+
+    return currentUser.value.uid;
+  });
+  const { createUserAsync, isCreatingUser, user } = useUserQuery(userId);
 
   const isAuthenticatedUser = computed(() => !!currentUser.value);
   const isAnonymousUser = computed(
@@ -33,7 +40,18 @@ export const useAuth = () => {
       return "Guest";
     }
 
-    return currentUser.value?.displayName?.trim() || "Guest";
+    return (
+      user.value?.displayName ??
+      currentUser.value?.displayName?.trim() ??
+      "Guest"
+    );
+  });
+  const userCountry = computed(() => {
+    if (!currentUser.value || currentUser.value.isAnonymous) {
+      return undefined;
+    }
+
+    return user.value?.country;
   });
 
   const signInWithGoogle = async () => {
@@ -87,6 +105,7 @@ export const useAuth = () => {
     signInAnonymously,
     signInWithGoogle,
     signOutUser,
+    userCountry,
     username,
   };
 };

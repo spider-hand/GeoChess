@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import useCountry from "@/composables/useCountry";
 import useOnClickOutside from "@/composables/useOnClickOutside";
 import Avatar from "@/components/shared/Avatar.vue";
 
@@ -11,6 +12,7 @@ defineOptions({
 
 const props = defineProps<{
   displayName: string;
+  country?: string;
 }>();
 
 const emit = defineEmits<{
@@ -18,6 +20,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const { countryFlagAlt, countryFlagSrc } = useCountry();
 const root = ref<HTMLElement | null>(null);
 const isOpen = ref(false);
 
@@ -65,7 +68,13 @@ useOnClickOutside({
           {{ t("components.shared.UserAvatarMenu.nameLabel") }}
         </span>
         <span class="user-avatar-menu__summary-name">
-          {{ props.displayName }}
+          <span>{{ props.displayName }}</span>
+          <img
+            v-if="props.country"
+            class="user-avatar-menu__flag"
+            :src="countryFlagSrc(props.country)"
+            :alt="countryFlagAlt(props.country)"
+          />
         </span>
       </div>
 
@@ -133,11 +142,19 @@ useOnClickOutside({
 }
 
 .user-avatar-menu__summary-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xxs);
   color: var(--on-dark);
   font-size: var(--font-size-body-md);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-body);
   word-break: break-word;
+}
+
+.user-avatar-menu__flag {
+  height: 14px;
+  width: auto;
 }
 
 .user-avatar-menu__divider {

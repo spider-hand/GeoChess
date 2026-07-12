@@ -33,6 +33,12 @@ export interface GetUser200Response {
   displayName: string;
   /**
    *
+   * @type {string}
+   * @memberof GetUser200Response
+   */
+  country?: string;
+  /**
+   *
    * @type {Date}
    * @memberof GetUser200Response
    */
@@ -73,6 +79,7 @@ export function GetUser200ResponseFromJSONTyped(
   return {
     userId: json["userId"],
     displayName: json["displayName"],
+    country: json["country"] == null ? undefined : json["country"],
     createdAt: new Date(json["createdAt"]),
     updatedAt: new Date(json["updatedAt"]),
   };
@@ -93,6 +100,7 @@ export function GetUser200ResponseToJSONTyped(
   return {
     userId: value["userId"],
     displayName: value["displayName"],
+    country: value["country"],
     createdAt: value["createdAt"].toISOString(),
     updatedAt: value["updatedAt"].toISOString(),
   };

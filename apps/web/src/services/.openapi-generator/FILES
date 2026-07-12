@@ -16,6 +16,7 @@ models/GetHealth200Response.ts
 models/GetHealthResponse.ts
 models/GetUser200Response.ts
 models/GetUserResponse.ts
+models/UpdateUser200Response.ts
 models/UpdateUserRequest.ts
 models/UpdateUserResponse.ts
 models/index.ts

@@ -1,5 +1,4 @@
 /* tslint:disable */
-
 export * from "./CreateAiGame201Response";
 export * from "./CreateAiGame201ResponseMovesValue";
 export * from "./CreateAiGame400Response";
@@ -14,5 +13,6 @@ export * from "./GetHealth200Response";
 export * from "./GetHealthResponse";
 export * from "./GetUser200Response";
 export * from "./GetUserResponse";
+export * from "./UpdateUser200Response";
 export * from "./UpdateUserRequest";
 export * from "./UpdateUserResponse";

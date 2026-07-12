@@ -5,6 +5,7 @@ vi.mock("@/composables/useAuth", () => ({
   signInAnonymouslyIfNeeded: vi.fn().mockResolvedValue({ isAnonymous: true }),
   useAuth: () => ({
     username: "Guest",
+    userCountry: undefined,
     currentUser: { value: null },
     isAnonymousUser: false,
     isAuthenticatedUser: false,
@@ -71,9 +72,9 @@ vi.mock("@/components/pages/Game/PathResultCard.vue", () => ({
 vi.mock("@/components/pages/Game/PlayerMatchupCard.vue", () => ({
   default: {
     name: "PlayerMatchupCard",
-    props: ["playerName"],
+    props: ["playerName", "playerCountry"],
     template:
-      '<div data-testid="player-matchup-card" :data-player-name="playerName" />',
+      '<div data-testid="player-matchup-card" :data-player-name="playerName" :data-player-country="playerCountry ?? \'\'" />',
   },
 }));
 

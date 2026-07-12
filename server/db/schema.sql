@@ -1,6 +1,6 @@
 \restrict dbmate
 
--- Dumped from database version 18.4 (eaf151e)
+-- Dumped from database version 18.4 (709c4c3)
 -- Dumped by pg_dump version 18.0
 
 SET statement_timeout = 0;
@@ -53,6 +53,7 @@ CREATE TABLE public.users (
     display_name text NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    country text,
     CONSTRAINT users_display_name_check CHECK ((btrim(display_name) <> ''::text))
 );
 
@@ -102,4 +103,5 @@ ALTER TABLE ONLY public.ai_games
 
 INSERT INTO public.schema_migrations (version) VALUES
     ('20260628013427'),
-    ('20260629000000');
+    ('20260629000000'),
+    ('20260712000000');

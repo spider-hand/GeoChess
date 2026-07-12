@@ -25,6 +25,12 @@ export interface CreateUserRequest {
    * @memberof CreateUserRequest
    */
   displayName: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateUserRequest
+   */
+  country?: string;
 }
 
 /**
@@ -51,6 +57,7 @@ export function CreateUserRequestFromJSONTyped(
   }
   return {
     displayName: json["displayName"],
+    country: json["country"] == null ? undefined : json["country"],
   };
 }
 
@@ -68,5 +75,6 @@ export function CreateUserRequestToJSONTyped(
 
   return {
     displayName: value["displayName"],
+    country: value["country"],
   };
 }

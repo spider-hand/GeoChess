@@ -23,6 +23,7 @@ const { locale, t } = useI18n({ useScope: "global" });
 const router = useRouter();
 const {
   username,
+  userCountry,
   isAuthenticatedUser,
   isCurrentUserLoaded,
   signInWithGoogle,
@@ -214,6 +215,7 @@ useOnClickOutside({
           <UserAvatarMenu
             v-if="isAuthenticatedUser"
             :display-name="username"
+            :country="userCountry"
             @sign-out-click="handleSignOut"
           />
 

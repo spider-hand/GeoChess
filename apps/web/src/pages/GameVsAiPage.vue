@@ -31,7 +31,7 @@ const aiGameQuery = useAiGameQuery();
 const createAiGame = aiGameQuery.createAiGame;
 const createAiGameMove = aiGameQuery.createAiGameMove;
 const timeoutAiGame = aiGameQuery.timeoutAiGame;
-const { username } = useAuth();
+const { username, userCountry } = useAuth();
 const gameId = computed(() =>
   typeof route.params.gameId === "string" ? route.params.gameId : null,
 );
@@ -255,7 +255,10 @@ const handleExit = async () => {
 
     <section class="game-page__content">
       <div class="game-page__top-row">
-        <PlayerMatchupCard :player-name="username" />
+        <PlayerMatchupCard
+          :player-name="username"
+          :player-country="userCountry"
+        />
 
         <div class="game-page__status-group">
           <TurnStatusStrip

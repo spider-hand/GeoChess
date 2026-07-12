@@ -5,6 +5,7 @@ import { ref } from "vue";
 import { createAppI18n } from "@/i18n";
 
 const username = ref<string | null>(null);
+const userCountry = ref<string | undefined>(undefined);
 const isAuthenticatedUser = ref(false);
 const isCurrentUserLoaded = ref(true);
 const signInWithGoogle = vi.fn();
@@ -20,6 +21,7 @@ vi.mock("vue-router", () => ({
 vi.mock("@/composables/useAuth", () => ({
   useAuth: () => ({
     username,
+    userCountry,
     isAuthenticatedUser,
     isCurrentUserLoaded,
     signInWithGoogle,
@@ -33,6 +35,7 @@ const NavigationHeader = (
 
 const resetAuthState = () => {
   username.value = null;
+  userCountry.value = undefined;
   isAuthenticatedUser.value = false;
   isCurrentUserLoaded.value = true;
   push.mockReset();
@@ -172,6 +175,7 @@ it("should emit the selected language on the mobile menu", async () => {
 it("should render the user section when logged in", async () => {
   resetAuthState();
   username.value = "Taylor Swift";
+  userCountry.value = "JP";
   isAuthenticatedUser.value = true;
   const { container, getByRole, getByTestId } = renderNavigationHeader();
 

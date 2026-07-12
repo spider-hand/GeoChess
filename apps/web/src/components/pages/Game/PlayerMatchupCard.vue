@@ -2,17 +2,20 @@
 import { Bot } from "@lucide/vue";
 import { useI18n } from "vue-i18n";
 
+import useCountry from "@/composables/useCountry";
 import Avatar from "@/components/shared/Avatar.vue";
 
 defineOptions({
   name: "GamePlayerMatchupCard",
 });
 
-defineProps<{
+const props = defineProps<{
   playerName: string;
+  playerCountry?: string;
 }>();
 
 const { t } = useI18n();
+const { countryFlagAlt, countryFlagSrc } = useCountry();
 </script>
 
 <template>
@@ -31,7 +34,13 @@ const { t } = useI18n();
 
         <div class="player-matchup-card__identity">
           <p class="player-matchup-card__name">
-            {{ playerName }}
+            <span>{{ props.playerName }}</span>
+            <img
+              v-if="props.playerCountry"
+              class="player-matchup-card__flag"
+              :src="countryFlagSrc(props.playerCountry)"
+              :alt="countryFlagAlt(props.playerCountry)"
+            />
           </p>
         </div>
       </article>
@@ -105,6 +114,9 @@ const { t } = useI18n();
 }
 
 .player-matchup-card__name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xxs);
   margin: 0;
   color: var(--on-dark);
   font-family: var(--font-body);
@@ -112,6 +124,11 @@ const { t } = useI18n();
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-title-sm);
   text-align: left;
+}
+
+.player-matchup-card__flag {
+  height: 16px;
+  width: auto;
 }
 
 .player-matchup-card__vs {

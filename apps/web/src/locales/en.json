@@ -41,7 +41,10 @@
         },
         "PlayerMatchupCard": {
           "versus": "vs",
-          "ai": "AI"
+          "ai": "AI",
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard"
         }
       },
       "Home": {

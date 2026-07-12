@@ -41,7 +41,10 @@
         },
         "PlayerMatchupCard": {
           "versus": "vs",
-          "ai": "KI"
+          "ai": "KI",
+          "easy": "Leicht",
+          "medium": "Mittel",
+          "hard": "Schwer"
         }
       },
       "Home": {

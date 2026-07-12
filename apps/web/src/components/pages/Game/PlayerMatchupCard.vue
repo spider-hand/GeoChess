@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 
 import useCountry from "@/composables/useCountry";
 import Avatar from "@/components/shared/Avatar.vue";
+import type { Difficulty } from "@/types/game";
 
 defineOptions({
   name: "GamePlayerMatchupCard",
@@ -12,6 +13,7 @@ defineOptions({
 const props = defineProps<{
   playerName: string;
   playerCountry?: string;
+  difficulty?: Difficulty;
 }>();
 
 const { t } = useI18n();
@@ -64,6 +66,11 @@ const { countryFlagAlt, countryFlagSrc } = useCountry();
         <div class="player-matchup-card__identity">
           <p class="player-matchup-card__name">
             {{ t("components.pages.Game.PlayerMatchupCard.ai") }}
+            <span v-if="props.difficulty" class="player-matchup-card__meta">
+              {{
+                t(`components.pages.Game.PlayerMatchupCard.${props.difficulty}`)
+              }}
+            </span>
           </p>
         </div>
       </article>
@@ -116,13 +123,23 @@ const { countryFlagAlt, countryFlagSrc } = useCountry();
 .player-matchup-card__name {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-xxs);
+  gap: var(--spacing-xs);
   margin: 0;
   color: var(--on-dark);
   font-family: var(--font-body);
   font-size: var(--font-size-title-sm);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-title-sm);
+  text-align: left;
+}
+
+.player-matchup-card__meta {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body-sm);
   text-align: left;
 }
 

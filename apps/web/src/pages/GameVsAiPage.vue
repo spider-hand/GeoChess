@@ -258,6 +258,7 @@ const handleExit = async () => {
         <PlayerMatchupCard
           :player-name="username"
           :player-country="userCountry"
+          :difficulty="realtimeAiGame.difficulty"
         />
 
         <div class="game-page__status-group">

@@ -22,3 +22,9 @@ export const WithCountry: Story = {
     playerCountry: "JP",
   },
 };
+
+export const WithDifficulty: Story = {
+  args: {
+    difficulty: "medium",
+  },
+};

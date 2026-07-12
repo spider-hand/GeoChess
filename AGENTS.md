@@ -40,7 +40,7 @@ Key paths are below:
 - Always create a composable to manage server state, instead of using `fetch`. If it doesn't have to manage the state of the API response, the file name should be `use{api-name}Api.ts` (e.g. `useHealthApi.ts`). If it manages the state of API responses, the file name should be `use{api-name}Query.ts` (e.g. `useUserQuery.ts`)
 - Always use the `@` alias instead of relative paths for imports within `apps/web/src/`
 - Always use `@lucide/vue` for icons
-- Always update entries in locale files for all supported languages accordingly as we add, update or remove any user-facing text in `apps/web/src/`
+- Always update locale entries for all supported languages whenever user-facing text in `apps/web/src/` is added, changed, or removed. Locale keys must live under and be referenced from the component or page that renders that text, even if the same wording exists elsewhere.
 - Always make Vue props required whenever possible, and avoid defining default values unless they are truly needed
 - Always run `pnpm lint`, `pnpm format:check`, `pnpm test:browser` and `pnpm exec vue-tsc --noEmit` and make sure to resolve all errors before finishing work
 

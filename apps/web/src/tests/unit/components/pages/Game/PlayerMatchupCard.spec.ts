@@ -28,6 +28,15 @@ it("should render the default state properly", async () => {
   ).not.toBeNull();
 });
 
+it("should show the ai difficulty when one is provided", async () => {
+  const { getByText } = renderPlayerMatchupCard({
+    difficulty: "medium",
+  });
+
+  await expect.element(getByText("AI")).toBeVisible();
+  await expect.element(getByText("Medium")).toBeVisible();
+});
+
 it("should show the player country flag when a country is provided", async () => {
   const { container } = renderPlayerMatchupCard({
     playerCountry: "JP",

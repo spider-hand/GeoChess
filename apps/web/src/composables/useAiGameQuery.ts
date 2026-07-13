@@ -23,14 +23,9 @@ const useAiGameQuery = () => {
     await aiGameApi.createAiGameMove({ gameId, createAiGameMoveRequest });
   };
 
-  const timeoutAiGame = async (gameId: string): Promise<void> => {
-    await aiGameApi.timeoutAiGame({ gameId });
-  };
-
   return {
     createAiGame,
     createAiGameMove,
-    timeoutAiGame,
   };
 };
 

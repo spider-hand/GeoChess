@@ -23,7 +23,6 @@ const userCountry = ref<string | undefined>(undefined);
 const isAnonymousUser = ref(false);
 const mockCreateAiGame = vi.fn();
 const mockCreateAiGameMove = vi.fn();
-const mockTimeoutAiGame = vi.fn();
 
 vi.mock("@/composables/useAuth", () => ({
   signInAnonymouslyIfNeeded: vi.fn().mockResolvedValue({ isAnonymous: true }),
@@ -123,7 +122,6 @@ vi.mock("@/composables/useAiGameQuery", () => ({
   default: () => ({
     createAiGame: (...args: unknown[]) => mockCreateAiGame(...args),
     createAiGameMove: (...args: unknown[]) => mockCreateAiGameMove(...args),
-    timeoutAiGame: (...args: unknown[]) => mockTimeoutAiGame(...args),
   }),
 }));
 
@@ -156,7 +154,6 @@ beforeEach(() => {
   isAnonymousUser.value = false;
   mockCreateAiGame.mockReset();
   mockCreateAiGameMove.mockReset();
-  mockTimeoutAiGame.mockReset();
   mockConfetti.mockReset();
 });
 

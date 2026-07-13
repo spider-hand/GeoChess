@@ -20,7 +20,7 @@ from features.ai_games.models import (
     CreateAiGameMoveInput,
     RealtimeAiGameRecord,
 )
-from features.ai_games.queue import enqueue_ai_game_move
+from features.ai_games.queue import enqueue_ai_game_move, enqueue_ai_game_timeout
 from features.ai_games.repository import AiGamesRepository
 from features.users.repository import UsersRepository
 
@@ -265,9 +265,10 @@ class AiGamesService:
         # Save game session into Firebase Realtime Database
         self._get_game_ref(created_ai_game.id).set(realtime_payload)
 
-        # If AI is the first player to move, enqueue the AI move to the queue for processing
         if realtime_ai_game.turn == "ai" and realtime_ai_game.available_moves:
             enqueue_ai_game_move(created_ai_game.id)
+        elif realtime_ai_game.turn == "player" and realtime_ai_game.available_moves:
+            enqueue_ai_game_timeout(created_ai_game.id)
 
         return realtime_ai_game, HTTPStatus.CREATED
 
@@ -343,8 +344,10 @@ class AiGamesService:
 
         enqueue_ai_game_move(game_id)
 
-    def timeout_ai_game(self, user_id: str, game_id: str) -> None:
-        self._require_owned_ai_game(user_id, game_id)
+    def process_ai_game_timeout(self, game_id: str) -> None:
+        ai_game = self.ai_games_repository.get_by_id(game_id)
+        if ai_game is None or ai_game.result is not None:
+            return
 
         game_ref = self._get_game_ref(game_id)
         current_time_ms = int(time() * 1000)
@@ -355,36 +358,16 @@ class AiGamesService:
             nonlocal did_timeout, final_realtime_game
 
             if current_value is None:
-                raise ApiError(
-                    status_code=HTTPStatus.NOT_FOUND,
-                    code="ai_game_not_found",
-                    message="Ai game was not found.",
-                )
+                return current_value
 
             realtime_ai_game = RealtimeAiGameRecord.model_validate(current_value)
 
-            if realtime_ai_game.turn != "player":
-                raise ApiError(
-                    status_code=HTTPStatus.BAD_REQUEST,
-                    code="invalid_request_body",
-                    message="It is not the player's turn.",
-                )
+            # If the player has already made a move or the game has already been finished, skip handling the timeout
+            if realtime_ai_game.turn != "player" or not realtime_ai_game.available_moves:
+                return current_value
 
-            if not realtime_ai_game.available_moves:
-                raise ApiError(
-                    status_code=HTTPStatus.BAD_REQUEST,
-                    code="invalid_request_body",
-                    message="The game is already finished.",
-                )
-
-            if current_time_ms < (
-                realtime_ai_game.updated_at + self.PLAYER_TURN_TIMEOUT_MS
-            ):
-                raise ApiError(
-                    status_code=HTTPStatus.BAD_REQUEST,
-                    code="invalid_request_body",
-                    message="The timeout has not expired yet.",
-                )
+            if current_time_ms < realtime_ai_game.updated_at + self.PLAYER_TURN_TIMEOUT_MS:
+                return current_value
 
             did_timeout = True
             final_realtime_game = realtime_ai_game
@@ -406,9 +389,10 @@ class AiGamesService:
         terminal_result: AiGameResult | None = None
         terminal_realtime_game: RealtimeAiGameRecord | None = None
         final_move: AiGameHistoryMoveRecord | None = None
+        should_enqueue_timeout = False
 
         def apply_ai_move(current_value: dict[str, object] | None):
-            nonlocal final_move, terminal_realtime_game, terminal_result
+            nonlocal final_move, terminal_realtime_game, terminal_result, should_enqueue_timeout
 
             if current_value is None:
                 return current_value
@@ -438,6 +422,8 @@ class AiGamesService:
                     country_code,
                     "ai",
                 )
+            else:
+                should_enqueue_timeout = True
 
             return updated_game
 
@@ -447,6 +433,10 @@ class AiGamesService:
             if terminal_realtime_game is not None:
                 self._finish_game(terminal_result, terminal_realtime_game, final_move)
             return
+
+        # Send a message to SQS to handle timeout for the player's turn if the game continues
+        if should_enqueue_timeout:
+            enqueue_ai_game_timeout(game_id)
 
     def delete_expired_ai_games(self) -> int:
         deleted_game_ids = self.ai_games_repository.delete_expired_games()

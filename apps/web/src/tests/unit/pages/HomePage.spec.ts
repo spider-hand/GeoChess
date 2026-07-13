@@ -43,7 +43,6 @@ vi.mock("@/composables/useAuth", () => ({
 vi.mock("@/composables/useAiGameQuery", () => ({
   default: () => ({
     createAiGame: (...args: unknown[]) => mockCreateAiGame(...args),
-    timeoutAiGame: vi.fn(),
   }),
 }));
 

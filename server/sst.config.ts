@@ -24,6 +24,14 @@ export default $config({
         retry: 3,
       },
     });
+    const aiGameTimeoutDlq = new sst.aws.Queue("AiGameTimeoutDLQ");
+    const aiGameTimeoutQueue = new sst.aws.Queue("AiGameTimeoutQueue", {
+      delay: "60 seconds",
+      dlq: {
+        queue: aiGameTimeoutDlq.arn,
+        retry: 3,
+      },
+    });
     const appSecretArn = `arn:aws:secretsmanager:*:*:secret:geochess-${$app.stage}*`;
     const databasePermissions = [
       sst.aws.permission({
@@ -34,6 +42,10 @@ export default $config({
     const aiGameMoveQueueSendPermission = sst.aws.permission({
       actions: ["sqs:SendMessage"],
       resources: [aiGameMoveQueue.arn],
+    });
+    const aiGameTimeoutQueueSendPermission = sst.aws.permission({
+      actions: ["sqs:SendMessage"],
+      resources: [aiGameTimeoutQueue.arn],
     });
     const firebaseAuthorizer = api.addAuthorizer({
       name: "firebaseAuthorizer",
@@ -74,8 +86,13 @@ export default $config({
         environment: {
           ENVIRONMENT: $app.stage,
           AI_GAME_MOVE_QUEUE_URL: aiGameMoveQueue.url,
+          AI_GAME_TIMEOUT_QUEUE_URL: aiGameTimeoutQueue.url,
         },
-        permissions: [...databasePermissions, aiGameMoveQueueSendPermission],
+        permissions: [
+          ...databasePermissions,
+          aiGameMoveQueueSendPermission,
+          aiGameTimeoutQueueSendPermission,
+        ],
       },
       {
         auth: {
@@ -92,25 +109,13 @@ export default $config({
         environment: {
           ENVIRONMENT: $app.stage,
           AI_GAME_MOVE_QUEUE_URL: aiGameMoveQueue.url,
+          AI_GAME_TIMEOUT_QUEUE_URL: aiGameTimeoutQueue.url,
         },
-        permissions: [...databasePermissions, aiGameMoveQueueSendPermission],
-      },
-      {
-        auth: {
-          lambda: firebaseAuthorizer.id,
-        },
-      },
-    );
-
-    api.route(
-      "POST /api/v1/ai-games/{gameId}/timeout",
-      {
-        runtime: "python3.14",
-        handler: "src/api/v1/ai_games/timeout/handler.timeout_ai_game",
-        environment: {
-          ENVIRONMENT: $app.stage,
-        },
-        permissions: databasePermissions,
+        permissions: [
+          ...databasePermissions,
+          aiGameMoveQueueSendPermission,
+          aiGameTimeoutQueueSendPermission,
+        ],
       },
       {
         auth: {
@@ -201,6 +206,16 @@ export default $config({
 
     aiGameMoveQueue.subscribe({
       handler: "src/jobs/process_ai_game_move.process_ai_game_move",
+      runtime: "python3.14",
+      environment: {
+        ENVIRONMENT: $app.stage,
+        AI_GAME_TIMEOUT_QUEUE_URL: aiGameTimeoutQueue.url,
+      },
+      permissions: [...databasePermissions, aiGameTimeoutQueueSendPermission],
+    });
+
+    aiGameTimeoutQueue.subscribe({
+      handler: "src/jobs/process_ai_game_timeout.process_ai_game_timeout",
       runtime: "python3.14",
       environment: {
         ENVIRONMENT: $app.stage,

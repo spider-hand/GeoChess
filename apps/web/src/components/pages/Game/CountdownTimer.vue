@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 
 defineOptions({
   name: "GameCountdownTimer",
@@ -9,22 +9,14 @@ const props = defineProps<{
   startedAtMs: number;
 }>();
 
-const emit = defineEmits<{
-  timeUp: [];
-}>();
-
-const BUFFER_MS = 500;
 const DURATION_MS = 60_000;
 const DANGER_THRESHOLD_MS = 10_000;
 const TICK_INTERVAL_MS = 100;
 
 const nowMs = ref(Date.now());
 const timeoutId = ref<number | null>(null);
-const emittedDeadlineKey = ref<string | null>(null);
 
-const countdownTargetMs = computed(
-  () => props.startedAtMs + DURATION_MS + BUFFER_MS,
-);
+const countdownTargetMs = computed(() => props.startedAtMs + DURATION_MS);
 const remainingMs = computed(() =>
   Math.max(0, countdownTargetMs.value - nowMs.value),
 );
@@ -52,34 +44,6 @@ const tick = () => {
   nowMs.value = Date.now();
   timeoutId.value = window.setTimeout(tick, TICK_INTERVAL_MS);
 };
-
-// Reset the deadline key whenever the countdown target changes, so that we can emit `timeUp` again if the countdown restarts.
-watch(
-  () => `${countdownTargetMs.value}`,
-  () => {
-    emittedDeadlineKey.value = null;
-  },
-  { immediate: true },
-);
-
-// Emit `timeUp` when the countdown reaches zero, but only once per countdown target.
-watch(
-  () => [remainingMs.value, countdownTargetMs.value] as const,
-  ([nextRemainingMs, targetMs]) => {
-    if (nextRemainingMs > 0) {
-      return;
-    }
-
-    const deadlineKey = `${targetMs}`;
-    if (emittedDeadlineKey.value === deadlineKey) {
-      return;
-    }
-
-    emittedDeadlineKey.value = deadlineKey;
-    emit("timeUp");
-  },
-  { immediate: true },
-);
 
 onMounted(() => {
   tick();

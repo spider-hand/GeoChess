@@ -11,9 +11,7 @@ const advanceBy = async (ms: number) => {
   await nextTick();
 };
 
-const renderCountdownTimer = (
-  props: Partial<{ startedAtMs: number } & { onTimeUp: () => void }> = {},
-) =>
+const renderCountdownTimer = (props: Partial<{ startedAtMs: number }> = {}) =>
   render(CountdownTimer, {
     props: {
       startedAtMs: nowMs,
@@ -49,23 +47,9 @@ it("should apply the danger class when the remaining time is below 10 seconds", 
     .toHaveClass("countdown-timer__value--danger");
 });
 
-it("should emit time-up event when the countdown reaches zero", async () => {
-  const onTimeUp = vi.fn();
-  const { getByText } = renderCountdownTimer({ onTimeUp });
+it("should render zero when the countdown reaches the deadline", async () => {
+  const { getByText } = renderCountdownTimer();
 
-  await advanceBy(60_500);
-
+  await advanceBy(60_000);
   await expect.element(getByText("00:00")).toBeVisible();
-  expect(onTimeUp).toHaveBeenCalledTimes(1);
-});
-
-it("should not emit time-up event multiple times when the countdown reaches zero", async () => {
-  const onTimeUp = vi.fn();
-
-  renderCountdownTimer({ onTimeUp });
-
-  await advanceBy(60_500);
-  await advanceBy(5_000);
-
-  expect(onTimeUp).toHaveBeenCalledTimes(1);
 });

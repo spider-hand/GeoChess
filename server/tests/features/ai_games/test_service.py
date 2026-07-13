@@ -159,7 +159,7 @@ def test_create_ai_game_creates_guest_user_and_enqueues_when_ai_starts():
     enqueue_mock.assert_called_once_with("game-123")
 
 
-def test_create_ai_game_skips_guest_creation_and_enqueue_when_player_starts():
+def test_create_ai_game_enqueues_timeout_when_player_starts():
     ai_games_repository = MagicMock()
     ai_games_repository.create_after_cancelling_incomplete_games.return_value = (
         make_ai_game()
@@ -197,9 +197,13 @@ def test_create_ai_game_skips_guest_creation_and_enqueue_when_player_starts():
             "features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
-        enqueue_mock = MagicMock()
+        enqueue_move_mock = MagicMock()
+        enqueue_timeout_mock = MagicMock()
         monkeypatch.setattr(
-            "features.ai_games.service.enqueue_ai_game_move", enqueue_mock
+            "features.ai_games.service.enqueue_ai_game_move", enqueue_move_mock
+        )
+        monkeypatch.setattr(
+            "features.ai_games.service.enqueue_ai_game_timeout", enqueue_timeout_mock
         )
 
         result, status_code = service.create_ai_game(
@@ -209,7 +213,8 @@ def test_create_ai_game_skips_guest_creation_and_enqueue_when_player_starts():
     assert status_code == 201
     assert result.turn == "player"
     users_repository.create.assert_not_called()
-    enqueue_mock.assert_not_called()
+    enqueue_move_mock.assert_not_called()
+    enqueue_timeout_mock.assert_called_once_with("game-123")
 
 
 def test_create_ai_game_move_returns_400_for_invalid_payload():
@@ -424,43 +429,61 @@ def test_create_ai_game_move_finishes_game_for_terminal_player_move():
     enqueue_mock.assert_not_called()
 
 
-def test_timeout_ai_game_returns_400_when_it_is_not_players_turn():
+def test_process_ai_game_timeout_returns_early_for_missing_or_finished_game():
+    ai_games_repository = MagicMock()
+    service = AiGamesService(ai_games_repository=ai_games_repository)
+
+    for stored_game in (None, make_ai_game(result="lose")):
+        ai_games_repository.reset_mock()
+        ai_games_repository.get_by_id.return_value = stored_game
+        service.process_ai_game_timeout("game-123")
+
+    ai_games_repository.finish_game.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("realtime_game", "current_time_ms", "test_id"),
+    [
+        pytest.param(None, 1751155261000, "missing-realtime", id="missing-realtime"),
+        pytest.param(
+            make_realtime_ai_game(turn="ai", available_moves=["CC"]).model_dump(
+                by_alias=True, mode="json"
+            ),
+            1751155261000,
+            "not-player-turn",
+            id="not-player-turn",
+        ),
+        pytest.param(
+            make_realtime_ai_game(turn="player", available_moves=[]).model_dump(
+                by_alias=True, mode="json"
+            ),
+            1751155261000,
+            "finished-game",
+            id="finished-game",
+        ),
+        pytest.param(
+            make_realtime_ai_game(turn="player", available_moves=["CC"]).model_dump(
+                by_alias=True, mode="json"
+            ),
+            1751155230000,
+            "not-expired",
+            id="not-expired",
+        ),
+    ],
+)
+def test_process_ai_game_timeout_leaves_state_unchanged_for_noop_branches(
+    realtime_game, current_time_ms, test_id
+):
     ai_games_repository = MagicMock()
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)
     game_ref = MagicMock()
-    game_ref.transaction.side_effect = lambda callback: callback(
-        make_realtime_ai_game(turn="ai", available_moves=["CC"]).model_dump(
-            by_alias=True, mode="json"
-        )
-    )
+    updated_state = {}
 
-    with pytest.MonkeyPatch.context() as monkeypatch:
-        monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
-        )
-        monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
-            lambda path, app: MagicMock(child=lambda game_id: game_ref),
-        )
+    def transaction(callback):
+        updated_state["value"] = callback(realtime_game)
 
-        with pytest.raises(ApiError) as error:
-            service.timeout_ai_game("user-123", "game-123")
-
-    assert error.value.status_code == 400
-    assert error.value.code == "invalid_request_body"
-
-
-def test_timeout_ai_game_returns_400_when_timeout_has_not_expired():
-    ai_games_repository = MagicMock()
-    ai_games_repository.get_by_id.return_value = make_ai_game()
-    service = AiGamesService(ai_games_repository=ai_games_repository)
-    game_ref = MagicMock()
-    game_ref.transaction.side_effect = lambda callback: callback(
-        make_realtime_ai_game(turn="player", available_moves=["CC"]).model_dump(
-            by_alias=True, mode="json"
-        )
-    )
+    game_ref.transaction.side_effect = transaction
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
@@ -472,17 +495,16 @@ def test_timeout_ai_game_returns_400_when_timeout_has_not_expired():
         )
         monkeypatch.setattr(
             "features.ai_games.service.time",
-            lambda: 1751155200 + 30,
+            lambda: current_time_ms / 1000,
         )
 
-        with pytest.raises(ApiError) as error:
-            service.timeout_ai_game("user-123", "game-123")
+        service.process_ai_game_timeout(test_id)
 
-    assert error.value.status_code == 400
-    assert error.value.code == "invalid_request_body"
+    assert updated_state["value"] == realtime_game
+    ai_games_repository.finish_game.assert_not_called()
 
 
-def test_timeout_ai_game_marks_loss_after_expiry():
+def test_process_ai_game_timeout_marks_loss_after_expiry():
     ai_games_repository = MagicMock()
     ai_games_repository.get_by_id.return_value = make_ai_game()
     service = AiGamesService(ai_games_repository=ai_games_repository)
@@ -511,7 +533,7 @@ def test_timeout_ai_game_marks_loss_after_expiry():
             lambda: 1751155200 + 61,
         )
 
-        service.timeout_ai_game("user-123", "game-123")
+        service.process_ai_game_timeout("game-123")
 
     assert updated_state["value"]["turn"] == "player"
     assert "availableMoves" not in updated_state["value"]
@@ -626,6 +648,10 @@ def test_process_ai_game_move_applies_available_ai_move():
         monkeypatch.setattr(
             "features.ai_games.service.choose_ai_move", lambda game: "CC"
         )
+        enqueue_timeout_mock = MagicMock()
+        monkeypatch.setattr(
+            "features.ai_games.service.enqueue_ai_game_timeout", enqueue_timeout_mock
+        )
 
         service.process_ai_game_move("game-123")
 
@@ -633,6 +659,7 @@ def test_process_ai_game_move_applies_available_ai_move():
     assert updated_state["value"]["country"] == "CC"
     assert updated_state["value"]["moves"]["move-2"]["actor"] == "ai"
     ai_games_repository.finish_game.assert_not_called()
+    enqueue_timeout_mock.assert_called_once_with("game-123")
 
 
 def test_process_ai_game_move_finishes_game_when_ai_has_no_available_moves():
@@ -663,6 +690,10 @@ def test_process_ai_game_move_finishes_game_when_ai_has_no_available_moves():
             "features.ai_games.service.uuid4",
             lambda: MagicMock(hex="move-2"),
         )
+        enqueue_timeout_mock = MagicMock()
+        monkeypatch.setattr(
+            "features.ai_games.service.enqueue_ai_game_timeout", enqueue_timeout_mock
+        )
 
         service.process_ai_game_move("game-123")
     ai_games_repository.finish_game.assert_called_once()
@@ -681,6 +712,7 @@ def test_process_ai_game_move_finishes_game_when_ai_has_no_available_moves():
             }
         )
     ]
+    enqueue_timeout_mock.assert_not_called()
 
 
 def test_delete_expired_ai_games_returns_deleted_count():

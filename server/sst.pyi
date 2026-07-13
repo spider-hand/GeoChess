@@ -10,6 +10,12 @@ class Resource:
     class AiGameMoveQueue:
         type: str
         url: str
+    class AiGameTimeoutDLQ:
+        type: str
+        url: str
+    class AiGameTimeoutQueue:
+        type: str
+        url: str
     class Api:
         type: str
         url: str

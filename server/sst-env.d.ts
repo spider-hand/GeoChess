@@ -14,6 +14,14 @@ declare module "sst" {
       "type": "sst.aws.Queue"
       "url": string
     }
+    "AiGameTimeoutDLQ": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
+    "AiGameTimeoutQueue": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
     "Api": {
       "type": "sst.aws.ApiGatewayV2"
       "url": string

@@ -30,7 +30,6 @@ const router = useRouter();
 const aiGameQuery = useAiGameQuery();
 const createAiGame = aiGameQuery.createAiGame;
 const createAiGameMove = aiGameQuery.createAiGameMove;
-const timeoutAiGame = aiGameQuery.timeoutAiGame;
 const { username, userCountry } = useAuth();
 const gameId = computed(() =>
   typeof route.params.gameId === "string" ? route.params.gameId : null,
@@ -39,9 +38,7 @@ const { realtimeAiGame, realtimeAiGameError, isLoadingRealtimeAiGame } =
   useRealtimeAiGame(gameId);
 
 const isSubmittingMove = ref(false);
-const isSubmittingTimeout = ref(false);
 const isStartingNewGame = ref(false);
-const timeoutRequestKey = ref<string | null>(null);
 
 const isFinished = computed(() => {
   if (realtimeAiGame.value === null) {
@@ -68,17 +65,9 @@ const currentTurn = computed(
   () => realtimeAiGame.value?.usedCountries.length ?? 0,
 );
 const isMoveSelectionDisabled = computed(
-  () =>
-    turnStatus.value !== "player" ||
-    isSubmittingMove.value ||
-    isSubmittingTimeout.value,
+  () => turnStatus.value !== "player" || isSubmittingMove.value,
 );
 const timerStartedAtMs = computed(() => realtimeAiGame.value?.updatedAt ?? 0);
-const timeoutWindowKey = computed(() =>
-  realtimeAiGame.value === null
-    ? null
-    : `${realtimeAiGame.value.id}:${realtimeAiGame.value.updatedAt}`,
-);
 
 const historySteps = computed<Array<PathStep>>(() => {
   if (realtimeAiGame.value === null) {
@@ -131,17 +120,6 @@ watch(
   { immediate: true },
 );
 
-// Reset the timeout request lock after the realtime node moves to a new turn.
-watch(
-  timeoutWindowKey,
-  (nextTimeoutWindowKey) => {
-    if (nextTimeoutWindowKey !== timeoutRequestKey.value) {
-      isSubmittingTimeout.value = false;
-    }
-  },
-  { immediate: true },
-);
-
 // Reset the move request lock after any realtime game update arrives.
 watch(
   () => realtimeAiGame.value?.updatedAt,
@@ -184,36 +162,6 @@ const handleSelect = async (countryCode: string) => {
   } catch (error) {
     console.error(error);
     isSubmittingMove.value = false;
-  }
-};
-
-const handleTimeUp = async () => {
-  if (
-    gameId.value === null ||
-    realtimeAiGame.value === null ||
-    turnStatus.value !== "player" ||
-    isFinished.value
-  ) {
-    return;
-  }
-
-  const nextTimeoutWindowKey = timeoutWindowKey.value;
-  if (
-    nextTimeoutWindowKey === null ||
-    timeoutRequestKey.value === nextTimeoutWindowKey ||
-    isSubmittingTimeout.value
-  ) {
-    return;
-  }
-
-  timeoutRequestKey.value = nextTimeoutWindowKey;
-  isSubmittingTimeout.value = true;
-
-  try {
-    await timeoutAiGame(gameId.value);
-  } catch (error) {
-    console.error(error);
-    isSubmittingTimeout.value = false;
   }
 };
 
@@ -271,7 +219,6 @@ const handleExit = async () => {
           <CountdownTimer
             v-if="!isFinished"
             :started-at-ms="timerStartedAtMs"
-            @time-up="handleTimeUp"
           />
         </div>
       </div>

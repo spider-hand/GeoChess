@@ -12,8 +12,6 @@ paths:
     $ref: ./paths/api/v1/ai-games/index.yml
   /api/v1/ai-games/{gameId}/moves:
     $ref: ./paths/api/v1/ai-games/moves.yml
-  /api/v1/ai-games/{gameId}/timeout:
-    $ref: ./paths/api/v1/ai-games/timeout.yml
   /api/v1/users/{userId}:
     $ref: ./paths/api/v1/users/user-by-id.yml
 components:

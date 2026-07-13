@@ -1,4 +1,5 @@
 /* tslint:disable */
+/* eslint-disable */
 export * from "./CreateAiGame201Response";
 export * from "./CreateAiGame201ResponseMovesValue";
 export * from "./CreateAiGame400Response";

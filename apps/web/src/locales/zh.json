@@ -12,7 +12,8 @@
           "title": "路径历史",
           "legendLabel": "路径历史图例",
           "you": "你",
-          "ai": "AI"
+          "ai": "AI",
+          "opponent": "对手"
         },
         "PathResultCard": {
           "start": "起点",
@@ -33,6 +34,7 @@
         "TurnStatusStrip": {
           "yourTurn": "轮到你了",
           "aiTurn": "AI 回合",
+          "opponentTurn": "对手回合",
           "turn": "第 {turn} 回合"
         },
         "ResultBadge": {

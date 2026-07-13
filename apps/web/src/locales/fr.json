@@ -12,7 +12,8 @@
           "title": "Historique du parcours",
           "legendLabel": "Légende de l'historique du parcours",
           "you": "Vous",
-          "ai": "IA"
+          "ai": "IA",
+          "opponent": "Adversaire"
         },
         "PathResultCard": {
           "start": "Départ",
@@ -33,6 +34,7 @@
         "TurnStatusStrip": {
           "yourTurn": "Votre tour",
           "aiTurn": "Tour de l'IA",
+          "opponentTurn": "Tour de l'adversaire",
           "turn": "Tour {turn}"
         },
         "ResultBadge": {

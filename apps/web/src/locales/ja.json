@@ -12,7 +12,8 @@
           "title": "経路履歴",
           "legendLabel": "経路履歴の凡例",
           "you": "You",
-          "ai": "AI"
+          "ai": "AI",
+          "opponent": "対戦相手"
         },
         "PathResultCard": {
           "start": "開始地点",
@@ -33,6 +34,7 @@
         "TurnStatusStrip": {
           "yourTurn": "あなたのターン",
           "aiTurn": "AIのターン",
+          "opponentTurn": "対戦相手のターン",
           "turn": "{turn} ターン目"
         },
         "ResultBadge": {

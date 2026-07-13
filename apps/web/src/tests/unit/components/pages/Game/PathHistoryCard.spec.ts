@@ -3,8 +3,9 @@ import { render } from "vitest-browser-vue";
 
 import PathHistoryCard from "@/components/pages/Game/PathHistoryCard.vue";
 import { createAppI18n } from "@/i18n";
+import type { AiPathStep, MultiplayerPathStep } from "@/types/game";
 
-const defaultHistorySteps = [
+const defaultHistorySteps: Array<AiPathStep> = [
   { countryCode: "bb", owner: "neutral" as const, turn: 0 },
   { countryCode: "cc", owner: "player" as const, turn: 1 },
   { countryCode: "dd", owner: "ai" as const, turn: 2 },
@@ -56,4 +57,18 @@ it("should not render the connector for the last item in the history", async () 
 
   expect(getByRole("listitem")).toHaveLength(1);
   expect(getByTestId("path-history-card-connector")).toHaveLength(0);
+});
+
+it("should render Opponent for multiplayer step data", async () => {
+  const multiplayerSteps: Array<MultiplayerPathStep> = [
+    { countryCode: "bb", owner: "neutral", turn: 0 },
+    { countryCode: "cc", owner: "player", turn: 1 },
+    { countryCode: "dd", owner: "opponent", turn: 2 },
+  ];
+  const { container, getByText } = renderPathHistoryCard(multiplayerSteps);
+
+  await expect.element(getByText("Opponent")).toBeVisible();
+  expect(
+    container.querySelector(".path-history-card__step--opponent"),
+  ).not.toBeNull();
 });

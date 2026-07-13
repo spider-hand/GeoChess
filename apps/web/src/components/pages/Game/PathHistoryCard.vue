@@ -3,7 +3,7 @@ import { History } from "@lucide/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import type { PathStep } from "@/types/game";
+import type { AiPathStep, MultiplayerPathStep } from "@/types/game";
 import { countryFlagSrc } from "@/utils/game";
 
 defineOptions({
@@ -11,7 +11,7 @@ defineOptions({
 });
 
 const props = defineProps<{
-  historySteps: Array<PathStep>;
+  historySteps: Array<AiPathStep | MultiplayerPathStep>;
 }>();
 
 const { t } = useI18n();
@@ -23,9 +23,15 @@ const legendItems = computed(() => [
     owner: "player" as const,
   },
   {
-    key: "ai",
-    label: t("components.pages.Game.PathHistoryCard.ai"),
-    owner: "ai" as const,
+    key: props.historySteps.some((step) => step.owner === "opponent")
+      ? "opponent"
+      : "ai",
+    label: props.historySteps.some((step) => step.owner === "opponent")
+      ? t("components.pages.Game.PathHistoryCard.opponent")
+      : t("components.pages.Game.PathHistoryCard.ai"),
+    owner: props.historySteps.some((step) => step.owner === "opponent")
+      ? ("opponent" as const)
+      : ("ai" as const),
   },
 ]);
 
@@ -69,6 +75,7 @@ const turnLabel = (turn: number) =>
           :class="{
             'path-history-card__step--player': step.owner === 'player',
             'path-history-card__step--ai': step.owner === 'ai',
+            'path-history-card__step--opponent': step.owner === 'opponent',
             'path-history-card__step--neutral': step.owner === 'neutral',
           }"
           role="listitem"
@@ -166,6 +173,11 @@ const turnLabel = (turn: number) =>
   color: var(--on-dark);
 }
 
+.path-history-card__legend-badge--opponent {
+  background-color: var(--surface-elevated-dark);
+  color: var(--on-dark);
+}
+
 .path-history-card__body {
   display: flex;
   align-items: center;
@@ -195,6 +207,15 @@ const turnLabel = (turn: number) =>
 }
 
 .path-history-card__step--ai {
+  background-color: color-mix(
+    in srgb,
+    var(--surface-elevated-dark) 85%,
+    transparent
+  );
+  border: 1px solid var(--hairline);
+}
+
+.path-history-card__step--opponent {
   background-color: color-mix(
     in srgb,
     var(--surface-elevated-dark) 85%,

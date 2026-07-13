@@ -18,7 +18,7 @@ import TurnStatusStrip from "@/components/pages/Game/TurnStatusStrip.vue";
 import Button from "@/components/shared/Button.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
-import type { GameMapMarker, PathStep, TurnStatus } from "@/types/game";
+import type { AiGameMapMarker, AiPathStep, AiTurnStatus } from "@/types/game";
 
 defineOptions({
   name: "GameVsAiPage",
@@ -51,7 +51,7 @@ const isFinished = computed(() => {
 
   return false;
 });
-const turnStatus = computed<TurnStatus>(() =>
+const turnStatus = computed<AiTurnStatus>(() =>
   realtimeAiGame.value?.turn === "ai" ? "ai" : "player",
 );
 const result = computed<"won" | "lost" | null>(() => {
@@ -69,7 +69,7 @@ const isMoveSelectionDisabled = computed(
 );
 const timerStartedAtMs = computed(() => realtimeAiGame.value?.updatedAt ?? 0);
 
-const historySteps = computed<Array<PathStep>>(() => {
+const historySteps = computed<Array<AiPathStep>>(() => {
   if (realtimeAiGame.value === null) {
     return [];
   }
@@ -92,7 +92,7 @@ const historySteps = computed<Array<PathStep>>(() => {
   ];
 });
 
-const mapMarkers = computed<Array<GameMapMarker>>(() =>
+const mapMarkers = computed<Array<AiGameMapMarker>>(() =>
   historySteps.value.map((step) => ({
     countryCode: step.countryCode,
     owner: step.owner,
@@ -204,8 +204,10 @@ const handleExit = async () => {
     <section class="game-page__content">
       <div class="game-page__top-row">
         <PlayerMatchupCard
-          :player-name="username"
-          :player-country="userCountry"
+          :player-one="{
+            name: username,
+            country: userCountry,
+          }"
           :difficulty="realtimeAiGame.difficulty"
         />
 

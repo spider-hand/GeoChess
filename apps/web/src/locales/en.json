@@ -12,7 +12,8 @@
           "title": "Path History",
           "legendLabel": "Path history legend",
           "you": "You",
-          "ai": "AI"
+          "ai": "AI",
+          "opponent": "Opponent"
         },
         "PathResultCard": {
           "start": "Start",
@@ -33,6 +34,7 @@
         "TurnStatusStrip": {
           "yourTurn": "Your Turn",
           "aiTurn": "AI Turn",
+          "opponentTurn": "Opponent Turn",
           "turn": "Turn {turn}"
         },
         "ResultBadge": {

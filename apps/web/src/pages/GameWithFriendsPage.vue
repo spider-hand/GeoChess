@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from "vue";
+
 import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
 import CountdownTimer from "@/components/pages/Game/CountdownTimer.vue";
 import GameMap from "@/components/pages/Game/GameMap.vue";
@@ -8,10 +10,27 @@ import PlayerMatchupCard from "@/components/pages/Game/PlayerMatchupCard.vue";
 import TurnStatusStrip from "@/components/pages/Game/TurnStatusStrip.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
+import type {
+  MultiplayerGameMapMarker,
+  MultiplayerPathStep,
+  MultiplayerTurnStatus,
+} from "@/types/game";
 
 defineOptions({
   name: "GameWithFriendsPage",
 });
+
+const turnStatus = computed<MultiplayerTurnStatus>(() => "opponent");
+const historySteps = computed<Array<MultiplayerPathStep>>(() => [
+  { countryCode: "bb", owner: "neutral", turn: 0 },
+  { countryCode: "jp", owner: "player", turn: 1 },
+  { countryCode: "kr", owner: "opponent", turn: 2 },
+]);
+const finishedMarkers = computed<Array<MultiplayerGameMapMarker>>(() => [
+  { countryCode: "BB", owner: "neutral", label: "Start" },
+  { countryCode: "JP", owner: "player", label: "Player" },
+  { countryCode: "KR", owner: "opponent", label: "Opponent" },
+]);
 </script>
 
 <template>
@@ -19,7 +38,7 @@ defineOptions({
     <NavigationHeader />
 
     <section class="game-page__content">
-      <TurnStatusStrip status="player" :current-turn="3" />
+      <TurnStatusStrip :status="turnStatus" :current-turn="3" />
       <CountdownTimer :started-at-ms="Date.now()" />
 
       <div class="game-page__map-card-row">
@@ -32,14 +51,21 @@ defineOptions({
         />
       </div>
 
-      <PathHistoryCard :history-steps="[]" />
+      <PathHistoryCard :history-steps="historySteps" />
 
       <div class="game-page__map-card-row">
-        <GameMap class="game-page__map" :is-finished="true" :markers="[]" />
-        <PathResultCard :result-steps="[]" />
+        <GameMap
+          class="game-page__map"
+          :is-finished="true"
+          :markers="finishedMarkers"
+        />
+        <PathResultCard :result-steps="historySteps" />
       </div>
 
-      <PlayerMatchupCard player-name="Player" />
+      <PlayerMatchupCard
+        :player-one="{ name: 'Player', country: 'JP' }"
+        :player-two="{ name: 'Opponent', country: 'KR' }"
+      />
     </section>
 
     <NavigationFooter />

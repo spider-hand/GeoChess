@@ -7,7 +7,9 @@ import { createAppI18n } from "@/i18n";
 const renderPlayerMatchupCard = (props: Record<string, unknown> = {}) =>
   render(PlayerMatchupCard, {
     props: {
-      playerName: "Taylor Swift",
+      playerOne: {
+        name: "Taylor Swift",
+      },
       ...props,
     },
     global: {
@@ -37,9 +39,43 @@ it("should show the ai difficulty when one is provided", async () => {
   await expect.element(getByText("Medium")).toBeVisible();
 });
 
-it("should show the player country flag when a country is provided", async () => {
+it("should render both human players when playerTwo is passed", async () => {
+  const { container, getByText } = renderPlayerMatchupCard({
+    playerOne: {
+      name: "Taylor Swift",
+      country: "JP",
+    },
+    playerTwo: {
+      name: "Opponent",
+      country: "KR",
+    },
+  });
+
+  await expect.element(getByText("Opponent")).toBeVisible();
+  expect(container.querySelectorAll(".player-matchup-card__flag")).toHaveLength(
+    2,
+  );
+});
+
+it("should not render the ai bot ui when playerTwo is passed", async () => {
   const { container } = renderPlayerMatchupCard({
-    playerCountry: "JP",
+    playerTwo: {
+      name: "Opponent",
+    },
+  });
+
+  expect(
+    container.querySelector(".player-matchup-card__avatar--ai"),
+  ).toBeNull();
+  expect(container.textContent).not.toContain("AI");
+});
+
+it("should show the player country flag when one is provided", async () => {
+  const { container } = renderPlayerMatchupCard({
+    playerOne: {
+      name: "Taylor Swift",
+      country: "JP",
+    },
   });
 
   await expect

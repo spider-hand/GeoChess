@@ -12,7 +12,8 @@
           "title": "Historial de ruta",
           "legendLabel": "Leyenda del historial de ruta",
           "you": "Tú",
-          "ai": "IA"
+          "ai": "IA",
+          "opponent": "Oponente"
         },
         "PathResultCard": {
           "start": "Inicio",
@@ -33,6 +34,7 @@
         "TurnStatusStrip": {
           "yourTurn": "Tu turno",
           "aiTurn": "Turno de la IA",
+          "opponentTurn": "Turno del oponente",
           "turn": "Turno {turn}"
         },
         "ResultBadge": {

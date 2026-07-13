@@ -14,7 +14,7 @@ import {
 
 import Avatar from "@/components/shared/Avatar.vue";
 import countryCoordinates from "@/constants/countryCoordinates";
-import type { GameMapMarker } from "@/types/game";
+import type { AiGameMapMarker, MultiplayerGameMapMarker } from "@/types/game";
 
 defineOptions({
   name: "GameMap",
@@ -22,7 +22,7 @@ defineOptions({
 
 const props = defineProps<{
   isFinished: boolean;
-  markers: Array<GameMapMarker>;
+  markers: Array<AiGameMapMarker | MultiplayerGameMapMarker>;
 }>();
 
 const mapElement = useTemplateRef("mapElement");
@@ -73,7 +73,9 @@ const removeMarkers = () => {
   }
 };
 
-const createMarkerElement = (marker: GameMapMarker) => {
+const createMarkerElement = (
+  marker: AiGameMapMarker | MultiplayerGameMapMarker,
+) => {
   const element = document.createElement("div");
   element.className = `game-map-marker game-map-marker--${marker.owner}`;
   element.dataset.countryCode = marker.countryCode;
@@ -99,7 +101,9 @@ const createMarkerElement = (marker: GameMapMarker) => {
   render(
     marker.owner === "player"
       ? h(Avatar, { name: marker.label, size: "sm" })
-      : h(Bot, { size: 16 }),
+      : marker.owner === "opponent"
+        ? h(Avatar, { name: marker.label, size: "sm" })
+        : h(Bot, { size: 16 }),
     mountNode,
   );
 
@@ -225,6 +229,10 @@ onBeforeUnmount(() => {
   color: var(--on-dark);
 }
 
+:global(.game-map-marker--opponent) {
+  color: var(--on-dark);
+}
+
 :global(.game-map-marker--neutral) {
   width: 24px;
   height: 24px;
@@ -247,7 +255,19 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
+:global(.game-map-marker__content--opponent) {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
 :global(.game-map-marker__content--player .avatar) {
+  width: 36px;
+  height: 36px;
+}
+
+:global(.game-map-marker__content--opponent .avatar) {
   width: 36px;
   height: 36px;
 }

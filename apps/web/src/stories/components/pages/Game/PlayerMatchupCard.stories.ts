@@ -7,7 +7,9 @@ const meta = {
   component: PlayerMatchupCard,
   tags: ["autodocs"],
   args: {
-    playerName: "Taylor Swift",
+    playerOne: {
+      name: "Taylor Swift",
+    },
   },
 } satisfies Meta<typeof PlayerMatchupCard>;
 
@@ -19,12 +21,28 @@ export const Default: Story = {};
 
 export const WithCountry: Story = {
   args: {
-    playerCountry: "JP",
+    playerOne: {
+      name: "Taylor Swift",
+      country: "JP",
+    },
   },
 };
 
 export const WithDifficulty: Story = {
   args: {
     difficulty: "medium",
+  },
+};
+
+export const Multiplayer: Story = {
+  args: {
+    playerOne: {
+      name: "Taylor Swift",
+      country: "JP",
+    },
+    playerTwo: {
+      name: "Opponent",
+      country: "KR",
+    },
   },
 };

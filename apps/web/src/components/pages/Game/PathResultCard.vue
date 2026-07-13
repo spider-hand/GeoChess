@@ -4,14 +4,14 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import useCountry from "@/composables/useCountry";
-import type { PathStep } from "@/types/game";
+import type { AiPathStep, MultiplayerPathStep } from "@/types/game";
 
 defineOptions({
   name: "GamePathResultCard",
 });
 
 const props = defineProps<{
-  resultSteps: Array<PathStep>;
+  resultSteps: Array<AiPathStep | MultiplayerPathStep>;
 }>();
 
 const { t } = useI18n();
@@ -30,9 +30,15 @@ const legendItems = computed(() => [
     owner: "player" as const,
   },
   {
-    key: "ai",
-    label: t("components.pages.Game.PathHistoryCard.ai"),
-    owner: "ai" as const,
+    key: props.resultSteps.some((step) => step.owner === "opponent")
+      ? "opponent"
+      : "ai",
+    label: props.resultSteps.some((step) => step.owner === "opponent")
+      ? t("components.pages.Game.PathHistoryCard.opponent")
+      : t("components.pages.Game.PathHistoryCard.ai"),
+    owner: props.resultSteps.some((step) => step.owner === "opponent")
+      ? ("opponent" as const)
+      : ("ai" as const),
   },
 ]);
 
@@ -82,6 +88,7 @@ const turnLabel = (turn: number) =>
             :class="{
               'path-result-card__marker--player': step.owner === 'player',
               'path-result-card__marker--ai': step.owner === 'ai',
+              'path-result-card__marker--opponent': step.owner === 'opponent',
               'path-result-card__marker--neutral': step.owner === 'neutral',
             }"
           />
@@ -97,6 +104,7 @@ const turnLabel = (turn: number) =>
           :class="{
             'path-result-card__step--player': step.owner === 'player',
             'path-result-card__step--ai': step.owner === 'ai',
+            'path-result-card__step--opponent': step.owner === 'opponent',
             'path-result-card__step--neutral': step.owner === 'neutral',
           }"
         >
@@ -205,6 +213,11 @@ const turnLabel = (turn: number) =>
   color: var(--on-dark);
 }
 
+.path-result-card__legend-badge--opponent {
+  background-color: var(--surface-elevated-dark);
+  color: var(--on-dark);
+}
+
 .path-result-card__body {
   display: flex;
   flex-direction: column;
@@ -246,6 +259,10 @@ const turnLabel = (turn: number) =>
   background-color: var(--surface-elevated-dark);
 }
 
+.path-result-card__marker--opponent {
+  background-color: var(--surface-elevated-dark);
+}
+
 .path-result-card__line {
   flex: 1;
   width: 1px;
@@ -272,6 +289,15 @@ const turnLabel = (turn: number) =>
 }
 
 .path-result-card__step--ai {
+  background-color: color-mix(
+    in srgb,
+    var(--surface-elevated-dark) 85%,
+    transparent
+  );
+  border: 1px solid var(--hairline);
+}
+
+.path-result-card__step--opponent {
   background-color: color-mix(
     in srgb,
     var(--surface-elevated-dark) 85%,

@@ -3,8 +3,12 @@ import { render } from "vitest-browser-vue";
 
 import TurnStatusStrip from "@/components/pages/Game/TurnStatusStrip.vue";
 import { createAppI18n } from "@/i18n";
+import type { AiTurnStatus, MultiplayerTurnStatus } from "@/types/game";
 
-const renderTurnStatusStrip = (status: "player" | "ai", currentTurn: number) =>
+const renderTurnStatusStrip = (
+  status: AiTurnStatus | MultiplayerTurnStatus,
+  currentTurn: number,
+) =>
   render(TurnStatusStrip, {
     props: {
       status,
@@ -45,4 +49,20 @@ it("should render the ai turn status and current turn", async () => {
       container.querySelector(".turn-status-strip__status") as HTMLElement,
     )
     .toHaveClass("turn-status-strip__status--ai");
+});
+
+it("should render the opponent turn status and current turn", async () => {
+  const { container, getByLabelText, getByText } = renderTurnStatusStrip(
+    "opponent",
+    12,
+  );
+
+  await expect.element(getByLabelText("Opponent Turn, Turn 12")).toBeVisible();
+  await expect.element(getByText("Opponent Turn")).toBeVisible();
+  await expect.element(getByText("Turn 12")).toBeVisible();
+  await expect
+    .element(
+      container.querySelector(".turn-status-strip__status") as HTMLElement,
+    )
+    .toHaveClass("turn-status-strip__status--opponent");
 });

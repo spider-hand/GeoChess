@@ -91,17 +91,24 @@ vi.mock("mapbox-gl", () => {
 });
 
 import GameMap from "@/components/pages/Game/GameMap.vue";
+import type { AiGameMapMarker, MultiplayerGameMapMarker } from "@/types/game";
 
-const finishedMarkers = [
+const finishedMarkers: Array<AiGameMapMarker> = [
   { countryCode: "JP", owner: "neutral" as const, label: "Start" },
   { countryCode: "KR", owner: "player" as const, label: "Taylor Swift" },
   { countryCode: "CN", owner: "ai" as const, label: "AI" },
 ];
 
+const multiplayerFinishedMarkers: Array<MultiplayerGameMapMarker> = [
+  { countryCode: "JP", owner: "neutral" as const, label: "Start" },
+  { countryCode: "KR", owner: "player" as const, label: "Taylor Swift" },
+  { countryCode: "CN", owner: "opponent" as const, label: "Opponent" },
+];
+
 const renderGameMap = (
   props: Partial<{
     isFinished: boolean;
-    markers: typeof finishedMarkers;
+    markers: Array<AiGameMapMarker | MultiplayerGameMapMarker>;
   }> = {},
 ) =>
   render(GameMap, {
@@ -186,6 +193,19 @@ it("should focus on the start marker when the game is finished", async () => {
     duration: 1500,
     essential: true,
   });
+});
+
+it("should render avatar marker content for opponent markers", async () => {
+  const { container } = renderGameMap({
+    isFinished: true,
+    markers: multiplayerFinishedMarkers,
+  });
+
+  expect(
+    container.querySelector(
+      '[data-country-code="CN"] .game-map-marker__content--opponent .avatar',
+    ),
+  ).not.toBeNull();
 });
 
 it("should remove markers when the game is reverted back to active state", async () => {

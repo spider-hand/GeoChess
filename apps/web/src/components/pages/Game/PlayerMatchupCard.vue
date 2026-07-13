@@ -11,9 +11,15 @@ defineOptions({
 });
 
 const props = defineProps<{
-  playerName: string;
-  playerCountry?: string;
+  playerOne: {
+    name: string;
+    country?: string;
+  };
   difficulty?: Difficulty;
+  playerTwo?: {
+    name: string;
+    country?: string;
+  };
 }>();
 
 const { t } = useI18n();
@@ -29,19 +35,19 @@ const { countryFlagAlt, countryFlagSrc } = useCountry();
       >
         <Avatar
           class="player-matchup-card__avatar"
-          :name="playerName"
+          :name="props.playerOne.name"
           size="md"
           data-testid="player-matchup-card-avatar"
         />
 
         <div class="player-matchup-card__identity">
           <p class="player-matchup-card__name">
-            <span>{{ props.playerName }}</span>
+            <span>{{ props.playerOne.name }}</span>
             <img
-              v-if="props.playerCountry"
+              v-if="props.playerOne.country"
               class="player-matchup-card__flag"
-              :src="countryFlagSrc(props.playerCountry)"
-              :alt="countryFlagAlt(props.playerCountry)"
+              :src="countryFlagSrc(props.playerOne.country)"
+              :alt="countryFlagAlt(props.playerOne.country)"
             />
           </p>
         </div>
@@ -56,17 +62,39 @@ const { countryFlagAlt, countryFlagSrc } = useCountry();
         data-testid="player-matchup-card-player"
       >
         <span
+          v-if="!props.playerTwo"
           class="player-matchup-card__avatar player-matchup-card__avatar--ai"
           aria-hidden="true"
           data-testid="player-matchup-card-avatar"
         >
           <Bot :size="20" />
         </span>
+        <Avatar
+          v-else
+          class="player-matchup-card__avatar"
+          :name="props.playerTwo.name"
+          size="md"
+          data-testid="player-matchup-card-avatar"
+        />
 
         <div class="player-matchup-card__identity">
           <p class="player-matchup-card__name">
-            {{ t("components.pages.Game.PlayerMatchupCard.ai") }}
-            <span v-if="props.difficulty" class="player-matchup-card__meta">
+            <span>
+              {{
+                props.playerTwo?.name ??
+                t("components.pages.Game.PlayerMatchupCard.ai")
+              }}
+            </span>
+            <img
+              v-if="props.playerTwo?.country"
+              class="player-matchup-card__flag"
+              :src="countryFlagSrc(props.playerTwo.country)"
+              :alt="countryFlagAlt(props.playerTwo.country)"
+            />
+            <span
+              v-if="!props.playerTwo && props.difficulty"
+              class="player-matchup-card__meta"
+            >
               {{
                 t(`components.pages.Game.PlayerMatchupCard.${props.difficulty}`)
               }}

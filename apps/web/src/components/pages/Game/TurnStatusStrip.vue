@@ -2,25 +2,26 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import type { TurnStatus } from "@/types/game";
+import type { AiTurnStatus, MultiplayerTurnStatus } from "@/types/game";
 
 defineOptions({
   name: "GameTurnStatusStrip",
 });
 
 const props = defineProps<{
-  status: TurnStatus;
+  status: AiTurnStatus | MultiplayerTurnStatus;
   currentTurn: number;
 }>();
 
 const { t } = useI18n();
 
 const STATUS_LABEL_KEYS: Record<
-  TurnStatus,
+  AiTurnStatus | MultiplayerTurnStatus,
   `components.pages.Game.TurnStatusStrip.${string}`
 > = {
   player: "components.pages.Game.TurnStatusStrip.yourTurn",
   ai: "components.pages.Game.TurnStatusStrip.aiTurn",
+  opponent: "components.pages.Game.TurnStatusStrip.opponentTurn",
 };
 
 const statusLabel = computed(() => t(STATUS_LABEL_KEYS[props.status]));
@@ -41,6 +42,7 @@ const ariaLabel = computed(() => `${statusLabel.value}, ${turnLabel.value}`);
       :class="{
         'turn-status-strip__status--player': status === 'player',
         'turn-status-strip__status--ai': status === 'ai',
+        'turn-status-strip__status--opponent': status === 'opponent',
       }"
     >
       {{ statusLabel }}
@@ -85,6 +87,10 @@ const ariaLabel = computed(() => `${statusLabel.value}, ${turnLabel.value}`);
 }
 
 .turn-status-strip__status--ai {
+  background-color: var(--primary-active);
+}
+
+.turn-status-strip__status--opponent {
   background-color: var(--primary-active);
 }
 

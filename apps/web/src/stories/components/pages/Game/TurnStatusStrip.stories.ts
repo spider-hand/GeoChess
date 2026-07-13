@@ -27,3 +27,10 @@ export const AiTurn: Story = {
     currentTurn: 11,
   },
 };
+
+export const OpponentTurn: Story = {
+  args: {
+    status: "opponent",
+    currentTurn: 12,
+  },
+};

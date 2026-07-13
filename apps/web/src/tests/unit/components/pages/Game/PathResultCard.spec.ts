@@ -3,8 +3,9 @@ import { render } from "vitest-browser-vue";
 
 import PathResultCard from "@/components/pages/Game/PathResultCard.vue";
 import { createAppI18n } from "@/i18n";
+import type { AiPathStep, MultiplayerPathStep } from "@/types/game";
 
-const defaultResultSteps = [
+const defaultResultSteps: Array<AiPathStep> = [
   { countryCode: "bb", owner: "neutral" as const, turn: 0 },
   { countryCode: "jp", owner: "player" as const, turn: 1 },
   { countryCode: "fr", owner: "ai" as const, turn: 2 },
@@ -52,4 +53,18 @@ it("should fall back to the uppercased country code when the localized name is m
   ]);
 
   await expect.element(getByText("ZZ")).toBeVisible();
+});
+
+it("should render Opponent for multiplayer step data", async () => {
+  const multiplayerSteps: Array<MultiplayerPathStep> = [
+    { countryCode: "bb", owner: "neutral", turn: 0 },
+    { countryCode: "jp", owner: "player", turn: 1 },
+    { countryCode: "fr", owner: "opponent", turn: 2 },
+  ];
+  const { container, getByText } = renderPathResultCard(multiplayerSteps);
+
+  await expect.element(getByText("Opponent")).toBeVisible();
+  expect(
+    container.querySelector(".path-result-card__step--opponent"),
+  ).not.toBeNull();
 });

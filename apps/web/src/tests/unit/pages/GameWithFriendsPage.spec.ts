@@ -72,9 +72,9 @@ vi.mock("@/components/pages/Game/PathResultCard.vue", () => ({
 vi.mock("@/components/pages/Game/PlayerMatchupCard.vue", () => ({
   default: {
     name: "PlayerMatchupCard",
-    props: ["playerName", "playerCountry"],
+    props: ["playerOne", "playerTwo"],
     template:
-      '<div data-testid="player-matchup-card" :data-player-name="playerName" :data-player-country="playerCountry ?? \'\'" />',
+      '<div data-testid="player-matchup-card" :data-player-one-name="playerOne?.name ?? \'\'" :data-player-two-name="playerTwo?.name ?? \'\'" />',
   },
 }));
 

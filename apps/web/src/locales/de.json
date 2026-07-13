@@ -12,7 +12,8 @@
           "title": "Pfadverlauf",
           "legendLabel": "Legende des Pfadverlaufs",
           "you": "Du",
-          "ai": "KI"
+          "ai": "KI",
+          "opponent": "Gegner"
         },
         "PathResultCard": {
           "start": "Start",
@@ -33,6 +34,7 @@
         "TurnStatusStrip": {
           "yourTurn": "Du bist dran",
           "aiTurn": "KI ist dran",
+          "opponentTurn": "Gegner ist dran",
           "turn": "Runde {turn}"
         },
         "ResultBadge": {

@@ -42,9 +42,9 @@ vi.mock("@/composables/useAuth", () => ({
 vi.mock("@/components/pages/Game/PlayerMatchupCard.vue", () => ({
   default: {
     name: "PlayerMatchupCard",
-    props: ["playerName", "playerCountry"],
+    props: ["playerOne", "playerTwo"],
     template:
-      '<div data-testid="player-matchup-card" :data-player-name="playerName ?? \'\'" :data-player-country="playerCountry ?? \'\'" />',
+      '<div data-testid="player-matchup-card" :data-player-one-name="playerOne?.name ?? \'\'" :data-player-one-country="playerOne?.country ?? \'\'" :data-player-two-name="playerTwo?.name ?? \'\'" />',
   },
 }));
 
@@ -173,7 +173,7 @@ it("should render the active game layout for the default state", async () => {
   expect(
     container
       .querySelector('[data-testid="player-matchup-card"]')
-      ?.getAttribute("data-player-country"),
+      ?.getAttribute("data-player-one-country"),
   ).toBe("");
   expect(
     container.querySelector('[data-testid="turn-status-strip"]'),

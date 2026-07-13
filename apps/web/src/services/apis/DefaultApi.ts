@@ -19,7 +19,11 @@ import type {
   CreateAiGameMoveRequest,
   CreateAiGameRequest,
   CreateUserRequest,
+  CreateWithFriendsGame201Response,
+  CreateWithFriendsGameMoveRequest,
   GetUser200Response,
+  JoinWithFriendsGame200Response,
+  JoinWithFriendsGameRequest,
   UpdateUser200Response,
 } from "../models/index";
 import {
@@ -33,8 +37,16 @@ import {
   CreateAiGameRequestToJSON,
   CreateUserRequestFromJSON,
   CreateUserRequestToJSON,
+  CreateWithFriendsGame201ResponseFromJSON,
+  CreateWithFriendsGame201ResponseToJSON,
+  CreateWithFriendsGameMoveRequestFromJSON,
+  CreateWithFriendsGameMoveRequestToJSON,
   GetUser200ResponseFromJSON,
   GetUser200ResponseToJSON,
+  JoinWithFriendsGame200ResponseFromJSON,
+  JoinWithFriendsGame200ResponseToJSON,
+  JoinWithFriendsGameRequestFromJSON,
+  JoinWithFriendsGameRequestToJSON,
   UpdateUser200ResponseFromJSON,
   UpdateUser200ResponseToJSON,
 } from "../models/index";
@@ -53,12 +65,21 @@ export interface CreateUserOperationRequest {
   createUserRequest?: CreateUserRequest;
 }
 
+export interface CreateWithFriendsGameMoveOperationRequest {
+  gameId: string;
+  createWithFriendsGameMoveRequest: CreateWithFriendsGameMoveRequest;
+}
+
 export interface DeleteUserRequest {
   userId: string;
 }
 
 export interface GetUserRequest {
   userId: string;
+}
+
+export interface JoinWithFriendsGameOperationRequest {
+  joinWithFriendsGameRequest: JoinWithFriendsGameRequest;
 }
 
 export interface UpdateUserRequest {
@@ -264,6 +285,120 @@ export class DefaultApi extends runtime.BaseAPI {
   }
 
   /**
+   * Create with-friends game
+   */
+  async createWithFriendsGameRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<CreateWithFriendsGame201Response>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/with-friends-games`;
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      CreateWithFriendsGame201ResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Create with-friends game
+   */
+  async createWithFriendsGame(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<CreateWithFriendsGame201Response> {
+    const response = await this.createWithFriendsGameRaw(initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Create with-friends game move
+   */
+  async createWithFriendsGameMoveRaw(
+    requestParameters: CreateWithFriendsGameMoveOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters["gameId"] == null) {
+      throw new runtime.RequiredError(
+        "gameId",
+        'Required parameter "gameId" was null or undefined when calling createWithFriendsGameMove().',
+      );
+    }
+
+    if (requestParameters["createWithFriendsGameMoveRequest"] == null) {
+      throw new runtime.RequiredError(
+        "createWithFriendsGameMoveRequest",
+        'Required parameter "createWithFriendsGameMoveRequest" was null or undefined when calling createWithFriendsGameMove().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/with-friends-games/{gameId}/moves`;
+    urlPath = urlPath.replace(
+      `{${"gameId"}}`,
+      encodeURIComponent(String(requestParameters["gameId"])),
+    );
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+        body: CreateWithFriendsGameMoveRequestToJSON(
+          requestParameters["createWithFriendsGameMoveRequest"],
+        ),
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Create with-friends game move
+   */
+  async createWithFriendsGameMove(
+    requestParameters: CreateWithFriendsGameMoveOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.createWithFriendsGameMoveRaw(requestParameters, initOverrides);
+  }
+
+  /**
    * Delete user
    */
   async deleteUserRaw(
@@ -375,6 +510,69 @@ export class DefaultApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetUser200Response> {
     const response = await this.getUserRaw(requestParameters, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Join with-friends game
+   */
+  async joinWithFriendsGameRaw(
+    requestParameters: JoinWithFriendsGameOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<JoinWithFriendsGame200Response>> {
+    if (requestParameters["joinWithFriendsGameRequest"] == null) {
+      throw new runtime.RequiredError(
+        "joinWithFriendsGameRequest",
+        'Required parameter "joinWithFriendsGameRequest" was null or undefined when calling joinWithFriendsGame().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/with-friends-games/join`;
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+        body: JoinWithFriendsGameRequestToJSON(
+          requestParameters["joinWithFriendsGameRequest"],
+        ),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      JoinWithFriendsGame200ResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Join with-friends game
+   */
+  async joinWithFriendsGame(
+    requestParameters: JoinWithFriendsGameOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<JoinWithFriendsGame200Response> {
+    const response = await this.joinWithFriendsGameRaw(
+      requestParameters,
+      initOverrides,
+    );
     return await response.value();
   }
 

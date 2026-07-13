@@ -1,0 +1,44 @@
+parameters:
+  - name: gameId
+    in: path
+    required: true
+    schema:
+      type: string
+post:
+  operationId: createWithFriendsGameMove
+  summary: Create with-friends game move
+  security:
+    - BearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../../../components/schemas/create-with-friends-game-move-request.yml
+  responses:
+    '202':
+      description: Move accepted
+    '400':
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '401':
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '403':
+      description: Access denied
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '404':
+      description: With-friends game not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml

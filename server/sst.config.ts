@@ -32,6 +32,30 @@ export default $config({
         retry: 3,
       },
     });
+    const withFriendsGameStartDlq = new sst.aws.Queue("WithFriendsGameStartDLQ");
+    const withFriendsGameStartQueue = new sst.aws.Queue(
+      "WithFriendsGameStartQueue",
+      {
+        delay: "5 seconds",
+        dlq: {
+          queue: withFriendsGameStartDlq.arn,
+          retry: 3,
+        },
+      },
+    );
+    const withFriendsGameTimeoutDlq = new sst.aws.Queue(
+      "WithFriendsGameTimeoutDLQ",
+    );
+    const withFriendsGameTimeoutQueue = new sst.aws.Queue(
+      "WithFriendsGameTimeoutQueue",
+      {
+        delay: "60 seconds",
+        dlq: {
+          queue: withFriendsGameTimeoutDlq.arn,
+          retry: 3,
+        },
+      },
+    );
     const appSecretArn = `arn:aws:secretsmanager:*:*:secret:geochess-${$app.stage}*`;
     const databasePermissions = [
       sst.aws.permission({
@@ -46,6 +70,14 @@ export default $config({
     const aiGameTimeoutQueueSendPermission = sst.aws.permission({
       actions: ["sqs:SendMessage"],
       resources: [aiGameTimeoutQueue.arn],
+    });
+    const withFriendsGameStartQueueSendPermission = sst.aws.permission({
+      actions: ["sqs:SendMessage"],
+      resources: [withFriendsGameStartQueue.arn],
+    });
+    const withFriendsGameTimeoutQueueSendPermission = sst.aws.permission({
+      actions: ["sqs:SendMessage"],
+      resources: [withFriendsGameTimeoutQueue.arn],
     });
     const firebaseAuthorizer = api.addAuthorizer({
       name: "firebaseAuthorizer",
@@ -142,6 +174,65 @@ export default $config({
     );
 
     api.route(
+      "POST /api/v1/with-friends-games",
+      {
+        runtime: "python3.14",
+        handler: "src/api/v1/with_friends_games/handler.create_with_friends_game",
+        environment: {
+          ENVIRONMENT: $app.stage,
+        },
+        permissions: databasePermissions,
+      },
+      {
+        auth: {
+          lambda: firebaseAuthorizer.id,
+        },
+      },
+    );
+
+    api.route(
+      "POST /api/v1/with-friends-games/join",
+      {
+        runtime: "python3.14",
+        handler: "src/api/v1/with_friends_games/join/handler.join_with_friends_game",
+        environment: {
+          ENVIRONMENT: $app.stage,
+          WITH_FRIENDS_GAME_START_QUEUE_URL: withFriendsGameStartQueue.url,
+        },
+        permissions: [
+          ...databasePermissions,
+          withFriendsGameStartQueueSendPermission,
+        ],
+      },
+      {
+        auth: {
+          lambda: firebaseAuthorizer.id,
+        },
+      },
+    );
+
+    api.route(
+      "POST /api/v1/with-friends-games/{gameId}/moves",
+      {
+        runtime: "python3.14",
+        handler: "src/api/v1/with_friends_games/moves/handler.create_with_friends_game_move",
+        environment: {
+          ENVIRONMENT: $app.stage,
+          WITH_FRIENDS_GAME_TIMEOUT_QUEUE_URL: withFriendsGameTimeoutQueue.url,
+        },
+        permissions: [
+          ...databasePermissions,
+          withFriendsGameTimeoutQueueSendPermission,
+        ],
+      },
+      {
+        auth: {
+          lambda: firebaseAuthorizer.id,
+        },
+      },
+    );
+
+    api.route(
       "POST /api/v1/users/{userId}",
       {
         runtime: "python3.14",
@@ -216,6 +307,28 @@ export default $config({
 
     aiGameTimeoutQueue.subscribe({
       handler: "src/jobs/process_ai_game_timeout.process_ai_game_timeout",
+      runtime: "python3.14",
+      environment: {
+        ENVIRONMENT: $app.stage,
+      },
+      permissions: databasePermissions,
+    });
+
+    withFriendsGameStartQueue.subscribe({
+      handler: "src/jobs/process_with_friends_game_start.process_with_friends_game_start",
+      runtime: "python3.14",
+      environment: {
+        ENVIRONMENT: $app.stage,
+        WITH_FRIENDS_GAME_TIMEOUT_QUEUE_URL: withFriendsGameTimeoutQueue.url,
+      },
+      permissions: [
+        ...databasePermissions,
+        withFriendsGameTimeoutQueueSendPermission,
+      ],
+    });
+
+    withFriendsGameTimeoutQueue.subscribe({
+      handler: "src/jobs/process_with_friends_game_timeout.process_with_friends_game_timeout",
       runtime: "python3.14",
       environment: {
         ENVIRONMENT: $app.stage,

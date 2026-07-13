@@ -8,7 +8,23 @@ from features.ai_games import (
     RealtimeAiGameMoveRecord,
     RealtimeAiGameRecord,
 )
-from features.users import CreateUserInput, UpdateUserInput, UserRecord, UsersRepository, UsersService
+from features.users import (
+    CreateUserInput,
+    UpdateUserInput,
+    UserRecord,
+    UsersRepository,
+    UsersService,
+)
+from features.with_friends_games import (
+    CreateWithFriendsGameJoinInput,
+    CreateWithFriendsGameMoveInput,
+    RealtimeWithFriendsGameMoveRecord,
+    RealtimeWithFriendsGameRecord,
+    WithFriendsGameHistoryMoveRecord,
+    WithFriendsGameRecord,
+    WithFriendsGamesRepository,
+    WithFriendsGamesService,
+)
 
 __all__ = [
     "AiGameHistoryMoveRecord",
@@ -19,9 +35,17 @@ __all__ = [
     "AiGamesService",
     "CreateAiGameInput",
     "CreateAiGameMoveInput",
+    "CreateWithFriendsGameJoinInput",
+    "CreateWithFriendsGameMoveInput",
     "CreateUserInput",
     "UpdateUserInput",
     "UserRecord",
     "UsersRepository",
     "UsersService",
+    "RealtimeWithFriendsGameMoveRecord",
+    "RealtimeWithFriendsGameRecord",
+    "WithFriendsGameHistoryMoveRecord",
+    "WithFriendsGameRecord",
+    "WithFriendsGamesRepository",
+    "WithFriendsGamesService",
 ]

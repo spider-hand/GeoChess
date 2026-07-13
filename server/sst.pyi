@@ -22,4 +22,16 @@ class Resource:
     class App:
         name: str
         stage: str
+    class WithFriendsGameStartDLQ:
+        type: str
+        url: str
+    class WithFriendsGameStartQueue:
+        type: str
+        url: str
+    class WithFriendsGameTimeoutDLQ:
+        type: str
+        url: str
+    class WithFriendsGameTimeoutQueue:
+        type: str
+        url: str
 

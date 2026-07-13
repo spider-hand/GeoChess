@@ -26,6 +26,22 @@ declare module "sst" {
       "type": "sst.aws.ApiGatewayV2"
       "url": string
     }
+    "WithFriendsGameStartDLQ": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
+    "WithFriendsGameStartQueue": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
+    "WithFriendsGameTimeoutDLQ": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
+    "WithFriendsGameTimeoutQueue": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
   }
 }
 

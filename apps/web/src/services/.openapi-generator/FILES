@@ -1,3 +1,4 @@
+.openapi-generator-ignore
 apis/DefaultApi.ts
 apis/HealthApi.ts
 apis/index.ts
@@ -11,11 +12,17 @@ models/CreateAiGameResponse.ts
 models/CreateAiGameResponseMove.ts
 models/CreateUserRequest.ts
 models/CreateUserResponse.ts
+models/CreateWithFriendsGame201Response.ts
+models/CreateWithFriendsGameMoveRequest.ts
+models/CreateWithFriendsGameResponse.ts
 models/ErrorResponse.ts
 models/GetHealth200Response.ts
 models/GetHealthResponse.ts
 models/GetUser200Response.ts
 models/GetUserResponse.ts
+models/JoinWithFriendsGame200Response.ts
+models/JoinWithFriendsGameRequest.ts
+models/JoinWithFriendsGameResponse.ts
 models/UpdateUser200Response.ts
 models/UpdateUserRequest.ts
 models/UpdateUserResponse.ts

@@ -1,0 +1,18 @@
+post:
+  operationId: createWithFriendsGame
+  summary: Create with-friends game
+  security:
+    - BearerAuth: []
+  responses:
+    '201':
+      description: With-friends game created
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/create-with-friends-game-response.yml
+    '401':
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml

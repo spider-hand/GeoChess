@@ -12,6 +12,12 @@ paths:
     $ref: ./paths/api/v1/ai-games/index.yml
   /api/v1/ai-games/{gameId}/moves:
     $ref: ./paths/api/v1/ai-games/moves.yml
+  /api/v1/with-friends-games:
+    $ref: ./paths/api/v1/with-friends-games/index.yml
+  /api/v1/with-friends-games/join:
+    $ref: ./paths/api/v1/with-friends-games/join.yml
+  /api/v1/with-friends-games/{gameId}/moves:
+    $ref: ./paths/api/v1/with-friends-games/moves.yml
   /api/v1/users/{userId}:
     $ref: ./paths/api/v1/users/user-by-id.yml
 components:
@@ -31,6 +37,14 @@ components:
       $ref: ./components/schemas/create-ai-game-response-move.yml
     CreateAiGameMoveRequest:
       $ref: ./components/schemas/create-ai-game-move-request.yml
+    CreateWithFriendsGameResponse:
+      $ref: ./components/schemas/create-with-friends-game-response.yml
+    JoinWithFriendsGameRequest:
+      $ref: ./components/schemas/join-with-friends-game-request.yml
+    JoinWithFriendsGameResponse:
+      $ref: ./components/schemas/join-with-friends-game-response.yml
+    CreateWithFriendsGameMoveRequest:
+      $ref: ./components/schemas/create-with-friends-game-move-request.yml
     GetUserResponse:
       $ref: ./components/schemas/get-user-response.yml
     CreateUserRequest:

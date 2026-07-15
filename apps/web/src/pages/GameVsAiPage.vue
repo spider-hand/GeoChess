@@ -239,7 +239,8 @@ const handleExit = async () => {
         <AvailableMovesCard
           v-if="!isFinished"
           :available-moves="realtimeAiGame.availableMoves"
-          :is-ai-turn="turnStatus === 'ai'"
+          :is-vs-ai-game="true"
+          :is-player-turn="turnStatus === 'player'"
           :is-selecting="isSubmittingMove"
           :is-select-disabled="isMoveSelectionDisabled"
           @select="handleSelect"

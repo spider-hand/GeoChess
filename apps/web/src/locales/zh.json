@@ -6,7 +6,8 @@
           "title": "可用走法",
           "select": "选择",
           "selecting": "选择中...",
-          "waiting": "AI 正在选择..."
+          "aiWaiting": "AI 正在选择..",
+          "opponentWaiting": "对手正在选择.."
         },
         "PathHistoryCard": {
           "title": "路径历史",
@@ -34,6 +35,7 @@
         "GameWithFriendsPage": {
           "createRoom": "创建房间",
           "exit": "退出",
+          "starting": "游戏已准备就绪，即将开始。",
           "waitingForOpponent": "正在等待对手..."
         },
         "TurnStatusStrip": {

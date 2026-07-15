@@ -8,6 +8,7 @@ const meta = {
   component: PlayVsAiCard,
   tags: ["autodocs"],
   args: {
+    disabled: false,
     isStartingGame: false,
   },
 } satisfies Meta<typeof PlayVsAiCard>;
@@ -44,6 +45,14 @@ export const HardSelected: Story = {
 
 export const Loading: Story = {
   args: {
+    disabled: true,
     isStartingGame: true,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    isStartingGame: false,
   },
 };

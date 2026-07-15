@@ -13,6 +13,7 @@ defineOptions({
 const { t } = useI18n();
 
 const props = defineProps<{
+  disabled: boolean;
   isStartingGame: boolean;
 }>();
 
@@ -68,7 +69,7 @@ const emitStartAiMatch = () => {
             selectedDifficulty === option.value,
         }"
         type="button"
-        :disabled="props.isStartingGame"
+        :disabled="props.disabled"
         :aria-pressed="selectedDifficulty === option.value"
         @click="selectDifficulty(option.value)"
       >
@@ -79,6 +80,7 @@ const emitStartAiMatch = () => {
 
     <Button
       class="play-vs-ai-card__start-button"
+      :disabled="props.disabled"
       :loading="props.isStartingGame"
       @click="emitStartAiMatch"
     >

@@ -8,6 +8,8 @@ it("should render the default state properly", async () => {
   const { getByRole, getByText } = render(PlayWithFriendsCard, {
     props: {
       disabled: false,
+      isCreatingRoom: false,
+      isEnteringRoom: false,
     },
     global: {
       plugins: [createAppI18n()],
@@ -34,6 +36,8 @@ it("should normalize the room key and show validation after invalid interaction"
   const { getByRole, getByText } = render(PlayWithFriendsCard, {
     props: {
       disabled: false,
+      isCreatingRoom: false,
+      isEnteringRoom: false,
     },
     global: {
       plugins: [createAppI18n()],
@@ -73,6 +77,8 @@ it("should emit the expected action events", async () => {
   const { getByRole } = render(PlayWithFriendsCard, {
     props: {
       disabled: false,
+      isCreatingRoom: false,
+      isEnteringRoom: false,
       onCreateFriendsRoom,
       onEnterFriendsRoom,
     },
@@ -93,6 +99,8 @@ it("should disable all actions when disabled", async () => {
   const { getByRole } = render(PlayWithFriendsCard, {
     props: {
       disabled: true,
+      isCreatingRoom: false,
+      isEnteringRoom: false,
     },
     global: {
       plugins: [createAppI18n()],
@@ -105,5 +113,47 @@ it("should disable all actions when disabled", async () => {
   await expect.element(getByRole("textbox")).toBeDisabled();
   await expect
     .element(getByRole("button", { name: "Enter Room" }))
+    .toBeDisabled();
+});
+
+it("should show a loader on the create room button and disable the rest of the form while creating", async () => {
+  const { getByRole } = render(PlayWithFriendsCard, {
+    props: {
+      disabled: true,
+      isCreatingRoom: true,
+      isEnteringRoom: false,
+    },
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
+
+  await expect
+    .element(getByRole("button", { name: "Create Room" }))
+    .toHaveAttribute("aria-busy", "true");
+  await expect.element(getByRole("textbox")).toBeDisabled();
+  await expect
+    .element(getByRole("button", { name: "Enter Room" }))
+    .toBeDisabled();
+});
+
+it("should show a loader on the enter room button and disable the rest of the form while entering", async () => {
+  const { getByRole } = render(PlayWithFriendsCard, {
+    props: {
+      disabled: true,
+      isCreatingRoom: false,
+      isEnteringRoom: true,
+    },
+    global: {
+      plugins: [createAppI18n()],
+    },
+  });
+
+  await expect
+    .element(getByRole("button", { name: "Enter Room" }))
+    .toHaveAttribute("aria-busy", "true");
+  await expect.element(getByRole("textbox")).toBeDisabled();
+  await expect
+    .element(getByRole("button", { name: "Create Room" }))
     .toBeDisabled();
 });

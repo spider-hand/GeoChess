@@ -9,7 +9,9 @@ const meta = {
   tags: ["autodocs"],
   args: {
     availableMoves: ["us", "jp", "fr"],
-    isAiTurn: false,
+    isVsAiGame: true,
+    isPlayerTurn: true,
+    isGameReady: true,
     isSelecting: false,
     isSelectDisabled: false,
   },
@@ -33,7 +35,25 @@ export const CountrySelected: Story = {
 
 export const AiTurn: Story = {
   args: {
-    isAiTurn: true,
+    isPlayerTurn: false,
+    isSelectDisabled: true,
+  },
+};
+
+export const OpponentTurn: Story = {
+  args: {
+    isVsAiGame: false,
+    isPlayerTurn: false,
+    isGameReady: true,
+    isSelectDisabled: true,
+  },
+};
+
+export const MultiplayerNotActive: Story = {
+  args: {
+    isVsAiGame: false,
+    isPlayerTurn: true,
+    isGameReady: false,
     isSelectDisabled: true,
   },
 };

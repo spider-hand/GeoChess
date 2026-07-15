@@ -25,7 +25,8 @@ const { createAiGame } = useAiGameQuery();
 const { createWithFriendsGame, joinWithFriendsGame } =
   useWithFriendsGameQuery();
 const isStartingAiGame = ref(false);
-const isStartingWithFriendsGame = ref(false);
+const isCreatingFriendsRoom = ref(false);
+const isEnteringFriendsRoom = ref(false);
 const isSignUpPromptOpen = ref(false);
 const isSigningUp = ref(false);
 
@@ -65,11 +66,16 @@ const ensureRegisteredUser = () => {
 };
 
 const handleCreateFriendsRoom = async () => {
-  if (!ensureRegisteredUser() || isStartingWithFriendsGame.value) {
+  if (
+    !ensureRegisteredUser() ||
+    isStartingAiGame.value ||
+    isCreatingFriendsRoom.value ||
+    isEnteringFriendsRoom.value
+  ) {
     return;
   }
 
-  isStartingWithFriendsGame.value = true;
+  isCreatingFriendsRoom.value = true;
 
   try {
     const withFriendsGame = await createWithFriendsGame();
@@ -77,16 +83,21 @@ const handleCreateFriendsRoom = async () => {
   } catch (error) {
     console.error(error);
   } finally {
-    isStartingWithFriendsGame.value = false;
+    isCreatingFriendsRoom.value = false;
   }
 };
 
 const handleEnterFriendsRoom = async (roomKey: string) => {
-  if (!ensureRegisteredUser() || isStartingWithFriendsGame.value) {
+  if (
+    !ensureRegisteredUser() ||
+    isStartingAiGame.value ||
+    isCreatingFriendsRoom.value ||
+    isEnteringFriendsRoom.value
+  ) {
     return;
   }
 
-  isStartingWithFriendsGame.value = true;
+  isEnteringFriendsRoom.value = true;
 
   try {
     const withFriendsGame = await joinWithFriendsGame({
@@ -96,7 +107,7 @@ const handleEnterFriendsRoom = async (roomKey: string) => {
   } catch (error) {
     console.error(error);
   } finally {
-    isStartingWithFriendsGame.value = false;
+    isEnteringFriendsRoom.value = false;
   }
 };
 
@@ -139,15 +150,24 @@ const handleSignUp = async () => {
       <div class="home-page__cards">
         <PlayVsAiCard
           :is-starting-game="isStartingAiGame"
+          :disabled="
+            isStartingAiGame || isCreatingFriendsRoom || isEnteringFriendsRoom
+          "
           @start-ai-match="handleStartAiMatch"
         />
         <PlayWithFriendsCard
-          :disabled="isStartingAiGame || isStartingWithFriendsGame"
+          :disabled="
+            isStartingAiGame || isCreatingFriendsRoom || isEnteringFriendsRoom
+          "
+          :is-creating-room="isCreatingFriendsRoom"
+          :is-entering-room="isEnteringFriendsRoom"
           @create-friends-room="handleCreateFriendsRoom"
           @enter-friends-room="handleEnterFriendsRoom"
         />
         <RandomMatchCard
-          :disabled="isStartingAiGame || isStartingWithFriendsGame"
+          :disabled="
+            isStartingAiGame || isCreatingFriendsRoom || isEnteringFriendsRoom
+          "
           :online-players="40"
           @join-random-match="handleJoinRandomMatch"
         />

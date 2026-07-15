@@ -7,6 +7,7 @@ import { createAppI18n } from "@/i18n";
 it("should render the default state properly", async () => {
   const { getByRole } = render(PlayVsAiCard, {
     props: {
+      disabled: false,
       isStartingGame: false,
     },
     global: {
@@ -28,6 +29,7 @@ it("should render the default state properly", async () => {
 it("should update the selected difficulty when a difficulty button is clicked", async () => {
   const { getByRole } = render(PlayVsAiCard, {
     props: {
+      disabled: false,
       isStartingGame: false,
     },
     global: {
@@ -74,6 +76,7 @@ it.each([
     const onStartAiMatch = vi.fn();
     const { getByRole } = render(PlayVsAiCard, {
       props: {
+        disabled: false,
         isStartingGame: false,
         onStartAiMatch,
       },
@@ -93,6 +96,7 @@ it.each([
 it("should disable all actions while starting a game", async () => {
   const { getByRole } = render(PlayVsAiCard, {
     props: {
+      disabled: true,
       isStartingGame: true,
     },
     global: {

@@ -12,6 +12,8 @@ defineOptions({
 
 const props = defineProps<{
   disabled: boolean;
+  isCreatingRoom: boolean;
+  isEnteringRoom: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -87,6 +89,7 @@ const submitEnterFriendsRoom = async () => {
     <Button
       class="play-with-friends-card__create-button"
       :disabled="props.disabled"
+      :loading="props.isCreatingRoom"
       @click="emitCreateFriendsRoom"
     >
       {{ t("components.pages.Home.PlayWithFriendsCard.createRoom") }}
@@ -126,6 +129,7 @@ const submitEnterFriendsRoom = async () => {
       <Button
         class="play-with-friends-card__enter-button"
         :disabled="isEnterRoomDisabled"
+        :loading="props.isEnteringRoom"
         type="submit"
       >
         {{ t("components.pages.Home.PlayWithFriendsCard.enterRoom") }}

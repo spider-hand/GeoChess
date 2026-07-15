@@ -8,6 +8,7 @@ import {
 } from "vue";
 
 import { getFirebaseDatabase } from "@/lib/firebase";
+import type { GameStatus } from "@/types/game";
 
 type RealtimeWithFriendsGameMove = {
   country: string;
@@ -20,7 +21,7 @@ type RealtimeWithFriendsGameSnapshot = {
   player1UserId: string;
   player2UserId?: string;
   participants: Record<"player1" | "player2", string>;
-  status: "waiting" | "starting" | "active" | "finished";
+  status: GameStatus;
   turn: "player1" | "player2";
   start: string;
   country: string;

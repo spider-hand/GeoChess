@@ -6,7 +6,8 @@
           "title": "Verfügbare Züge",
           "select": "Auswählen",
           "selecting": "Wird ausgewählt",
-          "waiting": "Die KI wählt..."
+          "aiWaiting": "Die KI wählt..",
+          "opponentWaiting": "Der Gegner wählt.."
         },
         "PathHistoryCard": {
           "title": "Pfadverlauf",
@@ -34,6 +35,7 @@
         "GameWithFriendsPage": {
           "createRoom": "Raum erstellen",
           "exit": "Beenden",
+          "starting": "Das Spiel ist bereit und startet in Kürze.",
           "waitingForOpponent": "Warten auf den Gegner..."
         },
         "TurnStatusStrip": {

@@ -23,6 +23,7 @@ const meta = {
   tags: ["autodocs"],
   args: {
     historySteps: aiHistorySteps,
+    isGameReady: true,
   },
 } satisfies Meta<typeof PathHistoryCard>;
 
@@ -35,5 +36,12 @@ export const Default: Story = {};
 export const Multiplayer: Story = {
   args: {
     historySteps: multiplayerHistorySteps,
+  },
+};
+
+export const NotReady: Story = {
+  args: {
+    historySteps: multiplayerHistorySteps,
+    isGameReady: false,
   },
 };

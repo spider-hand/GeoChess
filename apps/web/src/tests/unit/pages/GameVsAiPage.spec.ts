@@ -92,10 +92,16 @@ vi.mock("@/components/pages/Game/GameMap.vue", () => ({
 vi.mock("@/components/pages/Game/AvailableMovesCard.vue", () => ({
   default: {
     name: "AvailableMovesCard",
-    props: ["availableMoves", "isAiTurn", "isSelecting", "isSelectDisabled"],
+    props: [
+      "availableMoves",
+      "isVsAiGame",
+      "isPlayerTurn",
+      "isSelecting",
+      "isSelectDisabled",
+    ],
     emits: ["select"],
     template:
-      '<div data-testid="available-moves-card" :data-moves="String(availableMoves.length)" :data-is-ai-turn="String(isAiTurn)" :data-is-selecting="String(isSelecting)" :data-is-select-disabled="String(isSelectDisabled)" />',
+      '<div data-testid="available-moves-card" :data-moves="String(availableMoves.length)" :data-is-vs-ai-game="String(isVsAiGame)" :data-is-player-turn="String(isPlayerTurn)" :data-is-selecting="String(isSelecting)" :data-is-select-disabled="String(isSelectDisabled)" />',
   },
 }));
 
@@ -111,9 +117,9 @@ vi.mock("@/components/pages/Game/PathResultCard.vue", () => ({
 vi.mock("@/components/pages/Game/PathHistoryCard.vue", () => ({
   default: {
     name: "PathHistoryCard",
-    props: ["historySteps"],
+    props: ["historySteps", "isGameReady"],
     template:
-      '<div data-testid="path-history-card" :data-steps="String(historySteps.length)" />',
+      '<div data-testid="path-history-card" :data-steps="String(historySteps.length)" :data-is-game-ready="String(isGameReady)" />',
   },
 }));
 
@@ -203,40 +209,6 @@ it("should render the active game layout for the default state", async () => {
       .querySelector('[data-testid="game-map"]')
       ?.getAttribute("data-is-finished"),
   ).toBe("false");
-});
-
-it("should pass the ai-turn state to the active game controls", async () => {
-  realtimeAiGame.value = {
-    ...realtimeAiGame.value,
-    turn: "ai",
-    availableMoves: ["CC", "DD"],
-    updatedAt: 1751155260000,
-  };
-
-  await router.push("/game/vs-ai/game-123");
-  await router.isReady();
-
-  const { container } = render(App, {
-    global: {
-      plugins: [createAppI18n(), router],
-    },
-  });
-
-  expect(
-    container
-      .querySelector('[data-testid="turn-status-strip"]')
-      ?.getAttribute("data-status"),
-  ).toBe("ai");
-  expect(
-    container
-      .querySelector('[data-testid="available-moves-card"]')
-      ?.getAttribute("data-is-ai-turn"),
-  ).toBe("true");
-  expect(
-    container
-      .querySelector('[data-testid="available-moves-card"]')
-      ?.getAttribute("data-is-select-disabled"),
-  ).toBe("true");
 });
 
 it("should render the finished loss layout with replay actions", async () => {

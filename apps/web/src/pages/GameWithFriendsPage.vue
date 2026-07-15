@@ -97,6 +97,13 @@ const isPreGame = computed(() => {
 
   return realtimeWithFriendsGame.value.status !== "active" && !isFinished.value;
 });
+const preGameBannerMessageKey = computed(() => {
+  if (realtimeWithFriendsGame.value?.status === "starting") {
+    return "components.pages.Game.GameWithFriendsPage.starting";
+  }
+
+  return "components.pages.Game.GameWithFriendsPage.waitingForOpponent";
+});
 const turnStatus = computed<MultiplayerTurnStatus>(() => {
   if (
     realtimeWithFriendsGame.value === null ||
@@ -300,9 +307,7 @@ const handleExit = async () => {
     <section class="game-page__content">
       <div class="game-page__top-row">
         <div v-if="isPreGame" class="game-page__waiting-banner">
-          {{
-            t("components.pages.Game.GameWithFriendsPage.waitingForOpponent")
-          }}
+          {{ t(preGameBannerMessageKey) }}
         </div>
         <PlayerMatchupCard
           v-else
@@ -344,7 +349,9 @@ const handleExit = async () => {
         <AvailableMovesCard
           v-if="!isFinished"
           :available-moves="realtimeWithFriendsGame.availableMoves"
-          :is-ai-turn="turnStatus === 'opponent'"
+          :is-vs-ai-game="false"
+          :is-player-turn="turnStatus === 'player'"
+          :is-game-ready="realtimeWithFriendsGame.status === 'active'"
           :is-selecting="isSubmittingMove"
           :is-select-disabled="isMoveSelectionDisabled"
           @select="handleSelect"
@@ -353,10 +360,11 @@ const handleExit = async () => {
       </div>
 
       <PathHistoryCard
-        v-if="!isPreGame && !isFinished"
+        v-if="!isFinished"
         :history-steps="historySteps"
+        :is-game-ready="realtimeWithFriendsGame.status === 'active'"
       />
-      <div v-else class="game-page__finished-actions">
+      <div v-else-if="isFinished" class="game-page__finished-actions">
         <Button
           v-if="currentPlayerRole === 'player1'"
           :loading="isStartingNewRoom"

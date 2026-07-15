@@ -10,12 +10,19 @@ defineOptions({
   name: "GameAvailableMovesCard",
 });
 
-const props = defineProps<{
-  availableMoves: Array<string>;
-  isAiTurn: boolean;
-  isSelecting: boolean;
-  isSelectDisabled: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    availableMoves: Array<string>;
+    isVsAiGame: boolean;
+    isPlayerTurn: boolean;
+    isGameReady?: boolean;
+    isSelecting: boolean;
+    isSelectDisabled: boolean;
+  }>(),
+  {
+    isGameReady: true,
+  },
+);
 
 const emit = defineEmits<{
   select: [countryCode: string];
@@ -31,13 +38,20 @@ const {
 } = useCountry();
 const selectedCountryCode = ref<string | null>(null);
 
-const isWaiting = computed(() => props.isAiTurn);
+const waitingLabel = computed(() =>
+  t(
+    `components.pages.Game.AvailableMovesCard.${props.isVsAiGame ? "aiWaiting" : "opponentWaiting"}`,
+  ),
+);
 const isButtonDisabled = computed(
-  () => props.isSelectDisabled || selectedCountryCode.value === null,
+  () =>
+    props.isSelectDisabled ||
+    !props.isGameReady ||
+    selectedCountryCode.value === null,
 );
 
 watch(
-  () => [props.availableMoves, props.isAiTurn],
+  () => [props.availableMoves, props.isPlayerTurn, props.isGameReady],
   () => {
     selectedCountryCode.value = null;
   },
@@ -70,13 +84,15 @@ const emitSelect = () => {
       </h2>
     </div>
 
+    <div v-if="!props.isGameReady" />
+
     <div
-      v-if="isWaiting"
+      v-else-if="!props.isPlayerTurn"
       class="available-moves-card__waiting"
-      :aria-label="t('components.pages.Game.AvailableMovesCard.waiting')"
+      :aria-label="waitingLabel"
     >
       <span class="available-moves-card__waiting-label">
-        {{ t("components.pages.Game.AvailableMovesCard.waiting") }}
+        {{ waitingLabel }}
       </span>
     </div>
 
@@ -125,6 +141,7 @@ const emitSelect = () => {
     </div>
 
     <Button
+      v-if="props.isGameReady"
       class="available-moves-card__button"
       :disabled="isButtonDisabled"
       @click="emitSelect"

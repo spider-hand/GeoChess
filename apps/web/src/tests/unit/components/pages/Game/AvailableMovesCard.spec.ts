@@ -6,10 +6,11 @@ import { createAppI18n } from "@/i18n";
 
 const defaultProps = {
   availableMoves: ["us", "jp", "fr"],
-  isAiTurn: false,
+  isVsAiGame: true,
+  isPlayerTurn: true,
+  isGameReady: true,
   isSelecting: false,
   isSelectDisabled: false,
-  roomStatus: undefined,
 };
 
 const renderAvailableMovesCard = (
@@ -54,13 +55,39 @@ it("should enable the select button when a country is selected", async () => {
   await expect.element(getByRole("button", { name: "Select" })).toBeEnabled();
 });
 
-it("should show the AI waiting state when it's the AI's turn", async () => {
+it("should show the AI waiting state for vs AI games", async () => {
   const { container, getByLabelText } = renderAvailableMovesCard({
-    isAiTurn: true,
+    isPlayerTurn: false,
     isSelectDisabled: true,
   });
 
-  await expect.element(getByLabelText("AI is choosing")).toBeVisible();
+  await expect.element(getByLabelText("AI is choosing..")).toBeVisible();
+  expect(container.querySelectorAll('[role="option"]')).toHaveLength(0);
+});
+
+it("should show the opponent waiting state for non-AI games", async () => {
+  const { getByLabelText } = renderAvailableMovesCard({
+    isVsAiGame: false,
+    isPlayerTurn: false,
+    isGameReady: true,
+    isSelectDisabled: true,
+  });
+
+  await expect.element(getByLabelText("Opponent is choosing..")).toBeVisible();
+});
+
+it("should not show the options and the button when the multiplayer game is not active", async () => {
+  const { container } = renderAvailableMovesCard({
+    isVsAiGame: false,
+    isPlayerTurn: true,
+    isGameReady: false,
+    isSelectDisabled: true,
+  });
+
+  expect(container.querySelector('[role="listbox"]')).toBeNull();
+  expect(container.querySelector(".available-moves-card__button")).toBeNull();
+  expect(container.textContent).not.toContain("Opponent is choosing..");
+  expect(container.textContent).not.toContain("AI is choosing..");
   expect(container.querySelectorAll('[role="option"]')).toHaveLength(0);
 });
 

@@ -6,7 +6,8 @@
           "title": "Movimientos disponibles",
           "select": "Seleccionar",
           "selecting": "Seleccionando...",
-          "waiting": "La IA está eligiendo..."
+          "aiWaiting": "La IA está eligiendo..",
+          "opponentWaiting": "El oponente está eligiendo.."
         },
         "PathHistoryCard": {
           "title": "Historial de ruta",
@@ -34,6 +35,7 @@
         "GameWithFriendsPage": {
           "createRoom": "Crear sala",
           "exit": "Salir",
+          "starting": "La partida está lista y comenzará en breve.",
           "waitingForOpponent": "Esperando al oponente..."
         },
         "TurnStatusStrip": {

@@ -9,6 +9,8 @@ const meta = {
   tags: ["autodocs"],
   args: {
     disabled: false,
+    isCreatingRoom: false,
+    isEnteringRoom: false,
   },
 } satisfies Meta<typeof PlayWithFriendsCard>;
 
@@ -35,5 +37,23 @@ export const ValidationError: Story = {
 export const Disabled: Story = {
   args: {
     disabled: true,
+    isCreatingRoom: false,
+    isEnteringRoom: false,
+  },
+};
+
+export const CreatingRoom: Story = {
+  args: {
+    disabled: false,
+    isCreatingRoom: true,
+    isEnteringRoom: false,
+  },
+};
+
+export const EnteringRoom: Story = {
+  args: {
+    disabled: false,
+    isCreatingRoom: false,
+    isEnteringRoom: true,
   },
 };

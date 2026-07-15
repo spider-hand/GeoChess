@@ -37,3 +37,5 @@ export type MultiplayerPathStep = GamePathStep<"opponent">;
 export type MultiplayerGameMapMarkerOwner = GameMapMarkerOwner<"opponent">;
 
 export type MultiplayerGameMapMarker = GameMapMarker<"opponent">;
+
+export type GameStatus = "waiting" | "starting" | "active" | "finished";

@@ -45,18 +45,24 @@ vi.mock("@/components/pages/Game/GameMap.vue", () => ({
 vi.mock("@/components/pages/Game/AvailableMovesCard.vue", () => ({
   default: {
     name: "AvailableMovesCard",
-    props: ["availableMoves", "isAiTurn", "isSelecting", "isSelectDisabled"],
+    props: [
+      "availableMoves",
+      "isVsAiGame",
+      "isPlayerTurn",
+      "isSelecting",
+      "isSelectDisabled",
+    ],
     template:
-      '<div data-testid="available-moves-card" :data-moves="String(availableMoves.length)" :data-is-ai-turn="String(isAiTurn)" :data-is-selecting="String(isSelecting)" :data-is-select-disabled="String(isSelectDisabled)" />',
+      '<div data-testid="available-moves-card" :data-moves="String(availableMoves.length)" :data-is-vs-ai-game="String(isVsAiGame)" :data-is-player-turn="String(isPlayerTurn)" :data-is-selecting="String(isSelecting)" :data-is-select-disabled="String(isSelectDisabled)" />',
   },
 }));
 
 vi.mock("@/components/pages/Game/PathHistoryCard.vue", () => ({
   default: {
     name: "PathHistoryCard",
-    props: ["historySteps"],
+    props: ["historySteps", "isGameReady"],
     template:
-      '<div data-testid="path-history-card" :data-steps="String(historySteps.length)" />',
+      '<div data-testid="path-history-card" :data-steps="String(historySteps.length)" :data-is-game-ready="String(isGameReady)" />',
   },
 }));
 

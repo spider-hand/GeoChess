@@ -45,7 +45,8 @@ const finishedMarkers = computed<Array<MultiplayerGameMapMarker>>(() => [
         <GameMap class="game-page__map" :is-finished="false" :markers="[]" />
         <AvailableMovesCard
           :available-moves="['us', 'jp']"
-          :is-ai-turn="false"
+          :is-vs-ai-game="false"
+          :is-player-turn="true"
           :is-selecting="false"
           :is-select-disabled="false"
         />

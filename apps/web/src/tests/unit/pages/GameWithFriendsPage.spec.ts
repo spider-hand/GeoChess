@@ -158,14 +158,15 @@ vi.mock("@/components/pages/Game/AvailableMovesCard.vue", () => ({
     name: "AvailableMovesCard",
     props: [
       "availableMoves",
-      "isAiTurn",
+      "isVsAiGame",
+      "isPlayerTurn",
+      "isGameReady",
       "isSelecting",
       "isSelectDisabled",
-      "roomStatus",
     ],
     emits: ["select"],
     template:
-      '<div data-testid="available-moves-card" :data-moves="String(availableMoves.length)" :data-is-ai-turn="String(isAiTurn)" :data-is-selecting="String(isSelecting)" :data-is-select-disabled="String(isSelectDisabled)" :data-room-status="roomStatus ?? \'\'" />',
+      '<div data-testid="available-moves-card" :data-moves="String(availableMoves.length)" :data-is-vs-ai-game="String(isVsAiGame)" :data-is-player-turn="String(isPlayerTurn)" :data-is-game-ready="String(isGameReady)" :data-is-selecting="String(isSelecting)" :data-is-select-disabled="String(isSelectDisabled)" />',
   },
 }));
 
@@ -181,9 +182,9 @@ vi.mock("@/components/pages/Game/PathResultCard.vue", () => ({
 vi.mock("@/components/pages/Game/PathHistoryCard.vue", () => ({
   default: {
     name: "PathHistoryCard",
-    props: ["historySteps"],
+    props: ["historySteps", "isGameReady"],
     template:
-      '<div data-testid="path-history-card" :data-steps="String(historySteps.length)" />',
+      '<div data-testid="path-history-card" :data-steps="String(historySteps.length)" :data-is-game-ready="String(isGameReady)" />',
   },
 }));
 
@@ -275,7 +276,56 @@ it("should render the active game layout for player1", async () => {
   ).toBe("false");
 });
 
-it("should show the waiting message instead of the matchup card before the game starts", async () => {
+it.each(["waiting", "starting"] as const)(
+  "should not show countdown timer, player matchup card, and turn status strip when the game is not active",
+  async (status) => {
+    realtimeWithFriendsGame.value = {
+      ...realtimeWithFriendsGame.value,
+      status,
+    };
+
+    await router.push("/game/with-friends/game-123");
+    await router.isReady();
+
+    const { container } = render(App, {
+      global: {
+        plugins: [createAppI18n(), router],
+      },
+    });
+
+    expect(
+      container.querySelector('[data-testid="player-matchup-card"]'),
+    ).toBeNull();
+    expect(
+      container.querySelector('[data-testid="turn-status-strip"]'),
+    ).toBeNull();
+    expect(
+      container.querySelector('[data-testid="countdown-timer"]'),
+    ).toBeNull();
+  },
+);
+
+it("should show the starting message when the game is about to start", async () => {
+  realtimeWithFriendsGame.value = {
+    ...realtimeWithFriendsGame.value,
+    status: "starting",
+  };
+
+  await router.push("/game/with-friends/game-123");
+  await router.isReady();
+
+  const { getByText } = render(App, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  await expect
+    .element(getByText("The game is ready and will start shortly."))
+    .toBeVisible();
+});
+
+it("should show the waiting message while waiting for the opponent", async () => {
   realtimeWithFriendsGame.value = {
     ...realtimeWithFriendsGame.value,
     status: "waiting",
@@ -284,23 +334,13 @@ it("should show the waiting message instead of the matchup card before the game 
   await router.push("/game/with-friends/game-123");
   await router.isReady();
 
-  const { container, getByText } = render(App, {
+  const { getByText } = render(App, {
     global: {
       plugins: [createAppI18n(), router],
     },
   });
 
   await expect.element(getByText("Waiting for opponent")).toBeVisible();
-  expect(
-    container.querySelector('[data-testid="player-matchup-card"]'),
-  ).toBeNull();
-  expect(
-    container.querySelector('[data-testid="turn-status-strip"]'),
-  ).toBeNull();
-  expect(container.querySelector('[data-testid="countdown-timer"]')).toBeNull();
-  expect(
-    container.querySelector('[data-testid="path-history-card"]'),
-  ).toBeNull();
 });
 
 it("should render opponent information from the user endpoint", async () => {
@@ -354,7 +394,22 @@ it("should disable move selection when it is the opponent turn", async () => {
   expect(
     container
       .querySelector('[data-testid="available-moves-card"]')
-      ?.getAttribute("data-is-ai-turn"),
+      ?.getAttribute("data-is-vs-ai-game"),
+  ).toBe("false");
+  expect(
+    container
+      .querySelector('[data-testid="available-moves-card"]')
+      ?.getAttribute("data-is-player-turn"),
+  ).toBe("false");
+  expect(
+    container
+      .querySelector('[data-testid="available-moves-card"]')
+      ?.getAttribute("data-is-game-ready"),
+  ).toBe("true");
+  expect(
+    container
+      .querySelector('[data-testid="path-history-card"]')
+      ?.getAttribute("data-is-game-ready"),
   ).toBe("true");
   expect(
     container

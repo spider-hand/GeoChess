@@ -6,7 +6,8 @@
           "title": "Available Moves",
           "select": "Select",
           "selecting": "Selecting...",
-          "waiting": "AI is choosing..."
+          "aiWaiting": "AI is choosing..",
+          "opponentWaiting": "Opponent is choosing.."
         },
         "PathHistoryCard": {
           "title": "Path History",
@@ -34,6 +35,7 @@
         "GameWithFriendsPage": {
           "createRoom": "Create Room",
           "exit": "Exit",
+          "starting": "The game is ready and will start shortly.",
           "waitingForOpponent": "Waiting for opponent..."
         },
         "TurnStatusStrip": {

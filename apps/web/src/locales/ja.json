@@ -6,7 +6,8 @@
           "title": "選択可能な手",
           "select": "選択",
           "selecting": "選択中...",
-          "waiting": "AIが選択中..."
+          "aiWaiting": "AIが選択中..",
+          "opponentWaiting": "対戦相手が選択中.."
         },
         "PathHistoryCard": {
           "title": "経路履歴",
@@ -34,6 +35,7 @@
         "GameWithFriendsPage": {
           "createRoom": "ルームを作成",
           "exit": "終了",
+          "starting": "ゲームの準備ができました。まもなく開始します。",
           "waitingForOpponent": "対戦相手を待っています..."
         },
         "TurnStatusStrip": {

@@ -6,7 +6,8 @@
           "title": "Coups disponibles",
           "select": "Sélectionner",
           "selecting": "Sélection en cours...",
-          "waiting": "L'IA choisit..."
+          "aiWaiting": "L'IA choisit..",
+          "opponentWaiting": "L'adversaire choisit.."
         },
         "PathHistoryCard": {
           "title": "Historique du parcours",
@@ -34,6 +35,7 @@
         "GameWithFriendsPage": {
           "createRoom": "Créer une salle",
           "exit": "Quitter",
+          "starting": "La partie est prête et va commencer sous peu.",
           "waitingForOpponent": "En attente de l'adversaire..."
         },
         "TurnStatusStrip": {

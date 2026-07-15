@@ -11,10 +11,14 @@ const defaultHistorySteps: Array<AiPathStep> = [
   { countryCode: "dd", owner: "ai" as const, turn: 2 },
 ];
 
-const renderPathHistoryCard = (historySteps = defaultHistorySteps) =>
+const renderPathHistoryCard = (
+  historySteps = defaultHistorySteps,
+  isGameReady = true,
+) =>
   render(PathHistoryCard, {
     props: {
       historySteps,
+      isGameReady,
     },
     global: {
       plugins: [createAppI18n()],
@@ -71,4 +75,21 @@ it("should render Opponent for multiplayer step data", async () => {
   expect(
     container.querySelector(".path-history-card__step--opponent"),
   ).not.toBeNull();
+});
+
+it("should hide the body when the game is not ready", async () => {
+  const { container, getByLabelText, getByRole, getByText } =
+    renderPathHistoryCard(defaultHistorySteps, false);
+
+  await expect
+    .element(getByRole("heading", { name: "Path History" }))
+    .toBeInTheDocument();
+  await expect.element(getByText("You")).toBeVisible();
+  await expect.element(getByText("AI")).toBeVisible();
+  await expect.element(getByLabelText("Path history legend")).toBeVisible();
+  expect(container.querySelector('[role="list"]')).toBeNull();
+  expect(container.querySelectorAll('[role="listitem"]')).toHaveLength(0);
+  expect(
+    container.querySelectorAll('[data-testid="path-history-card-connector"]'),
+  ).toHaveLength(0);
 });

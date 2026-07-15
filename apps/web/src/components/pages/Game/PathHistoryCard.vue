@@ -10,9 +10,15 @@ defineOptions({
   name: "GamePathHistoryCard",
 });
 
-const props = defineProps<{
-  historySteps: Array<AiPathStep | MultiplayerPathStep>;
-}>();
+const props = withDefaults(
+  defineProps<{
+    historySteps: Array<AiPathStep | MultiplayerPathStep>;
+    isGameReady?: boolean;
+  }>(),
+  {
+    isGameReady: true,
+  },
+);
 
 const { t } = useI18n();
 
@@ -68,7 +74,7 @@ const turnLabel = (turn: number) =>
       </div>
     </div>
 
-    <div class="path-history-card__body" role="list">
+    <div v-if="props.isGameReady" class="path-history-card__body" role="list">
       <template v-for="(step, index) in props.historySteps" :key="step.turn">
         <div
           class="path-history-card__step"

@@ -78,20 +78,20 @@ vi.mock("@/composables/useRealtimeAiGame", () => ({
 vi.mock("@/components/pages/Home/PlayVsAiCard.vue", () => ({
   default: {
     name: "PlayVsAiCard",
-    props: ["isStartingGame"],
+    props: ["disabled", "isStartingGame"],
     emits: ["start-ai-match"],
     template:
-      '<div data-testid="play-vs-ai-card" :data-is-starting-game="String(isStartingGame)"><button @click="$emit(\'start-ai-match\', \'hard\')">Start mocked AI game</button></div>',
+      '<div data-testid="play-vs-ai-card" :data-disabled="String(disabled)" :data-is-starting-game="String(isStartingGame)"><button @click="$emit(\'start-ai-match\', \'hard\')">Start mocked AI game</button></div>',
   },
 }));
 
 vi.mock("@/components/pages/Home/PlayWithFriendsCard.vue", () => ({
   default: {
     name: "PlayWithFriendsCard",
-    props: ["disabled"],
+    props: ["disabled", "isCreatingRoom", "isEnteringRoom"],
     emits: ["create-friends-room", "enter-friends-room"],
     template:
-      '<div data-testid="play-with-friends-card" :data-disabled="String(disabled)"><button @click="$emit(\'create-friends-room\')">Create Room</button><button @click="$emit(\'enter-friends-room\', \'654321\')">Enter Room</button></div>',
+      '<div data-testid="play-with-friends-card" :data-disabled="String(disabled)" :data-is-creating-room="String(isCreatingRoom)" :data-is-entering-room="String(isEnteringRoom)"><button @click="$emit(\'create-friends-room\')">Create Room</button><button @click="$emit(\'enter-friends-room\', \'654321\')">Enter Room</button></div>',
   },
 }));
 
@@ -173,6 +173,11 @@ it("should render the default state properly", async () => {
   expect(
     container.querySelector('[data-testid="play-with-friends-card"]'),
   ).not.toBeNull();
+  expect(
+    container
+      .querySelector('[data-testid="play-vs-ai-card"]')
+      ?.getAttribute("data-disabled"),
+  ).toBe("false");
   expect(
     container.querySelector('[data-testid="random-match-card"]'),
   ).not.toBeNull();

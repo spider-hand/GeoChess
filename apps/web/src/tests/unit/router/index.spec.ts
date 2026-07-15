@@ -1,6 +1,7 @@
 import { beforeEach, expect, it, vi } from "vitest";
 
 const mockEnsureVsAiAccess = vi.fn();
+const mockGetCurrentUser = vi.fn();
 
 vi.mock("@/composables/useAuth", () => ({
   signInAnonymouslyIfNeeded: mockEnsureVsAiAccess,
@@ -17,12 +18,23 @@ vi.mock("@/composables/useAuth", () => ({
   }),
 }));
 
+vi.mock("vuefire", async () => {
+  const actual = await vi.importActual<typeof import("vuefire")>("vuefire");
+
+  return {
+    ...actual,
+    getCurrentUser: (...args: unknown[]) => mockGetCurrentUser(...args),
+  };
+});
+
 beforeEach(() => {
   vi.resetModules();
   mockEnsureVsAiAccess.mockReset();
+  mockGetCurrentUser.mockReset();
+  mockGetCurrentUser.mockResolvedValue({ isAnonymous: false });
 });
 
-it.each(["/", "/game/with-friends", "/game/random-match"])(
+it.each(["/", "/game/random-match"])(
   "should allow navigation to %s without requiring vs ai auth",
   async (path) => {
     const { default: router } = await import("@/router");
@@ -59,4 +71,17 @@ it("should redirect to home when the vs ai auth guard fails", async () => {
 
   expect(mockEnsureVsAiAccess).toHaveBeenCalledTimes(1);
   expect(router.currentRoute.value.path).toBe("/");
+});
+
+it("should redirect guest users away from with-friends routes", async () => {
+  mockGetCurrentUser.mockResolvedValue({ isAnonymous: true });
+
+  const { default: router } = await import("@/router");
+
+  await router.push("/");
+  await router.isReady();
+  await router.push("/game/with-friends/game-123");
+
+  expect(router.currentRoute.value.path).toBe("/");
+  expect(mockEnsureVsAiAccess).not.toHaveBeenCalled();
 });

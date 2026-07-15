@@ -31,6 +31,11 @@
           "playAgain": "もう一度プレイ",
           "exit": "終了"
         },
+        "GameWithFriendsPage": {
+          "createRoom": "ルームを作成",
+          "exit": "終了",
+          "waitingForOpponent": "対戦相手を待っています..."
+        },
         "TurnStatusStrip": {
           "yourTurn": "あなたのターン",
           "aiTurn": "AIのターン",

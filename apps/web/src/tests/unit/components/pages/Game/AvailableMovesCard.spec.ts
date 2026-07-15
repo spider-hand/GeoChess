@@ -9,6 +9,7 @@ const defaultProps = {
   isAiTurn: false,
   isSelecting: false,
   isSelectDisabled: false,
+  roomStatus: undefined,
 };
 
 const renderAvailableMovesCard = (

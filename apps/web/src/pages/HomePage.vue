@@ -6,6 +6,7 @@ import type { Difficulty } from "@/types/game";
 import heroImage from "@/assets/hero.png";
 import useAiGameQuery from "@/composables/useAiGameQuery";
 import { useAuth } from "@/composables/useAuth";
+import useWithFriendsGameQuery from "@/composables/useWithFriendsGameQuery";
 import PlayVsAiCard from "@/components/pages/Home/PlayVsAiCard.vue";
 import PlayWithFriendsCard from "@/components/pages/Home/PlayWithFriendsCard.vue";
 import RandomMatchCard from "@/components/pages/Home/RandomMatchCard.vue";
@@ -21,7 +22,10 @@ const {
   signInWithGoogle,
 } = useAuth();
 const { createAiGame } = useAiGameQuery();
+const { createWithFriendsGame, joinWithFriendsGame } =
+  useWithFriendsGameQuery();
 const isStartingAiGame = ref(false);
+const isStartingWithFriendsGame = ref(false);
 const isSignUpPromptOpen = ref(false);
 const isSigningUp = ref(false);
 
@@ -51,27 +55,57 @@ const closeSignUpPrompt = () => {
   isSignUpPromptOpen.value = false;
 };
 
-const handleProtectedNavigation = async (path: string) => {
+const ensureRegisteredUser = () => {
   if (!isCurrentUserLoaded.value || !isRegisteredUser.value) {
     openSignUpPrompt();
-    return;
+    return false;
   }
 
-  await router.push(path);
+  return true;
 };
 
 const handleCreateFriendsRoom = async () => {
-  await handleProtectedNavigation("/game/with-friends");
+  if (!ensureRegisteredUser() || isStartingWithFriendsGame.value) {
+    return;
+  }
+
+  isStartingWithFriendsGame.value = true;
+
+  try {
+    const withFriendsGame = await createWithFriendsGame();
+    await router.push(`/game/with-friends/${withFriendsGame.id}`);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isStartingWithFriendsGame.value = false;
+  }
 };
 
 const handleEnterFriendsRoom = async (roomKey: string) => {
-  await handleProtectedNavigation(
-    `/game/with-friends?roomKey=${encodeURIComponent(roomKey)}`,
-  );
+  if (!ensureRegisteredUser() || isStartingWithFriendsGame.value) {
+    return;
+  }
+
+  isStartingWithFriendsGame.value = true;
+
+  try {
+    const withFriendsGame = await joinWithFriendsGame({
+      roomKey,
+    });
+    await router.push(`/game/with-friends/${withFriendsGame.id}`);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isStartingWithFriendsGame.value = false;
+  }
 };
 
 const handleJoinRandomMatch = async () => {
-  await handleProtectedNavigation("/game/random-match");
+  if (!ensureRegisteredUser()) {
+    return;
+  }
+
+  await router.push("/game/random-match");
 };
 
 const handleSignUp = async () => {
@@ -108,12 +142,12 @@ const handleSignUp = async () => {
           @start-ai-match="handleStartAiMatch"
         />
         <PlayWithFriendsCard
-          :disabled="isStartingAiGame"
+          :disabled="isStartingAiGame || isStartingWithFriendsGame"
           @create-friends-room="handleCreateFriendsRoom"
           @enter-friends-room="handleEnterFriendsRoom"
         />
         <RandomMatchCard
-          :disabled="isStartingAiGame"
+          :disabled="isStartingAiGame || isStartingWithFriendsGame"
           :online-players="40"
           @join-random-match="handleJoinRandomMatch"
         />

@@ -31,6 +31,11 @@
           "playAgain": "Jugar de nuevo",
           "exit": "Salir"
         },
+        "GameWithFriendsPage": {
+          "createRoom": "Crear sala",
+          "exit": "Salir",
+          "waitingForOpponent": "Esperando al oponente..."
+        },
         "TurnStatusStrip": {
           "yourTurn": "Tu turno",
           "aiTurn": "Turno de la IA",

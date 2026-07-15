@@ -3,6 +3,9 @@ import { render } from "vitest-browser-vue";
 import { computed, ref } from "vue";
 
 const mockCreateAiGame = vi.fn();
+const mockCreateWithFriendsGame = vi.fn();
+const mockJoinWithFriendsGame = vi.fn();
+const mockRouterCurrentUser = vi.fn();
 const mockSignInAnonymously = vi.fn();
 const mockSignInWithGoogle = vi.fn();
 const currentUser = ref<null | { isAnonymous: boolean }>(null);
@@ -21,6 +24,15 @@ const realtimeAiGame = ref({
 });
 const realtimeAiGameError = ref<Error | null>(null);
 const isLoadingRealtimeAiGame = ref(false);
+
+vi.mock("vuefire", async () => {
+  const actual = await vi.importActual<typeof import("vuefire")>("vuefire");
+
+  return {
+    ...actual,
+    getCurrentUser: (...args: unknown[]) => mockRouterCurrentUser(...args),
+  };
+});
 
 vi.mock("@/composables/useAuth", () => ({
   signInAnonymouslyIfNeeded: vi.fn().mockResolvedValue({ isAnonymous: true }),
@@ -43,6 +55,15 @@ vi.mock("@/composables/useAuth", () => ({
 vi.mock("@/composables/useAiGameQuery", () => ({
   default: () => ({
     createAiGame: (...args: unknown[]) => mockCreateAiGame(...args),
+  }),
+}));
+
+vi.mock("@/composables/useWithFriendsGameQuery", () => ({
+  default: () => ({
+    createWithFriendsGame: (...args: unknown[]) =>
+      mockCreateWithFriendsGame(...args),
+    joinWithFriendsGame: (...args: unknown[]) =>
+      mockJoinWithFriendsGame(...args),
   }),
 }));
 
@@ -100,11 +121,24 @@ import router from "@/router";
 
 beforeEach(() => {
   mockCreateAiGame.mockReset();
+  mockCreateWithFriendsGame.mockReset();
+  mockJoinWithFriendsGame.mockReset();
+  mockRouterCurrentUser.mockReset();
   mockSignInAnonymously.mockReset();
   mockSignInWithGoogle.mockReset();
   mockSignInAnonymously.mockResolvedValue({ isAnonymous: true });
   mockSignInWithGoogle.mockResolvedValue({ user: { uid: "user-123" } });
   currentUser.value = null;
+  mockRouterCurrentUser.mockImplementation(async () => {
+    if (currentUser.value === null) {
+      return null;
+    }
+
+    return {
+      uid: "user-123",
+      isAnonymous: currentUser.value.isAnonymous,
+    };
+  });
   realtimeAiGame.value = {
     id: "game-123",
     userId: "user-123",
@@ -186,13 +220,23 @@ it("should show the sign up prompt when an unauthenticated user tries to access 
 });
 
 it.each([
-  ["Create Room", "/game/with-friends"],
-  ["Enter Room", "/game/with-friends"],
-  ["Join Lobby", "/game/random-match"],
+  ["Create Room", "create", "/game/with-friends/friends-123"],
+  ["Enter Room", "join", "/game/with-friends/friends-456"],
 ])(
-  "should navigate authenticated users to %s destination without opening the sign up prompt",
-  async (actionName, expectedPath) => {
+  "should create or join a with-friends game for authenticated users from %s",
+  async (actionName, mode, expectedPath) => {
     currentUser.value = { isAnonymous: false };
+
+    if (mode === "create") {
+      mockCreateWithFriendsGame.mockResolvedValue({
+        id: "friends-123",
+        roomKey: "654321",
+      });
+    } else {
+      mockJoinWithFriendsGame.mockResolvedValue({
+        id: "friends-456",
+      });
+    }
 
     await router.push("/");
     await router.isReady();
@@ -208,9 +252,38 @@ it.each([
     expect(
       container.querySelector('[data-testid="sign-up-prompt-modal"]'),
     ).toBe(null);
+    if (mode === "create") {
+      expect(mockCreateWithFriendsGame).toHaveBeenCalledTimes(1);
+    } else {
+      expect(mockJoinWithFriendsGame).toHaveBeenCalledWith({
+        roomKey: "654321",
+      });
+    }
     await expect.poll(() => router.currentRoute.value.path).toBe(expectedPath);
   },
 );
+
+it("should navigate authenticated users to the random-match destination without opening the sign up prompt", async () => {
+  currentUser.value = { isAnonymous: false };
+
+  await router.push("/");
+  await router.isReady();
+
+  const { container, getByRole } = render(HomePage, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  await getByRole("button", { name: "Join Lobby" }).click();
+
+  expect(container.querySelector('[data-testid="sign-up-prompt-modal"]')).toBe(
+    null,
+  );
+  await expect
+    .poll(() => router.currentRoute.value.path)
+    .toBe("/game/random-match");
+});
 
 it("should start the normal sign up flow from the prompt", async () => {
   await router.push("/");

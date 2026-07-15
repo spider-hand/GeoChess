@@ -39,6 +39,13 @@ vi.mock("@/composables/useAuth", () => ({
   }),
 }));
 
+vi.mock("@/pages/HomePage.vue", () => ({
+  default: {
+    name: "HomePage",
+    template: '<div data-testid="home-page" />',
+  },
+}));
+
 vi.mock("@/components/pages/Game/PlayerMatchupCard.vue", () => ({
   default: {
     name: "PlayerMatchupCard",

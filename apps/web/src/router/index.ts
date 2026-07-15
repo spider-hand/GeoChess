@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { getCurrentUser } from "vuefire";
 
 import { signInAnonymouslyIfNeeded } from "@/composables/useAuth";
 import GameRandomMatchPage from "@/pages/GameRandomMatchPage.vue";
@@ -8,6 +9,7 @@ import HomePage from "@/pages/HomePage.vue";
 
 declare module "vue-router" {
   interface RouteMeta {
+    requiresRegisteredAuth?: boolean;
     requiresVsAiAuth?: boolean;
   }
 }
@@ -27,8 +29,11 @@ const router = createRouter({
       },
     },
     {
-      path: "/game/with-friends",
+      path: "/game/with-friends/:gameId",
       component: GameWithFriendsPage,
+      meta: {
+        requiresRegisteredAuth: true,
+      },
     },
     {
       path: "/game/random-match",
@@ -38,6 +43,14 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
+  if (to.meta.requiresRegisteredAuth) {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser || currentUser.isAnonymous) {
+      return "/";
+    }
+  }
+
   if (!to.meta.requiresVsAiAuth) {
     return true;
   }

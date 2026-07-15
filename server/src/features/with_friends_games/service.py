@@ -546,3 +546,12 @@ class WithFriendsGamesService:
                 self._get_result_for_winner(self._get_other_turn(timed_out_turn)),
                 final_realtime_game,
             )
+
+    def delete_expired_with_friends_games(self) -> int:
+        deleted_game_ids = self.with_friends_games_repository.delete_expired_game_moves()
+        if deleted_game_ids:
+            self._get_with_friends_games_ref().update(
+                {game_id: None for game_id in deleted_game_ids}
+            )
+
+        return len(deleted_game_ids)

@@ -312,6 +312,19 @@ export default $config({
       },
     });
 
+    new sst.aws.CronV2("DeleteExpiredWithFriendsGames", {
+      schedule: "cron(0 0 1 * ? *)",
+      function: {
+        runtime: "python3.14",
+        handler:
+          "src/jobs/cleanup_expired_with_friends_games.cleanup_expired_with_friends_games",
+        environment: {
+          ENVIRONMENT: $app.stage,
+        },
+        permissions: databasePermissions,
+      },
+    });
+
     aiGameMoveQueue.subscribe({
       handler: "src/jobs/process_ai_game_move.process_ai_game_move",
       runtime: "python3.14",

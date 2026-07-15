@@ -244,3 +244,56 @@ def test_create_with_friends_game_move_enqueues_timeout_for_non_terminal_move():
     assert updated_state["value"]["availableMoves"] == ["DD"]
     assert updated_state["value"]["moves"]["move-1"]["actor"] == "player1"
     enqueue_mock.assert_called_once_with("game-123")
+
+
+def test_delete_expired_with_friends_games_returns_deleted_count():
+    with_friends_games_repository = MagicMock()
+    with_friends_games_repository.delete_expired_game_moves.return_value = [
+        "game-1",
+        "game-2",
+    ]
+    service = WithFriendsGamesService(
+        with_friends_games_repository=with_friends_games_repository
+    )
+    with_friends_games_ref = MagicMock()
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.with_friends_games.service.firebase_db.reference",
+            lambda path, app: with_friends_games_ref,
+        )
+
+        deleted_count = service.delete_expired_with_friends_games()
+
+    assert deleted_count == 2
+    with_friends_games_repository.delete_expired_game_moves.assert_called_once_with()
+    with_friends_games_ref.update.assert_called_once_with(
+        {"game-1": None, "game-2": None}
+    )
+
+
+def test_delete_expired_with_friends_games_skips_realtime_delete_when_nothing_was_deleted():
+    with_friends_games_repository = MagicMock()
+    with_friends_games_repository.delete_expired_game_moves.return_value = []
+    service = WithFriendsGamesService(
+        with_friends_games_repository=with_friends_games_repository
+    )
+    with_friends_games_ref = MagicMock()
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.with_friends_games.service.firebase_db.reference",
+            lambda path, app: with_friends_games_ref,
+        )
+
+        deleted_count = service.delete_expired_with_friends_games()
+
+    assert deleted_count == 0
+    with_friends_games_repository.delete_expired_game_moves.assert_called_once_with()
+    with_friends_games_ref.update.assert_not_called()

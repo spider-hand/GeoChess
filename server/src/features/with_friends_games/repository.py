@@ -127,3 +127,17 @@ class WithFriendsGamesRepository:
                 )
 
             return True
+
+    def delete_expired_game_moves(self) -> list[str]:
+        with get_connection() as connection, connection.cursor() as cursor:
+            cursor.execute("""
+                DELETE FROM with_friends_game_moves
+                WHERE game_id IN (
+                    SELECT id
+                    FROM with_friends_games
+                    WHERE created_at < NOW() - INTERVAL '30 days'
+                )
+                RETURNING game_id
+                """)
+
+            return list(dict.fromkeys(row["game_id"] for row in cursor.fetchall()))

@@ -16,41 +16,41 @@ import { mapValues } from "../runtime";
 /**
  *
  * @export
- * @interface UpdateUser200Response
+ * @interface UpdateCurrentUser200Response
  */
-export interface UpdateUser200Response {
+export interface UpdateCurrentUser200Response {
   /**
    *
    * @type {string}
-   * @memberof UpdateUser200Response
+   * @memberof UpdateCurrentUser200Response
    */
   userId: string;
   /**
    *
    * @type {string}
-   * @memberof UpdateUser200Response
+   * @memberof UpdateCurrentUser200Response
    */
   displayName: string;
   /**
    *
    * @type {Date}
-   * @memberof UpdateUser200Response
+   * @memberof UpdateCurrentUser200Response
    */
   createdAt: Date;
   /**
    *
    * @type {Date}
-   * @memberof UpdateUser200Response
+   * @memberof UpdateCurrentUser200Response
    */
   updatedAt: Date;
 }
 
 /**
- * Check if a given object implements the UpdateUser200Response interface.
+ * Check if a given object implements the UpdateCurrentUser200Response interface.
  */
-export function instanceOfUpdateUser200Response(
+export function instanceOfUpdateCurrentUser200Response(
   value: object,
-): value is UpdateUser200Response {
+): value is UpdateCurrentUser200Response {
   if (!("userId" in value) || value["userId"] === undefined) return false;
   if (!("displayName" in value) || value["displayName"] === undefined)
     return false;
@@ -59,16 +59,16 @@ export function instanceOfUpdateUser200Response(
   return true;
 }
 
-export function UpdateUser200ResponseFromJSON(
+export function UpdateCurrentUser200ResponseFromJSON(
   json: any,
-): UpdateUser200Response {
-  return UpdateUser200ResponseFromJSONTyped(json, false);
+): UpdateCurrentUser200Response {
+  return UpdateCurrentUser200ResponseFromJSONTyped(json, false);
 }
 
-export function UpdateUser200ResponseFromJSONTyped(
+export function UpdateCurrentUser200ResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): UpdateUser200Response {
+): UpdateCurrentUser200Response {
   if (json == null) {
     return json;
   }
@@ -80,12 +80,14 @@ export function UpdateUser200ResponseFromJSONTyped(
   };
 }
 
-export function UpdateUser200ResponseToJSON(json: any): UpdateUser200Response {
-  return UpdateUser200ResponseToJSONTyped(json, false);
+export function UpdateCurrentUser200ResponseToJSON(
+  json: any,
+): UpdateCurrentUser200Response {
+  return UpdateCurrentUser200ResponseToJSONTyped(json, false);
 }
 
-export function UpdateUser200ResponseToJSONTyped(
-  value?: UpdateUser200Response | null,
+export function UpdateCurrentUser200ResponseToJSONTyped(
+  value?: UpdateCurrentUser200Response | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

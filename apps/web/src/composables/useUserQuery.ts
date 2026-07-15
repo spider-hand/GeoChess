@@ -5,14 +5,12 @@ import useApi from "@/composables/useApi";
 import {
   Configuration,
   DefaultApi,
-  type CreateUserRequest,
-  type CreateUserResponse,
-  type GetUserResponse,
+  type CreateCurrentUserRequest,
+  type GetCurrentUser200Response,
 } from "@/services";
 
 type CreateUserVariables = {
-  userId: string;
-  createUserRequest: CreateUserRequest;
+  createCurrentUserRequest: CreateCurrentUserRequest;
   idToken: string;
 };
 
@@ -21,18 +19,17 @@ const useUserQuery = (userId?: MaybeRefOrGetter<string | null>) => {
   const usersApi = new DefaultApi(apiConfig);
   const queryClient = useQueryClient();
   const normalizedUserId = computed(() => toValue(userId) ?? null);
-  const userQuery = useQuery<GetUserResponse>({
+  const userQuery = useQuery<GetCurrentUser200Response>({
     queryKey: computed(() => ["user", normalizedUserId.value]),
     enabled: computed(() => normalizedUserId.value !== null),
     queryFn: async () => {
-      return usersApi.getUser({ userId: normalizedUserId.value! });
+      return usersApi.getCurrentUser();
     },
   });
 
   const createUserMutation = useMutation({
     mutationFn: async ({
-      userId,
-      createUserRequest,
+      createCurrentUserRequest,
       idToken,
     }: CreateUserVariables) => {
       const usersApi = new DefaultApi(
@@ -42,13 +39,12 @@ const useUserQuery = (userId?: MaybeRefOrGetter<string | null>) => {
         }),
       );
 
-      return usersApi.createUser({
-        userId,
-        createUserRequest,
+      return usersApi.createCurrentUser({
+        createCurrentUserRequest,
       });
     },
-    onSuccess: (user: CreateUserResponse, variables) => {
-      queryClient.setQueryData(["user", variables.userId], user);
+    onSuccess: (user: GetCurrentUser200Response) => {
+      queryClient.setQueryData(["user", user.userId], user);
     },
   });
 

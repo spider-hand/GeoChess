@@ -233,7 +233,24 @@ export default $config({
     );
 
     api.route(
-      "POST /api/v1/users/{userId}",
+      "GET /api/v1/users/me",
+      {
+        runtime: "python3.14",
+        handler: "src/api/v1/users/handler.get_current_user",
+        environment: {
+          ENVIRONMENT: $app.stage,
+        },
+        permissions: databasePermissions,
+      },
+      {
+        auth: {
+          lambda: firebaseAuthorizer.id,
+        },
+      },
+    );
+
+    api.route(
+      "POST /api/v1/users/me",
       {
         runtime: "python3.14",
         handler: "src/api/v1/users/handler.create_user",
@@ -250,7 +267,7 @@ export default $config({
     );
 
     api.route(
-      "PATCH /api/v1/users/{userId}",
+      "PATCH /api/v1/users/me",
       {
         runtime: "python3.14",
         handler: "src/api/v1/users/handler.update_user",
@@ -267,7 +284,7 @@ export default $config({
     );
 
     api.route(
-      "DELETE /api/v1/users/{userId}",
+      "DELETE /api/v1/users/me",
       {
         runtime: "python3.14",
         handler: "src/api/v1/users/handler.delete_user",

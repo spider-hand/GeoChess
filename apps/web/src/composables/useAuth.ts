@@ -77,8 +77,7 @@ export const useAuth = () => {
 
       // Create a new user if the user record does not exist. Otherwise, return the existing user record.
       await createUserAsync({
-        userId: credential.user.uid,
-        createUserRequest: {
+        createCurrentUserRequest: {
           displayName,
         },
         idToken,

@@ -16,47 +16,47 @@ import { mapValues } from "../runtime";
 /**
  *
  * @export
- * @interface GetUser200Response
+ * @interface GetCurrentUser200Response
  */
-export interface GetUser200Response {
+export interface GetCurrentUser200Response {
   /**
    *
    * @type {string}
-   * @memberof GetUser200Response
+   * @memberof GetCurrentUser200Response
    */
   userId: string;
   /**
    *
    * @type {string}
-   * @memberof GetUser200Response
+   * @memberof GetCurrentUser200Response
    */
   displayName: string;
   /**
    *
    * @type {string}
-   * @memberof GetUser200Response
+   * @memberof GetCurrentUser200Response
    */
   country?: string;
   /**
    *
    * @type {Date}
-   * @memberof GetUser200Response
+   * @memberof GetCurrentUser200Response
    */
   createdAt: Date;
   /**
    *
    * @type {Date}
-   * @memberof GetUser200Response
+   * @memberof GetCurrentUser200Response
    */
   updatedAt: Date;
 }
 
 /**
- * Check if a given object implements the GetUser200Response interface.
+ * Check if a given object implements the GetCurrentUser200Response interface.
  */
-export function instanceOfGetUser200Response(
+export function instanceOfGetCurrentUser200Response(
   value: object,
-): value is GetUser200Response {
+): value is GetCurrentUser200Response {
   if (!("userId" in value) || value["userId"] === undefined) return false;
   if (!("displayName" in value) || value["displayName"] === undefined)
     return false;
@@ -65,14 +65,16 @@ export function instanceOfGetUser200Response(
   return true;
 }
 
-export function GetUser200ResponseFromJSON(json: any): GetUser200Response {
-  return GetUser200ResponseFromJSONTyped(json, false);
+export function GetCurrentUser200ResponseFromJSON(
+  json: any,
+): GetCurrentUser200Response {
+  return GetCurrentUser200ResponseFromJSONTyped(json, false);
 }
 
-export function GetUser200ResponseFromJSONTyped(
+export function GetCurrentUser200ResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): GetUser200Response {
+): GetCurrentUser200Response {
   if (json == null) {
     return json;
   }
@@ -85,12 +87,14 @@ export function GetUser200ResponseFromJSONTyped(
   };
 }
 
-export function GetUser200ResponseToJSON(json: any): GetUser200Response {
-  return GetUser200ResponseToJSONTyped(json, false);
+export function GetCurrentUser200ResponseToJSON(
+  json: any,
+): GetCurrentUser200Response {
+  return GetCurrentUser200ResponseToJSONTyped(json, false);
 }
 
-export function GetUser200ResponseToJSONTyped(
-  value?: GetUser200Response | null,
+export function GetCurrentUser200ResponseToJSONTyped(
+  value?: GetCurrentUser200Response | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

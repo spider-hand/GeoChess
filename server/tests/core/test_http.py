@@ -8,12 +8,11 @@ from tests.factories.http_events import make_api_gateway_event
 def make_event(body):
     return CustomApiGatewayEvent.model_validate(
         make_api_gateway_event(
-            route_key="POST /api/v1/users/{userId}",
-            raw_path="/api/v1/users/user-123",
+            route_key="POST /api/v1/users/me",
+            raw_path="/api/v1/users/me",
             method="POST",
             body=body,
             serialize_body=False,
-            path_parameters={"userId": "user-123"},
             authenticated_uid="user-123",
         )
     )

@@ -1,7 +1,7 @@
 import { beforeEach, expect, it, vi } from "vitest";
 import { ref } from "vue";
 
-const mockDefaultCreateUser = vi.fn();
+const mockDefaultCreateCurrentUser = vi.fn();
 const mockDefaultGetUser = vi.fn();
 const mockSetQueryData = vi.fn();
 const mockConfiguration = vi.fn();
@@ -75,11 +75,11 @@ vi.mock("@/services", async () => {
     DefaultApi: class {
       constructor() {}
 
-      createUser(args: unknown) {
-        return mockDefaultCreateUser(args);
+      createCurrentUser(args: unknown) {
+        return mockDefaultCreateCurrentUser(args);
       }
 
-      getUser(args: unknown) {
+      getCurrentUser(args: unknown) {
         return mockDefaultGetUser(args);
       }
     },
@@ -87,7 +87,7 @@ vi.mock("@/services", async () => {
 });
 
 beforeEach(() => {
-  mockDefaultCreateUser.mockReset();
+  mockDefaultCreateCurrentUser.mockReset();
   mockDefaultGetUser.mockReset();
   mockSetQueryData.mockReset();
   mockConfiguration.mockReset();
@@ -100,7 +100,7 @@ it("should create a user with the provided id token and cache the created user",
     createdAt: new Date("2026-06-29T00:00:00Z"),
     updatedAt: new Date("2026-06-29T00:00:00Z"),
   };
-  mockDefaultCreateUser.mockResolvedValue(createdUser);
+  mockDefaultCreateCurrentUser.mockResolvedValue(createdUser);
 
   const { default: useUserQuery } = await import("@/composables/useUserQuery");
 
@@ -108,8 +108,7 @@ it("should create a user with the provided id token and cache the created user",
 
   await expect(
     createUserAsync({
-      userId: "user-123",
-      createUserRequest: {
+      createCurrentUserRequest: {
         displayName: "Taylor Swift",
       },
       idToken: "token-123",
@@ -118,9 +117,8 @@ it("should create a user with the provided id token and cache the created user",
 
   expect(mockConfiguration).toHaveBeenCalledTimes(1);
   expect(mockConfiguration.mock.calls[0]?.[0]?.accessToken).toBe("token-123");
-  expect(mockDefaultCreateUser).toHaveBeenCalledWith({
-    userId: "user-123",
-    createUserRequest: {
+  expect(mockDefaultCreateCurrentUser).toHaveBeenCalledWith({
+    createCurrentUserRequest: {
       displayName: "Taylor Swift",
     },
   });
@@ -130,7 +128,7 @@ it("should create a user with the provided id token and cache the created user",
   );
 });
 
-it("should fetch a user with the provided user id", async () => {
+it("should fetch the current user when a current user id is available", async () => {
   const fetchedUser = {
     userId: "user-123",
     displayName: "Taylor Swift",
@@ -145,5 +143,5 @@ it("should fetch a user with the provided user id", async () => {
   const { refetchUser } = useUserQuery("user-123");
 
   await expect(refetchUser()).resolves.toEqual({ data: fetchedUser });
-  expect(mockDefaultGetUser).toHaveBeenCalledWith({ userId: "user-123" });
+  expect(mockDefaultGetUser).toHaveBeenCalledWith(undefined);
 });

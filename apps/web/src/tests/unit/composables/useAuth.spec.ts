@@ -155,8 +155,7 @@ it("should sign out the anonymous user before starting google sign in and save t
   expect(mockSignOut).toHaveBeenCalledTimes(1);
   expect(mockSignInWithPopup).toHaveBeenCalledTimes(1);
   expect(mockCreateUserAsync).toHaveBeenCalledWith({
-    userId: "user-123",
-    createUserRequest: {
+    createCurrentUserRequest: {
       displayName: "Taylor Swift",
     },
     idToken: "token",

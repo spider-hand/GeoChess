@@ -18,13 +18,13 @@ import type {
   CreateAiGame400Response,
   CreateAiGameMoveRequest,
   CreateAiGameRequest,
-  CreateUserRequest,
+  CreateCurrentUserRequest,
   CreateWithFriendsGame201Response,
   CreateWithFriendsGameMoveRequest,
-  GetUser200Response,
+  GetCurrentUser200Response,
   JoinWithFriendsGame200Response,
   JoinWithFriendsGameRequest,
-  UpdateUser200Response,
+  UpdateCurrentUser200Response,
 } from "../models/index";
 import {
   CreateAiGame201ResponseFromJSON,
@@ -35,20 +35,20 @@ import {
   CreateAiGameMoveRequestToJSON,
   CreateAiGameRequestFromJSON,
   CreateAiGameRequestToJSON,
-  CreateUserRequestFromJSON,
-  CreateUserRequestToJSON,
+  CreateCurrentUserRequestFromJSON,
+  CreateCurrentUserRequestToJSON,
   CreateWithFriendsGame201ResponseFromJSON,
   CreateWithFriendsGame201ResponseToJSON,
   CreateWithFriendsGameMoveRequestFromJSON,
   CreateWithFriendsGameMoveRequestToJSON,
-  GetUser200ResponseFromJSON,
-  GetUser200ResponseToJSON,
+  GetCurrentUser200ResponseFromJSON,
+  GetCurrentUser200ResponseToJSON,
   JoinWithFriendsGame200ResponseFromJSON,
   JoinWithFriendsGame200ResponseToJSON,
   JoinWithFriendsGameRequestFromJSON,
   JoinWithFriendsGameRequestToJSON,
-  UpdateUser200ResponseFromJSON,
-  UpdateUser200ResponseToJSON,
+  UpdateCurrentUser200ResponseFromJSON,
+  UpdateCurrentUser200ResponseToJSON,
 } from "../models/index";
 
 export interface CreateAiGameOperationRequest {
@@ -60,18 +60,13 @@ export interface CreateAiGameMoveOperationRequest {
   createAiGameMoveRequest: CreateAiGameMoveRequest;
 }
 
-export interface CreateUserOperationRequest {
-  userId: string;
-  createUserRequest?: CreateUserRequest;
+export interface CreateCurrentUserOperationRequest {
+  createCurrentUserRequest?: CreateCurrentUserRequest;
 }
 
 export interface CreateWithFriendsGameMoveOperationRequest {
   gameId: string;
   createWithFriendsGameMoveRequest: CreateWithFriendsGameMoveRequest;
-}
-
-export interface DeleteUserRequest {
-  userId: string;
 }
 
 export interface GetUserRequest {
@@ -82,9 +77,8 @@ export interface JoinWithFriendsGameOperationRequest {
   joinWithFriendsGameRequest: JoinWithFriendsGameRequest;
 }
 
-export interface UpdateUserRequest {
-  userId: string;
-  createUserRequest: CreateUserRequest;
+export interface UpdateCurrentUserRequest {
+  createCurrentUserRequest: CreateCurrentUserRequest;
 }
 
 /**
@@ -223,19 +217,12 @@ export class DefaultApi extends runtime.BaseAPI {
   }
 
   /**
-   * Create user
+   * Create current user
    */
-  async createUserRaw(
-    requestParameters: CreateUserOperationRequest,
+  async createCurrentUserRaw(
+    requestParameters: CreateCurrentUserOperationRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetUser200Response>> {
-    if (requestParameters["userId"] == null) {
-      throw new runtime.RequiredError(
-        "userId",
-        'Required parameter "userId" was null or undefined when calling createUser().',
-      );
-    }
-
+  ): Promise<runtime.ApiResponse<GetCurrentUser200Response>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -251,11 +238,7 @@ export class DefaultApi extends runtime.BaseAPI {
       }
     }
 
-    let urlPath = `/api/v1/users/{userId}`;
-    urlPath = urlPath.replace(
-      `{${"userId"}}`,
-      encodeURIComponent(String(requestParameters["userId"])),
-    );
+    let urlPath = `/api/v1/users/me`;
 
     const response = await this.request(
       {
@@ -263,24 +246,29 @@ export class DefaultApi extends runtime.BaseAPI {
         method: "POST",
         headers: headerParameters,
         query: queryParameters,
-        body: CreateUserRequestToJSON(requestParameters["createUserRequest"]),
+        body: CreateCurrentUserRequestToJSON(
+          requestParameters["createCurrentUserRequest"],
+        ),
       },
       initOverrides,
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetUser200ResponseFromJSON(jsonValue),
+      GetCurrentUser200ResponseFromJSON(jsonValue),
     );
   }
 
   /**
-   * Create user
+   * Create current user
    */
-  async createUser(
-    requestParameters: CreateUserOperationRequest,
+  async createCurrentUser(
+    requestParameters: CreateCurrentUserOperationRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetUser200Response> {
-    const response = await this.createUserRaw(requestParameters, initOverrides);
+  ): Promise<GetCurrentUser200Response> {
+    const response = await this.createCurrentUserRaw(
+      requestParameters,
+      initOverrides,
+    );
     return await response.value();
   }
 
@@ -399,19 +387,11 @@ export class DefaultApi extends runtime.BaseAPI {
   }
 
   /**
-   * Delete user
+   * Delete current user
    */
-  async deleteUserRaw(
-    requestParameters: DeleteUserRequest,
+  async deleteCurrentUserRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
-    if (requestParameters["userId"] == null) {
-      throw new runtime.RequiredError(
-        "userId",
-        'Required parameter "userId" was null or undefined when calling deleteUser().',
-      );
-    }
-
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -425,11 +405,7 @@ export class DefaultApi extends runtime.BaseAPI {
       }
     }
 
-    let urlPath = `/api/v1/users/{userId}`;
-    urlPath = urlPath.replace(
-      `{${"userId"}}`,
-      encodeURIComponent(String(requestParameters["userId"])),
-    );
+    let urlPath = `/api/v1/users/me`;
 
     const response = await this.request(
       {
@@ -445,13 +421,58 @@ export class DefaultApi extends runtime.BaseAPI {
   }
 
   /**
-   * Delete user
+   * Delete current user
    */
-  async deleteUser(
-    requestParameters: DeleteUserRequest,
+  async deleteCurrentUser(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
-    await this.deleteUserRaw(requestParameters, initOverrides);
+    await this.deleteCurrentUserRaw(initOverrides);
+  }
+
+  /**
+   * Get current user
+   */
+  async getCurrentUserRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetCurrentUser200Response>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/users/me`;
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "GET",
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      GetCurrentUser200ResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Get current user
+   */
+  async getCurrentUser(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetCurrentUser200Response> {
+    const response = await this.getCurrentUserRaw(initOverrides);
+    return await response.value();
   }
 
   /**
@@ -460,7 +481,7 @@ export class DefaultApi extends runtime.BaseAPI {
   async getUserRaw(
     requestParameters: GetUserRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetUser200Response>> {
+  ): Promise<runtime.ApiResponse<GetCurrentUser200Response>> {
     if (requestParameters["userId"] == null) {
       throw new runtime.RequiredError(
         "userId",
@@ -498,7 +519,7 @@ export class DefaultApi extends runtime.BaseAPI {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetUser200ResponseFromJSON(jsonValue),
+      GetCurrentUser200ResponseFromJSON(jsonValue),
     );
   }
 
@@ -508,7 +529,7 @@ export class DefaultApi extends runtime.BaseAPI {
   async getUser(
     requestParameters: GetUserRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetUser200Response> {
+  ): Promise<GetCurrentUser200Response> {
     const response = await this.getUserRaw(requestParameters, initOverrides);
     return await response.value();
   }
@@ -577,23 +598,16 @@ export class DefaultApi extends runtime.BaseAPI {
   }
 
   /**
-   * Update user
+   * Update current user
    */
-  async updateUserRaw(
-    requestParameters: UpdateUserRequest,
+  async updateCurrentUserRaw(
+    requestParameters: UpdateCurrentUserRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<UpdateUser200Response>> {
-    if (requestParameters["userId"] == null) {
+  ): Promise<runtime.ApiResponse<UpdateCurrentUser200Response>> {
+    if (requestParameters["createCurrentUserRequest"] == null) {
       throw new runtime.RequiredError(
-        "userId",
-        'Required parameter "userId" was null or undefined when calling updateUser().',
-      );
-    }
-
-    if (requestParameters["createUserRequest"] == null) {
-      throw new runtime.RequiredError(
-        "createUserRequest",
-        'Required parameter "createUserRequest" was null or undefined when calling updateUser().',
+        "createCurrentUserRequest",
+        'Required parameter "createCurrentUserRequest" was null or undefined when calling updateCurrentUser().',
       );
     }
 
@@ -612,11 +626,7 @@ export class DefaultApi extends runtime.BaseAPI {
       }
     }
 
-    let urlPath = `/api/v1/users/{userId}`;
-    urlPath = urlPath.replace(
-      `{${"userId"}}`,
-      encodeURIComponent(String(requestParameters["userId"])),
-    );
+    let urlPath = `/api/v1/users/me`;
 
     const response = await this.request(
       {
@@ -624,24 +634,29 @@ export class DefaultApi extends runtime.BaseAPI {
         method: "PATCH",
         headers: headerParameters,
         query: queryParameters,
-        body: CreateUserRequestToJSON(requestParameters["createUserRequest"]),
+        body: CreateCurrentUserRequestToJSON(
+          requestParameters["createCurrentUserRequest"],
+        ),
       },
       initOverrides,
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      UpdateUser200ResponseFromJSON(jsonValue),
+      UpdateCurrentUser200ResponseFromJSON(jsonValue),
     );
   }
 
   /**
-   * Update user
+   * Update current user
    */
-  async updateUser(
-    requestParameters: UpdateUserRequest,
+  async updateCurrentUser(
+    requestParameters: UpdateCurrentUserRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<UpdateUser200Response> {
-    const response = await this.updateUserRaw(requestParameters, initOverrides);
+  ): Promise<UpdateCurrentUser200Response> {
+    const response = await this.updateCurrentUserRaw(
+      requestParameters,
+      initOverrides,
+    );
     return await response.value();
   }
 }

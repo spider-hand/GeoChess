@@ -18,6 +18,8 @@ paths:
     $ref: ./paths/api/v1/with-friends-games/join.yml
   /api/v1/with-friends-games/{gameId}/moves:
     $ref: ./paths/api/v1/with-friends-games/moves.yml
+  /api/v1/users/me:
+    $ref: ./paths/api/v1/users/me.yml
   /api/v1/users/{userId}:
     $ref: ./paths/api/v1/users/user-by-id.yml
 components:

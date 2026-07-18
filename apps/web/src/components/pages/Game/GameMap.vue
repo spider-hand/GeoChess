@@ -206,8 +206,8 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .game-map {
+  height: 420px;
   width: 100%;
-  min-height: 320px;
   border-radius: var(--radius-token-xl);
   overflow: hidden;
 }

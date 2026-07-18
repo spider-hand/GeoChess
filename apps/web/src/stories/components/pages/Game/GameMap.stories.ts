@@ -26,8 +26,8 @@ const meta = {
   render: (args) => ({
     components: { GameMap },
     template: `
-      <div style="height: 360px; width: min(100%, 720px);">
-        <GameMap v-bind="args" style="height: 100%; width: 100%;" />
+      <div style="width: min(100%, 720px);">
+        <GameMap v-bind="args" style="width: 100%;" />
       </div>
     `,
     setup: () => ({ args }),

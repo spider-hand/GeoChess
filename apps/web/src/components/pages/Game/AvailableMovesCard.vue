@@ -160,6 +160,7 @@ const emitSelect = () => {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  height: 420px;
   width: min(100%, 360px);
   padding: var(--spacing-lg);
   border: 1px solid var(--hairline);
@@ -189,8 +190,8 @@ const emitSelect = () => {
 
 .available-moves-card__options,
 .available-moves-card__waiting {
-  min-height: 280px;
-  max-height: 280px;
+  flex: 1;
+  min-height: 0;
 }
 
 .available-moves-card__options {

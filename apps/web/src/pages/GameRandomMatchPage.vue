@@ -101,7 +101,6 @@ const finishedMarkers = computed<Array<MultiplayerGameMapMarker>>(() => [
 .game-page__map {
   flex: 1 1 0;
   min-width: 0;
-  min-height: 320px;
 }
 
 @media (max-width: 960px) {

@@ -149,8 +149,8 @@ const turnLabel = (turn: number) =>
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  height: 420px;
   width: min(100%, 360px);
-  min-height: 320px;
   padding: var(--spacing-lg);
   border: 1px solid var(--hairline);
   border-radius: var(--radius-token-xl);

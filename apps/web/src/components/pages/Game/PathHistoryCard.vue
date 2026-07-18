@@ -109,6 +109,11 @@ const turnLabel = (turn: number) =>
         />
       </template>
     </div>
+    <div
+      v-else
+      class="path-history-card__body-placeholder"
+      aria-hidden="true"
+    />
   </section>
 </template>
 
@@ -190,6 +195,10 @@ const turnLabel = (turn: number) =>
   gap: var(--spacing-sm);
   overflow-x: auto;
   padding-bottom: var(--spacing-xs);
+}
+
+.path-history-card__body-placeholder {
+  flex: 0 0 60px;
 }
 
 .path-history-card__step {

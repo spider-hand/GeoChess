@@ -107,6 +107,11 @@ const handleSignOut = async () => {
   }
 };
 
+const handleProfileClick = async () => {
+  closeMobileMenu();
+  await router.push("/user");
+};
+
 const handleGithubClick = () => {
   closeMobileMenu();
   window.open(GITHUB_URL, "_blank", "noopener,noreferrer");
@@ -208,6 +213,7 @@ useOnClickOutside({
             v-if="isAuthenticatedUser"
             :display-name="username"
             :country="userCountry"
+            @profile-click="handleProfileClick"
             @sign-out-click="handleSignOut"
           />
 
@@ -256,6 +262,15 @@ useOnClickOutside({
                 {{ username }}
               </span>
             </div>
+
+            <button
+              v-if="isCurrentUserLoaded && isAuthenticatedUser"
+              class="navigation-header__mobile-row"
+              type="button"
+              @click="handleProfileClick"
+            >
+              {{ t("components.shared.NavigationHeader.profile") }}
+            </button>
 
             <button
               class="navigation-header__mobile-row navigation-header__mobile-row--accordion"

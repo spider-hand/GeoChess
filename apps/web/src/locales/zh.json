@@ -102,6 +102,7 @@
         "primaryNavigationLabel": "主导航",
         "signUp": "注册",
         "signOut": "退出登录",
+        "profile": "个人资料",
         "openMenu": "打开导航菜单",
         "closeMenu": "关闭导航菜单",
         "howToPlayTriggerLabel": "玩法说明",
@@ -124,6 +125,7 @@
         "triggerLabel": "账户菜单",
         "menuLabel": "账户菜单",
         "nameLabel": "名称",
+        "profile": "个人资料",
         "signOut": "退出登录"
       },
       "NavigationFooter": {

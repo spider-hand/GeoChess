@@ -218,6 +218,21 @@ it("should render the user section when logged in", async () => {
     .toBeInTheDocument();
 });
 
+it("should navigate to the profile page from the mobile menu", async () => {
+  resetAuthState();
+  username.value = "Taylor Swift";
+  isAuthenticatedUser.value = true;
+  const { container, getByRole } = renderNavigationHeader();
+
+  await getByRole("button", { name: "Open navigation menu" }).click();
+  await getByRole("button", { name: "Profile" }).click();
+
+  expect(push).toHaveBeenCalledWith("/user");
+  expect(
+    container.querySelector('[data-testid="navigation-header-mobile-panel"]'),
+  ).toBeNull();
+});
+
 it("should not render the user section when the authentication is in progress", async () => {
   resetAuthState();
   isCurrentUserLoaded.value = false;

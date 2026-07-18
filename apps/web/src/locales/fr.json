@@ -102,6 +102,7 @@
         "primaryNavigationLabel": "Navigation principale",
         "signUp": "S'inscrire",
         "signOut": "Se déconnecter",
+        "profile": "Profil",
         "openMenu": "Ouvrir le menu de navigation",
         "closeMenu": "Fermer le menu de navigation",
         "howToPlayTriggerLabel": "Comment jouer",
@@ -124,6 +125,7 @@
         "triggerLabel": "Menu du compte",
         "menuLabel": "Menu du compte",
         "nameLabel": "Nom",
+        "profile": "Profil",
         "signOut": "Se déconnecter"
       },
       "NavigationFooter": {

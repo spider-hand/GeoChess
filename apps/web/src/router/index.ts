@@ -6,6 +6,7 @@ import GameRandomMatchPage from "@/pages/GameRandomMatchPage.vue";
 import GameVsAiPage from "@/pages/GameVsAiPage.vue";
 import GameWithFriendsPage from "@/pages/GameWithFriendsPage.vue";
 import HomePage from "@/pages/HomePage.vue";
+import UserPage from "@/pages/UserPage.vue";
 
 declare module "vue-router" {
   interface RouteMeta {
@@ -20,6 +21,13 @@ const router = createRouter({
     {
       path: "/",
       component: HomePage,
+    },
+    {
+      path: "/user",
+      component: UserPage,
+      meta: {
+        requiresRegisteredAuth: true,
+      },
     },
     {
       path: "/game/vs-ai/:gameId",

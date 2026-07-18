@@ -16,6 +16,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  profileClick: [];
   signOutClick: [];
 }>();
 
@@ -34,6 +35,11 @@ const toggleMenu = () => {
 
 const emitSignOutClick = () => {
   emit("signOutClick");
+  closeMenu();
+};
+
+const emitProfileClick = () => {
+  emit("profileClick");
   closeMenu();
 };
 
@@ -79,6 +85,15 @@ useOnClickOutside({
       </div>
 
       <div class="user-avatar-menu__divider" />
+
+      <button
+        class="user-avatar-menu__item"
+        type="button"
+        role="menuitem"
+        @click="emitProfileClick"
+      >
+        {{ t("components.shared.UserAvatarMenu.profile") }}
+      </button>
 
       <button
         class="user-avatar-menu__item"

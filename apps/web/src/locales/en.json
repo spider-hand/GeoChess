@@ -102,6 +102,7 @@
         "primaryNavigationLabel": "Primary navigation",
         "signUp": "Sign Up",
         "signOut": "Sign Out",
+        "profile": "Profile",
         "openMenu": "Open navigation menu",
         "closeMenu": "Close navigation menu",
         "howToPlayTriggerLabel": "How to play",
@@ -124,6 +125,7 @@
         "triggerLabel": "Account menu",
         "menuLabel": "Account menu",
         "nameLabel": "Name",
+        "profile": "Profile",
         "signOut": "Sign Out"
       },
       "NavigationFooter": {

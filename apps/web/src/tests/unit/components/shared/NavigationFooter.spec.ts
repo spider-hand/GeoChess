@@ -30,14 +30,13 @@ it("should render the default state properly", async () => {
     .element(getByRole("button", { name: "Terms" }))
     .toBeInTheDocument();
   await expect
-    .element(getByRole("button", { name: "Contact" }))
-    .toBeInTheDocument();
+    .element(getByRole("link", { name: "Contact" }))
+    .toHaveAttribute("href", "mailto:creative.spider.hand@gmail.com");
 });
 
 it.each([
   { label: "Privacy", prop: "onPrivacyClick" },
   { label: "Terms", prop: "onTermsClick" },
-  { label: "Contact", prop: "onContactClick" },
 ] as const)("should emit the $label action", async ({ label, prop }) => {
   const handler = vi.fn();
   const { getByRole } = renderNavigationFooter({

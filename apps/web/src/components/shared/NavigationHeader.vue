@@ -19,6 +19,8 @@ defineOptions({
   name: "SharedNavigationHeader",
 });
 
+const GITHUB_URL = "https://github.com/spider-hand/GeoChess";
+
 const { locale, t } = useI18n({ useScope: "global" });
 const router = useRouter();
 const {
@@ -36,19 +38,9 @@ const isMobileHowToPlayOpen = ref(false);
 const isMobileLanguageOpen = ref(false);
 
 const emit = defineEmits<{
-  brandClick: [event: MouseEvent];
-  githubClick: [event: MouseEvent];
   discordClick: [event: MouseEvent];
   languageSelect: [language: string];
 }>();
-
-const emitBrandClick = (event: MouseEvent) => {
-  emit("brandClick", event);
-};
-
-const emitGithubClick = (event: MouseEvent) => {
-  emit("githubClick", event);
-};
 
 const emitDiscordClick = (event: MouseEvent) => {
   emit("discordClick", event);
@@ -115,9 +107,9 @@ const handleSignOut = async () => {
   }
 };
 
-const handleGithubClick = (event: MouseEvent) => {
+const handleGithubClick = () => {
   closeMobileMenu();
-  emitGithubClick(event);
+  window.open(GITHUB_URL, "_blank", "noopener,noreferrer");
 };
 
 const handleDiscordClick = (event: MouseEvent) => {
@@ -142,7 +134,7 @@ useOnClickOutside({
       <button
         class="navigation-header__brand"
         type="button"
-        @click="emitBrandClick"
+        @click="router.push('/')"
       >
         GeoChess
       </button>
@@ -161,7 +153,7 @@ useOnClickOutside({
             :ariaLabel="
               t('components.shared.NavigationHeader.githubRepositoryLink')
             "
-            @click="emitGithubClick"
+            @click="handleGithubClick"
           >
             <svg
               aria-hidden="true"

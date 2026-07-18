@@ -10,7 +10,6 @@ const { t } = useI18n();
 const emit = defineEmits<{
   privacyClick: [event: MouseEvent];
   termsClick: [event: MouseEvent];
-  contactClick: [event: MouseEvent];
 }>();
 
 const year = new Date().getFullYear();
@@ -21,10 +20,6 @@ const emitPrivacyClick = (event: MouseEvent) => {
 
 const emitTermsClick = (event: MouseEvent) => {
   emit("termsClick", event);
-};
-
-const emitContactClick = (event: MouseEvent) => {
-  emit("contactClick", event);
 };
 </script>
 
@@ -53,13 +48,12 @@ const emitContactClick = (event: MouseEvent) => {
         >
           {{ t("components.shared.NavigationFooter.terms") }}
         </button>
-        <button
+        <a
           class="navigation-footer__action"
-          type="button"
-          @click="emitContactClick"
+          href="mailto:creative.spider.hand@gmail.com"
         >
           {{ t("components.shared.NavigationFooter.contact") }}
-        </button>
+        </a>
       </nav>
     </div>
   </footer>
@@ -107,6 +101,7 @@ const emitContactClick = (event: MouseEvent) => {
   font-family: var(--font-body);
   font-size: var(--font-size-body-sm);
   line-height: var(--line-height-body-sm);
+  text-decoration: none;
   cursor: pointer;
   transition: color 160ms ease;
 }

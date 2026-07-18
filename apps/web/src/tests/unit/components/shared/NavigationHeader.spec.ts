@@ -72,6 +72,15 @@ it("should render the default state properly", async () => {
   expect(container.querySelector(".language-selector")).not.toBeNull();
 });
 
+it("should navigate home when the title is clicked", async () => {
+  resetAuthState();
+  const { getByRole } = renderNavigationHeader();
+
+  await getByRole("button", { name: "GeoChess" }).click();
+
+  expect(push).toHaveBeenCalledWith("/");
+});
+
 it("should open and close the mobile menu", async () => {
   resetAuthState();
   const { container, getByRole, getByTestId } = renderNavigationHeader();
@@ -142,20 +151,35 @@ it("should show the mobile how to play accordion content", async () => {
   await expect.element(getByText("That's it. Enjoy!")).toBeInTheDocument();
 });
 
-it.each([
-  { label: "GitHub", prop: "onGithubClick" },
-  { label: "Discord", prop: "onDiscordClick" },
-] as const)("should emit %s from the mobile menu", async ({ label, prop }) => {
+it("should emit Discord from the mobile menu", async () => {
   resetAuthState();
   const handler = vi.fn();
   const { getByRole } = renderNavigationHeader({
-    [prop]: handler,
+    onDiscordClick: handler,
   });
 
   await getByRole("button", { name: "Open navigation menu" }).click();
-  await getByRole("button", { name: label, exact: true }).click();
+  await getByRole("button", { name: "Discord", exact: true }).click();
 
   expect(handler).toHaveBeenCalledTimes(1);
+});
+
+it("should open GitHub from the mobile control", async () => {
+  resetAuthState();
+  const open = vi.spyOn(window, "open").mockImplementation(() => null);
+  const { getByRole } = renderNavigationHeader();
+
+  await getByRole("button", { name: "Open navigation menu" }).click();
+  await getByRole("button", { name: "GitHub", exact: true }).click();
+
+  expect(open).toHaveBeenCalledTimes(1);
+  expect(open).toHaveBeenCalledWith(
+    "https://github.com/spider-hand/GeoChess",
+    "_blank",
+    "noopener,noreferrer",
+  );
+
+  open.mockRestore();
 });
 
 it("should emit the selected language on the mobile menu", async () => {

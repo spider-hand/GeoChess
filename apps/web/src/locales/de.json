@@ -101,6 +101,22 @@
           "search": "Länder suchen",
           "noCountry": "Kein Land"
         },
+        "AiGamesSection": {
+          "loading": "KI-Spiele werden geladen…",
+          "loadError": "KI-Spiele konnten nicht geladen werden.",
+          "wins": "Siege: {count}",
+          "losses": "Niederlagen: {count}",
+          "winsLabel": "Siege",
+          "lossesLabel": "Niederlagen",
+          "win": "Sieg",
+          "lose": "Niederlage",
+          "easy": "Leicht",
+          "medium": "Mittel",
+          "hard": "Schwer",
+          "recentGames": "Letzte Spiele",
+          "noRecentGames": "Noch keine abgeschlossenen KI-Spiele.",
+          "viewGame": "Spiel ansehen"
+        },
         "DeleteAccountModal": {
           "title": "Konto löschen",
           "description": "Dadurch wird dein Konto dauerhaft gelöscht.",

@@ -13,13 +13,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Won: Story = {
-  args: {
-    result: "won",
-  },
+  args: { result: "won" },
 };
 
 export const Lost: Story = {
-  args: {
-    result: "lost",
-  },
+  args: { result: "lost" },
 };

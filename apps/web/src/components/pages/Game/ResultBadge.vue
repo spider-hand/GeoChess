@@ -6,21 +6,15 @@ defineOptions({
   name: "GameResultBadge",
 });
 
-const props = defineProps<{
-  result: "won" | "lost";
-}>();
-
+const props = defineProps<{ result: "won" | "lost" }>();
 const { t } = useI18n();
-
-const RESULT_LABEL_KEYS: Record<
-  "won" | "lost",
-  `components.pages.Game.ResultBadge.${string}`
-> = {
-  won: "components.pages.Game.ResultBadge.youWin",
-  lost: "components.pages.Game.ResultBadge.youLose",
-};
-
-const resultLabel = computed(() => t(RESULT_LABEL_KEYS[props.result]));
+const resultLabel = computed(() =>
+  t(
+    props.result === "won"
+      ? "components.pages.Game.ResultBadge.youWin"
+      : "components.pages.Game.ResultBadge.youLose",
+  ),
+);
 </script>
 
 <template>
@@ -50,15 +44,12 @@ const resultLabel = computed(() => t(RESULT_LABEL_KEYS[props.result]));
   line-height: var(--line-height-button);
   white-space: nowrap;
 }
-
 .result-badge--won {
-  background-color: var(--primary);
+  background-color: var(--success);
 }
-
 .result-badge--lost {
   background-color: var(--danger);
 }
-
 @media (max-width: 480px) {
   .result-badge {
     padding: 0 var(--spacing-sm);

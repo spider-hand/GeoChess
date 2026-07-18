@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/vue-query";
+
 import useApi from "@/composables/useApi";
 import {
   DefaultApi,
@@ -9,6 +11,16 @@ import {
 const useAiGameQuery = () => {
   const { apiConfig } = useApi();
   const aiGameApi = new DefaultApi(apiConfig);
+  const aiGamesQuery = useQuery({
+    queryKey: ["ai-games", 5, "updated_at", "desc"],
+    queryFn: () =>
+      aiGameApi.getAiGames({
+        limit: 5,
+        sortBy: "updated_at",
+        orderBy: "desc",
+      }),
+    staleTime: Infinity,
+  });
 
   const createAiGame = async (
     createAiGameRequest: CreateAiGameRequest,
@@ -26,6 +38,9 @@ const useAiGameQuery = () => {
   return {
     createAiGame,
     createAiGameMove,
+    data: aiGamesQuery.data,
+    isError: aiGamesQuery.isError,
+    isLoading: aiGamesQuery.isLoading,
   };
 };
 

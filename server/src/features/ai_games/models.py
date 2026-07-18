@@ -8,6 +8,8 @@ AiGameResult = Literal["win", "lose", "cancelled"]
 AiGameTurn = Literal["player", "ai"]
 AiGameMoveActor = Literal["player", "ai"]
 AiGameHistoryMoveActor = Literal["start", "player", "ai"]
+AiGamesSortBy = Literal["created_at", "updated_at"]
+OrderBy = Literal["asc", "desc"]
 
 
 class AiGameRecord(BaseModel):
@@ -19,6 +21,17 @@ class AiGameRecord(BaseModel):
     result: AiGameResult | None = None
     created_at: datetime = Field(alias="createdAt")
     updated_at: datetime = Field(alias="updatedAt")
+
+
+class AiGameStats(BaseModel):
+    wins: int
+    losses: int
+
+
+class AiGamesSummary(BaseModel):
+    total: AiGameStats
+    by_difficulty: dict[Difficulty, AiGameStats] = Field(alias="byDifficulty")
+    recent_games: list[AiGameRecord] = Field(alias="recentGames")
 
 
 class CreateAiGameInput(BaseModel):

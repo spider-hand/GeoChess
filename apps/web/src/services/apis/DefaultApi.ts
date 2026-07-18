@@ -15,12 +15,13 @@
 import * as runtime from "../runtime";
 import type {
   CreateAiGame201Response,
-  CreateAiGame400Response,
   CreateAiGameMoveRequest,
   CreateAiGameRequest,
   CreateCurrentUserRequest,
   CreateWithFriendsGame201Response,
   CreateWithFriendsGameMoveRequest,
+  GetAiGames200Response,
+  GetAiGames400Response,
   GetCurrentUser200Response,
   JoinWithFriendsGame200Response,
   JoinWithFriendsGameRequest,
@@ -29,8 +30,6 @@ import type {
 import {
   CreateAiGame201ResponseFromJSON,
   CreateAiGame201ResponseToJSON,
-  CreateAiGame400ResponseFromJSON,
-  CreateAiGame400ResponseToJSON,
   CreateAiGameMoveRequestFromJSON,
   CreateAiGameMoveRequestToJSON,
   CreateAiGameRequestFromJSON,
@@ -41,6 +40,10 @@ import {
   CreateWithFriendsGame201ResponseToJSON,
   CreateWithFriendsGameMoveRequestFromJSON,
   CreateWithFriendsGameMoveRequestToJSON,
+  GetAiGames200ResponseFromJSON,
+  GetAiGames200ResponseToJSON,
+  GetAiGames400ResponseFromJSON,
+  GetAiGames400ResponseToJSON,
   GetCurrentUser200ResponseFromJSON,
   GetCurrentUser200ResponseToJSON,
   JoinWithFriendsGame200ResponseFromJSON,
@@ -67,6 +70,12 @@ export interface CreateCurrentUserOperationRequest {
 export interface CreateWithFriendsGameMoveOperationRequest {
   gameId: string;
   createWithFriendsGameMoveRequest: CreateWithFriendsGameMoveRequest;
+}
+
+export interface GetAiGamesRequest {
+  limit?: number;
+  sortBy?: GetAiGamesSortByEnum;
+  orderBy?: GetAiGamesOrderByEnum;
 }
 
 export interface GetUserRequest {
@@ -430,6 +439,66 @@ export class DefaultApi extends runtime.BaseAPI {
   }
 
   /**
+   * Get current user\'s ai game history and statistics
+   */
+  async getAiGamesRaw(
+    requestParameters: GetAiGamesRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetAiGames200Response>> {
+    const queryParameters: any = {};
+
+    if (requestParameters["limit"] != null) {
+      queryParameters["limit"] = requestParameters["limit"];
+    }
+
+    if (requestParameters["sortBy"] != null) {
+      queryParameters["sort_by"] = requestParameters["sortBy"];
+    }
+
+    if (requestParameters["orderBy"] != null) {
+      queryParameters["order_by"] = requestParameters["orderBy"];
+    }
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/ai-games`;
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "GET",
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      GetAiGames200ResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Get current user\'s ai game history and statistics
+   */
+  async getAiGames(
+    requestParameters: GetAiGamesRequest = {},
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetAiGames200Response> {
+    const response = await this.getAiGamesRaw(requestParameters, initOverrides);
+    return await response.value();
+  }
+
+  /**
    * Get current user
    */
   async getCurrentUserRaw(
@@ -660,3 +729,22 @@ export class DefaultApi extends runtime.BaseAPI {
     return await response.value();
   }
 }
+
+/**
+ * @export
+ */
+export const GetAiGamesSortByEnum = {
+  CreatedAt: "created_at",
+  UpdatedAt: "updated_at",
+} as const;
+export type GetAiGamesSortByEnum =
+  (typeof GetAiGamesSortByEnum)[keyof typeof GetAiGamesSortByEnum];
+/**
+ * @export
+ */
+export const GetAiGamesOrderByEnum = {
+  Asc: "asc",
+  Desc: "desc",
+} as const;
+export type GetAiGamesOrderByEnum =
+  (typeof GetAiGamesOrderByEnum)[keyof typeof GetAiGamesOrderByEnum];

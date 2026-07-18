@@ -3,6 +3,12 @@ import { render } from "vitest-browser-vue";
 
 import { createAppI18n } from "@/i18n";
 
+vi.mock("@/components/pages/User/AiGamesSection.vue", () => ({
+  default: {
+    template: '<section data-testid="ai-games-section" />',
+  },
+}));
+
 vi.mock("@/components/pages/User/UserProfileSection.vue", () => ({
   default: {
     template: '<section data-testid="user-profile-section" />',

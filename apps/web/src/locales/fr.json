@@ -101,6 +101,22 @@
           "search": "Rechercher des pays",
           "noCountry": "Aucun pays"
         },
+        "AiGamesSection": {
+          "loading": "Chargement des parties contre l’IA…",
+          "loadError": "Impossible de charger les parties contre l’IA.",
+          "wins": "Victoires : {count}",
+          "losses": "Défaites : {count}",
+          "winsLabel": "Victoires",
+          "lossesLabel": "Défaites",
+          "win": "Victoire",
+          "lose": "Défaite",
+          "easy": "Facile",
+          "medium": "Moyen",
+          "hard": "Difficile",
+          "recentGames": "Parties récentes",
+          "noRecentGames": "Aucune partie contre l’IA terminée.",
+          "viewGame": "Voir la partie"
+        },
         "DeleteAccountModal": {
           "title": "Supprimer le compte",
           "description": "Votre compte sera supprimé définitivement.",

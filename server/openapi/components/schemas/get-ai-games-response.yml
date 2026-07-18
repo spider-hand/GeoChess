@@ -1,0 +1,41 @@
+type: object
+required: [total, byDifficulty, recentGames]
+properties:
+  total:
+    $ref: '#/$defs/stats'
+  byDifficulty:
+    type: object
+    required: [easy, medium, hard]
+    properties:
+      easy:
+        $ref: '#/$defs/stats'
+      medium:
+        $ref: '#/$defs/stats'
+      hard:
+        $ref: '#/$defs/stats'
+  recentGames:
+    type: array
+    items:
+      type: object
+      required: [id, difficulty, result, createdAt]
+      properties:
+        id:
+          type: string
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        result:
+          type: string
+          enum: [win, lose]
+        createdAt:
+          type: string
+          format: date-time
+$defs:
+  stats:
+    type: object
+    required: [wins, losses]
+    properties:
+      wins:
+        type: integer
+      losses:
+        type: integer

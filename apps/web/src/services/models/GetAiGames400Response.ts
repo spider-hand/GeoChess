@@ -16,44 +16,44 @@ import { mapValues } from "../runtime";
 /**
  *
  * @export
- * @interface CreateAiGame400Response
+ * @interface GetAiGames400Response
  */
-export interface CreateAiGame400Response {
+export interface GetAiGames400Response {
   /**
    *
    * @type {string}
-   * @memberof CreateAiGame400Response
+   * @memberof GetAiGames400Response
    */
   code: string;
   /**
    *
    * @type {string}
-   * @memberof CreateAiGame400Response
+   * @memberof GetAiGames400Response
    */
   message: string;
 }
 
 /**
- * Check if a given object implements the CreateAiGame400Response interface.
+ * Check if a given object implements the GetAiGames400Response interface.
  */
-export function instanceOfCreateAiGame400Response(
+export function instanceOfGetAiGames400Response(
   value: object,
-): value is CreateAiGame400Response {
+): value is GetAiGames400Response {
   if (!("code" in value) || value["code"] === undefined) return false;
   if (!("message" in value) || value["message"] === undefined) return false;
   return true;
 }
 
-export function CreateAiGame400ResponseFromJSON(
+export function GetAiGames400ResponseFromJSON(
   json: any,
-): CreateAiGame400Response {
-  return CreateAiGame400ResponseFromJSONTyped(json, false);
+): GetAiGames400Response {
+  return GetAiGames400ResponseFromJSONTyped(json, false);
 }
 
-export function CreateAiGame400ResponseFromJSONTyped(
+export function GetAiGames400ResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): CreateAiGame400Response {
+): GetAiGames400Response {
   if (json == null) {
     return json;
   }
@@ -63,14 +63,12 @@ export function CreateAiGame400ResponseFromJSONTyped(
   };
 }
 
-export function CreateAiGame400ResponseToJSON(
-  json: any,
-): CreateAiGame400Response {
-  return CreateAiGame400ResponseToJSONTyped(json, false);
+export function GetAiGames400ResponseToJSON(json: any): GetAiGames400Response {
+  return GetAiGames400ResponseToJSONTyped(json, false);
 }
 
-export function CreateAiGame400ResponseToJSONTyped(
-  value?: CreateAiGame400Response | null,
+export function GetAiGames400ResponseToJSONTyped(
+  value?: GetAiGames400Response | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

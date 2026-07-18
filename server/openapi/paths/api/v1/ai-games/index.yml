@@ -1,3 +1,47 @@
+get:
+  operationId: getAiGames
+  summary: Get current user's ai game history and statistics
+  security:
+    - BearerAuth: []
+  parameters:
+    - name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    - name: sort_by
+      in: query
+      schema:
+        type: string
+        enum: [created_at, updated_at]
+        default: updated_at
+    - name: order_by
+      in: query
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+  responses:
+    '200':
+      description: Ai game history and statistics
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/get-ai-games-response.yml
+    '400':
+      description: Invalid query parameters
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
+    '401':
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml
 post:
   operationId: createAiGame
   summary: Create ai game

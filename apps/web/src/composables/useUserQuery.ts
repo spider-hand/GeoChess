@@ -26,6 +26,7 @@ const useUserQuery = (userId?: MaybeRefOrGetter<string | null>) => {
     queryFn: async () => {
       return usersApi.getCurrentUser();
     },
+    staleTime: Infinity,
   });
 
   const createUserMutation = useMutation({

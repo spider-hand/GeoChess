@@ -15,9 +15,12 @@ from features.ai_games.models import (
     AiGameMoveActor,
     AiGameRecord,
     AiGameResult,
+    AiGamesSortBy,
+    AiGamesSummary,
     AiGameTurn,
     CreateAiGameInput,
     CreateAiGameMoveInput,
+    OrderBy,
     RealtimeAiGameRecord,
 )
 from features.ai_games.queue import enqueue_ai_game_move, enqueue_ai_game_timeout
@@ -38,6 +41,11 @@ class AiGamesService:
 
     def _get_ai_games_ref(self):
         return firebase_db.reference("aiGames", app=get_firebase_app())
+
+    def get_ai_games(
+        self, user_id: str, limit: int, sort_by: AiGamesSortBy, order_by: OrderBy
+    ) -> AiGamesSummary:
+        return self.ai_games_repository.get_user_summary(user_id, limit, sort_by, order_by)
 
     def _get_game_ref(self, game_id: str):
         return self._get_ai_games_ref().child(game_id)

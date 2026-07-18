@@ -101,6 +101,22 @@
           "search": "搜索国家",
           "noCountry": "不选择国家"
         },
+        "AiGamesSection": {
+          "loading": "正在加载人机对战…",
+          "loadError": "无法加载人机对战。",
+          "wins": "胜场：{count}",
+          "losses": "负场：{count}",
+          "winsLabel": "胜场",
+          "lossesLabel": "负场",
+          "win": "胜",
+          "lose": "负",
+          "easy": "简单",
+          "medium": "普通",
+          "hard": "困难",
+          "recentGames": "最近对局",
+          "noRecentGames": "尚无已完成的人机对战。",
+          "viewGame": "查看对局"
+        },
         "DeleteAccountModal": {
           "title": "删除账户",
           "description": "这将永久删除您的账户。",

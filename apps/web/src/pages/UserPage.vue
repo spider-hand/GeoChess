@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import UserProfileSection from "@/components/pages/User/UserProfileSection.vue";
+import AiGamesSection from "@/components/pages/User/AiGamesSection.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import NavigationHeader from "@/components/shared/NavigationHeader.vue";
 
@@ -59,6 +60,7 @@ const selectTab = (tab: UserTab) => {
       </div>
 
       <UserProfileSection v-if="activeTab === 'profile'" />
+      <AiGamesSection v-else-if="activeTab === 'aiGames'" />
     </section>
 
     <NavigationFooter />

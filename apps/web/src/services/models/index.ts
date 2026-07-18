@@ -2,7 +2,6 @@
 /* eslint-disable */
 export * from "./CreateAiGame201Response";
 export * from "./CreateAiGame201ResponseMovesValue";
-export * from "./CreateAiGame400Response";
 export * from "./CreateAiGameMoveRequest";
 export * from "./CreateAiGameRequest";
 export * from "./CreateAiGameResponse";
@@ -14,6 +13,12 @@ export * from "./CreateWithFriendsGame201Response";
 export * from "./CreateWithFriendsGameMoveRequest";
 export * from "./CreateWithFriendsGameResponse";
 export * from "./ErrorResponse";
+export * from "./GetAiGames200Response";
+export * from "./GetAiGames200ResponseByDifficulty";
+export * from "./GetAiGames200ResponseRecentGamesInner";
+export * from "./GetAiGames200ResponseTotal";
+export * from "./GetAiGames400Response";
+export * from "./GetAiGamesResponse";
 export * from "./GetCurrentUser200Response";
 export * from "./GetHealth200Response";
 export * from "./GetHealthResponse";

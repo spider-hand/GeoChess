@@ -111,6 +111,22 @@
           "country": "Country",
           "search": "Search countries",
           "noCountry": "No country"
+        },
+        "AiGamesSection": {
+          "loading": "Loading AI games…",
+          "loadError": "Unable to load AI games.",
+          "wins": "Wins: {count}",
+          "losses": "Losses: {count}",
+          "winsLabel": "Wins",
+          "lossesLabel": "Losses",
+          "win": "Win",
+          "lose": "Lose",
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard",
+          "recentGames": "Recent Games",
+          "noRecentGames": "No completed AI games yet.",
+          "viewGame": "View game"
         }
       }
     },

@@ -32,6 +32,23 @@ def _handle_api_error(error: Exception):
     raise error
 
 
+def _get_list_parameters(event: CustomApiGatewayEvent) -> tuple[int, str, str]:
+    parameters = event.queryStringParameters or {}
+    try:
+        limit = int(parameters.get("limit", "20"))
+    except ValueError as error:
+        raise ApiError(400, "invalid_limit", "limit must be an integer between 1 and 100.") from error
+    sort_by = parameters.get("sort_by", "updated_at")
+    order_by = parameters.get("order_by", "desc")
+    if not 1 <= limit <= 100:
+        raise ApiError(400, "invalid_limit", "limit must be an integer between 1 and 100.")
+    if sort_by not in ("created_at", "updated_at"):
+        raise ApiError(400, "invalid_sort_by", "sort_by must be created_at or updated_at.")
+    if order_by not in ("asc", "desc"):
+        raise ApiError(400, "invalid_order_by", "order_by must be asc or desc.")
+    return limit, sort_by, order_by
+
+
 @dynamic_inject_lambda_context
 @event_parser(model=CustomApiGatewayEvent)
 def create_ai_game(event: CustomApiGatewayEvent, context: LambdaContext):
@@ -42,5 +59,18 @@ def create_ai_game(event: CustomApiGatewayEvent, context: LambdaContext):
         return json_response(
             status_code, ai_game.model_dump(by_alias=True, mode="json"), CORS_HEADERS
         )
+    except Exception as error:
+        return _handle_api_error(error)
+
+
+@dynamic_inject_lambda_context
+@event_parser(model=CustomApiGatewayEvent)
+def get_ai_games(event: CustomApiGatewayEvent, context: LambdaContext):
+    try:
+        limit, sort_by, order_by = _get_list_parameters(event)
+        summary = _ai_games_service.get_ai_games(
+            get_authorized_uid(event), limit, sort_by, order_by
+        )
+        return json_response(200, summary.model_dump(by_alias=True, mode="json"), CORS_HEADERS)
     except Exception as error:
         return _handle_api_error(error)

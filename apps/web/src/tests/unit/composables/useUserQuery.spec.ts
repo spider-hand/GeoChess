@@ -5,6 +5,7 @@ const mockDefaultCreateCurrentUser = vi.fn();
 const mockDefaultGetUser = vi.fn();
 const mockSetQueryData = vi.fn();
 const mockConfiguration = vi.fn();
+const mockUseQuery = vi.fn();
 
 vi.mock("@tanstack/vue-query", () => ({
   useMutation: ({
@@ -28,20 +29,25 @@ vi.mock("@tanstack/vue-query", () => ({
   useQuery: ({
     queryFn,
     enabled,
+    ...options
   }: {
     queryFn: () => Promise<unknown>;
     enabled: { value: boolean };
-  }) => ({
-    data: ref(undefined),
-    isLoading: ref(false),
-    refetch: async () => {
-      if (!enabled.value) {
-        return { data: undefined };
-      }
+  }) => {
+    mockUseQuery(options);
 
-      return { data: await queryFn() };
-    },
-  }),
+    return {
+      data: ref(undefined),
+      isLoading: ref(false),
+      refetch: async () => {
+        if (!enabled.value) {
+          return { data: undefined };
+        }
+
+        return { data: await queryFn() };
+      },
+    };
+  },
 }));
 
 vi.mock("@/composables/useApi", () => ({
@@ -91,6 +97,7 @@ beforeEach(() => {
   mockDefaultGetUser.mockReset();
   mockSetQueryData.mockReset();
   mockConfiguration.mockReset();
+  mockUseQuery.mockReset();
 });
 
 it("should create a user with the provided id token and cache the created user", async () => {
@@ -144,4 +151,14 @@ it("should fetch the current user when a current user id is available", async ()
 
   await expect(refetchUser()).resolves.toEqual({ data: fetchedUser });
   expect(mockDefaultGetUser).toHaveBeenCalledWith(undefined);
+});
+
+it("should keep the current user fresh while switching user-page tabs", async () => {
+  const { default: useUserQuery } = await import("@/composables/useUserQuery");
+
+  useUserQuery("user-123");
+
+  expect(mockUseQuery).toHaveBeenCalledWith(
+    expect.objectContaining({ staleTime: Infinity }),
+  );
 });

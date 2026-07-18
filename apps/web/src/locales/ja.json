@@ -101,6 +101,22 @@
           "search": "国を検索",
           "noCountry": "国を選択しない"
         },
+        "AiGamesSection": {
+          "loading": "AI対戦を読み込み中…",
+          "loadError": "AI対戦を読み込めませんでした。",
+          "wins": "勝ち: {count}",
+          "losses": "負け: {count}",
+          "winsLabel": "勝ち",
+          "lossesLabel": "負け",
+          "win": "勝ち",
+          "lose": "負け",
+          "easy": "かんたん",
+          "medium": "ふつう",
+          "hard": "むずかしい",
+          "recentGames": "最近の対戦",
+          "noRecentGames": "完了したAI対戦はまだありません。",
+          "viewGame": "対戦を見る"
+        },
         "DeleteAccountModal": {
           "title": "アカウントを削除",
           "description": "アカウントは完全に削除されます。",

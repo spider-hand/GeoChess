@@ -71,9 +71,14 @@ const countries = computed(() =>
   border: 1px solid var(--hairline);
   border-radius: var(--radius-token-md);
   padding: 0 var(--spacing-sm);
-  background: var(--on-primary);
+  background: var(--surface-card-dark);
   color: var(--on-dark);
   font: inherit;
+}
+
+.country-select__input:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--info-ring) 50%, transparent);
+  outline-offset: 2px;
 }
 
 .country-select__label {

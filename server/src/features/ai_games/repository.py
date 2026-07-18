@@ -5,7 +5,11 @@ from features.ai_games.models import (
     AiGameHistoryMoveRecord,
     AiGameRecord,
     AiGameResult,
+    AiGamesSortBy,
+    AiGamesSummary,
+    AiGameStats,
     Difficulty,
+    OrderBy,
 )
 
 
@@ -23,6 +27,57 @@ def _map_ai_game_row(row: dict[str, Any]) -> AiGameRecord:
 
 
 class AiGamesRepository:
+    def get_user_summary(
+        self, user_id: str, limit: int, sort_by: AiGamesSortBy, order_by: OrderBy
+    ) -> AiGamesSummary:
+        sort_column = {"created_at": "created_at", "updated_at": "updated_at"}[sort_by]
+        sort_direction = order_by.upper()
+
+        with get_connection() as connection, connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT difficulty, result, COUNT(*) AS count
+                FROM ai_games
+                WHERE user_id = %s
+                  AND result IN ('win', 'lose')
+                GROUP BY difficulty, result
+                """,
+                (user_id,),
+            )
+            stat_rows = cursor.fetchall()
+            cursor.execute(
+                f"""
+                SELECT id, user_id, difficulty, result, created_at, updated_at
+                FROM ai_games
+                WHERE user_id = %s
+                  AND result IN ('win', 'lose')
+                ORDER BY {sort_column} {sort_direction}
+                LIMIT %s
+                """,
+                (user_id, limit),
+            )
+            recent_rows = cursor.fetchall()
+
+        by_difficulty = {
+            difficulty: AiGameStats(wins=0, losses=0)
+            for difficulty in ("easy", "medium", "hard")
+        }
+        for row in stat_rows:
+            stats = by_difficulty[row["difficulty"]]
+            if row["result"] == "win":
+                stats.wins += row["count"]
+            else:
+                stats.losses += row["count"]
+
+        return AiGamesSummary(
+            total=AiGameStats(
+                wins=sum(stats.wins for stats in by_difficulty.values()),
+                losses=sum(stats.losses for stats in by_difficulty.values()),
+            ),
+            byDifficulty=by_difficulty,
+            recentGames=[_map_ai_game_row(row) for row in recent_rows],
+        )
+
     def get_by_id(self, game_id: str) -> AiGameRecord | None:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute(

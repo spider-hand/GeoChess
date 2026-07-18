@@ -35,6 +35,8 @@ components:
       $ref: ./components/schemas/create-ai-game-response.yml
     CreateAiGameRequest:
       $ref: ./components/schemas/create-ai-game-request.yml
+    GetAiGamesResponse:
+      $ref: ./components/schemas/get-ai-games-response.yml
     CreateAiGameResponseMove:
       $ref: ./components/schemas/create-ai-game-response-move.yml
     CreateAiGameMoveRequest:

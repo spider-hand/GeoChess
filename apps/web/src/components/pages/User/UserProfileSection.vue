@@ -239,9 +239,14 @@ const deleteAccount = async () => {
   border: 1px solid var(--hairline);
   border-radius: var(--radius-token-md);
   padding: 0 var(--spacing-sm);
-  background: var(--on-primary);
+  background: var(--surface-card-dark);
   color: var(--on-dark);
   font: inherit;
+}
+
+.user-profile-section__input:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--info-ring) 50%, transparent);
+  outline-offset: 2px;
 }
 
 .user-profile-section__actions {

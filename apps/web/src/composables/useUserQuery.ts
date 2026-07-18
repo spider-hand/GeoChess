@@ -7,6 +7,7 @@ import {
   DefaultApi,
   type CreateCurrentUserRequest,
   type GetCurrentUser200Response,
+  type UpdateUserRequest,
 } from "@/services";
 
 type CreateUserVariables = {
@@ -48,13 +49,36 @@ const useUserQuery = (userId?: MaybeRefOrGetter<string | null>) => {
     },
   });
 
+  const updateUserMutation = useMutation({
+    mutationFn: async (updateUserRequest: UpdateUserRequest) => {
+      return usersApi.updateCurrentUser({
+        createCurrentUserRequest: updateUserRequest,
+      });
+    },
+    onSuccess: (user: GetCurrentUser200Response) => {
+      queryClient.setQueryData(["user", user.userId], user);
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async () => {
+      await usersApi.deleteCurrentUser();
+    },
+  });
+
   return {
     createUser: createUserMutation.mutate,
     createUserAsync: createUserMutation.mutateAsync,
+    deleteUser: deleteUserMutation.mutate,
+    deleteUserAsync: deleteUserMutation.mutateAsync,
+    isDeletingUser: deleteUserMutation.isPending,
     isCreatingUser: createUserMutation.isPending,
     isLoadingUser: userQuery.isLoading,
     refetchUser: userQuery.refetch,
     user: userQuery.data,
+    updateUser: updateUserMutation.mutate,
+    updateUserAsync: updateUserMutation.mutateAsync,
+    isUpdatingUser: updateUserMutation.isPending,
   };
 };
 

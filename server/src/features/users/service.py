@@ -2,13 +2,17 @@ from http import HTTPStatus
 
 from pydantic import ValidationError
 
+from core.firebase import get_firebase_app
 from core.http import ApiError
 from features.users.models import CreateUserInput, UpdateUserInput, UserRecord
 from features.users.repository import UsersRepository
 
 
 class UsersService:
-    def __init__(self, users_repository: UsersRepository | None = None):
+    def __init__(
+        self,
+        users_repository: UsersRepository | None = None,
+    ):
         self.users_repository = users_repository or UsersRepository()
 
     def get_user(self, user_id: str) -> UserRecord:
@@ -82,10 +86,11 @@ class UsersService:
         return updated_user
 
     def delete_user(self, user_id: str) -> None:
-        deleted = self.users_repository.delete(user_id)
-        if not deleted:
-            raise ApiError(
-                status_code=HTTPStatus.NOT_FOUND,
-                code="user_not_found",
-                message="User was not found.",
-            )
+        from firebase_admin import auth as firebase_auth
+
+        self.users_repository.delete(user_id)
+
+        try:
+            firebase_auth.delete_user(user_id, app=get_firebase_app())
+        except firebase_auth.UserNotFoundError:
+            pass

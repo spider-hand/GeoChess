@@ -10,15 +10,15 @@ import {
 const useCountry = () => {
   const { locale } = useI18n();
 
-  const countryName = (countryCode: string) => {
+  const countryName = (countryCode: string): string => {
     return countryDisplayName(countryCode, locale.value);
   };
 
-  const countryLabel = (countryCode: string) => {
+  const countryLabel = (countryCode: string): string => {
     return countryDisplayLabel(countryCode, locale.value);
   };
 
-  const countryFlagAlt = (countryCode: string) => {
+  const countryFlagAlt = (countryCode: string): string => {
     return `${countryDisplayCode(countryCode)} flag`;
   };
 

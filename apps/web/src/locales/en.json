@@ -85,6 +85,33 @@
           "onlinePlayersOne": "{count} player online",
           "onlinePlayersOther": "{count} players online"
         }
+      },
+      "User": {
+        "profile": "Profile",
+        "aiGames": "AI Games",
+        "friendsGames": "Friends Games",
+        "name": "Name",
+        "editProfile": "Edit Profile",
+        "cancel": "Cancel",
+        "saveChanges": "Save Changes",
+        "deleteAccount": "Delete Account",
+        "saveError": "Unable to save your profile. Please try again.",
+        "nameRequiredError": "Name is required.",
+        "DeleteAccountModal": {
+          "title": "Delete Account",
+          "description": "This permanently deletes your account.",
+          "confirmationPlaceholder": "Type Delete to continue",
+          "confirmationError": "Type Delete to continue",
+          "close": "Close delete account dialog",
+          "cancel": "Cancel",
+          "delete": "Delete",
+          "deleteError": "Unable to delete your account. Please try again."
+        },
+        "CountrySelect": {
+          "country": "Country",
+          "search": "Search countries",
+          "noCountry": "No country"
+        }
       }
     },
     "shared": {

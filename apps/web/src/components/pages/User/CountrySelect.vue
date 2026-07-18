@@ -1,0 +1,124 @@
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+
+import countryNames from "@/constants/countryNames";
+import useCountry from "@/composables/useCountry";
+
+const props = defineProps<{ country?: string }>();
+const emit = defineEmits<{ select: [country?: string] }>();
+const { t } = useI18n();
+const { countryFlagAlt, countryFlagSrc, countryName } = useCountry();
+const query = ref("");
+const countries = computed(() =>
+  Object.keys(countryNames)
+    .filter((code) =>
+      countryName(code).toLowerCase().includes(query.value.toLowerCase()),
+    )
+    .sort((a, b) => countryName(a).localeCompare(countryName(b))),
+);
+</script>
+
+<template>
+  <div class="country-select">
+    <span class="country-select__label">
+      {{ t("components.pages.User.CountrySelect.country") }}
+    </span>
+    <input
+      v-model="query"
+      class="country-select__input"
+      :placeholder="t('components.pages.User.CountrySelect.search')"
+      type="search"
+    />
+    <button
+      class="country-select__option"
+      type="button"
+      @click="emit('select', undefined)"
+    >
+      {{ t("components.pages.User.CountrySelect.noCountry") }}
+    </button>
+    <div class="country-select__options">
+      <button
+        v-for="countryCode in countries"
+        :key="countryCode"
+        class="country-select__option"
+        :class="{
+          'country-select__option--selected':
+            countryCode.toUpperCase() === props.country,
+        }"
+        type="button"
+        @click="emit('select', countryCode.toUpperCase())"
+      >
+        <img
+          :src="countryFlagSrc(countryCode)"
+          :alt="countryFlagAlt(countryCode)"
+        />
+        {{ countryName(countryCode) }}
+      </button>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.country-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.country-select__input {
+  min-height: 40px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-token-md);
+  padding: 0 var(--spacing-sm);
+  background: var(--on-primary);
+  color: var(--on-dark);
+  font: inherit;
+}
+
+.country-select__label {
+  color: var(--muted);
+  font-size: var(--font-size-body-sm);
+}
+
+.country-select__options {
+  max-height: 224px;
+  overflow-y: auto;
+}
+
+.country-select__option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  border-radius: var(--radius-token-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 0;
+  background: transparent;
+  color: var(--body);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.country-select__option:hover {
+  background-color: var(--surface-elevated-dark);
+  color: var(--on-dark);
+}
+
+.country-select__option:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--info-ring) 50%, transparent);
+  outline-offset: 2px;
+}
+
+.country-select__option--selected {
+  color: var(--primary);
+}
+
+.country-select__option img {
+  width: 20px;
+  height: auto;
+}
+</style>

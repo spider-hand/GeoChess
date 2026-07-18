@@ -85,6 +85,31 @@
           "onlinePlayersOne": "オンライン {count} 人",
           "onlinePlayersOther": "オンライン {count} 人"
         }
+      },
+      "User": {
+        "profile": "プロフィール",
+        "aiGames": "AI対戦",
+        "friendsGames": "フレンド対戦",
+        "name": "名前",
+        "editProfile": "プロフィールを編集",
+        "cancel": "キャンセル",
+        "saveChanges": "変更を保存",
+        "deleteAccount": "アカウントを削除",
+        "saveError": "プロフィールを保存できませんでした。",
+        "CountrySelect": {
+          "country": "国",
+          "search": "国を検索",
+          "noCountry": "国を選択しない"
+        },
+        "DeleteAccountModal": {
+          "title": "アカウントを削除",
+          "description": "アカウントは完全に削除されます。",
+          "confirmationPlaceholder": "続行するには Delete と入力",
+          "close": "アカウント削除ダイアログを閉じる",
+          "cancel": "キャンセル",
+          "delete": "削除",
+          "deleteError": "アカウントを削除できませんでした。"
+        }
       }
     },
     "shared": {

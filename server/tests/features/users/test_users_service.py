@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -88,3 +88,17 @@ def test_update_user_updates_country_when_provided():
         "Taylor Swift",
         "US",
     )
+
+
+def test_delete_user_removes_the_postgresql_and_firebase_accounts():
+    users_repository = MagicMock()
+    service = UsersService(users_repository=users_repository)
+
+    with (
+        patch("features.users.service.get_firebase_app", return_value=MagicMock()),
+        patch("firebase_admin.auth.delete_user") as delete_user,
+    ):
+        service.delete_user("user-123")
+
+    users_repository.delete.assert_called_once_with("user-123")
+    delete_user.assert_called_once()

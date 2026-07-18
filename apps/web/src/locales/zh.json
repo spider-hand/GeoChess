@@ -85,6 +85,31 @@
           "onlinePlayersOne": "{count} 名玩家在线",
           "onlinePlayersOther": "{count} 名玩家在线"
         }
+      },
+      "User": {
+        "profile": "个人资料",
+        "aiGames": "人机对战",
+        "friendsGames": "好友对战",
+        "name": "名称",
+        "editProfile": "编辑个人资料",
+        "cancel": "取消",
+        "saveChanges": "保存更改",
+        "deleteAccount": "删除账户",
+        "saveError": "无法保存个人资料。",
+        "CountrySelect": {
+          "country": "国家",
+          "search": "搜索国家",
+          "noCountry": "不选择国家"
+        },
+        "DeleteAccountModal": {
+          "title": "删除账户",
+          "description": "这将永久删除您的账户。",
+          "confirmationPlaceholder": "输入 Delete 以继续",
+          "close": "关闭删除账户对话框",
+          "cancel": "取消",
+          "delete": "删除",
+          "deleteError": "无法删除您的账户。"
+        }
       }
     },
     "shared": {

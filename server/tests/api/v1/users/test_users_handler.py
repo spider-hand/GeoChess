@@ -153,20 +153,15 @@ def test_update_user_returns_existing_row_for_no_op():
     assert body["country"] == "JP"
 
 
-def test_delete_user_returns_404_when_missing():
-    with patch.object(
-        handler._users_service,
-        "delete_user",
-        side_effect=ApiError(404, "user_not_found", "User was not found."),
-    ):
+def test_delete_user_returns_204():
+    with patch.object(handler._users_service, "delete_user") as delete_user:
         response = handler.delete_user(
             make_current_user_event(method="DELETE"),
             MagicMock(),
         )
 
-    assert response["statusCode"] == 404
-    body = json.loads(response["body"])
-    assert body["code"] == "user_not_found"
+    assert response["statusCode"] == 204
+    delete_user.assert_called_once_with("user-123")
 
 
 def test_handler_returns_500_when_authorizer_context_uid_is_missing():

@@ -155,7 +155,7 @@ const handleClick = (event: MouseEvent) => {
 
 .button--danger {
   background-color: var(--danger);
-  color: var(--on-dark);
+  color: var(--on-primary);
 }
 
 .button--danger:hover:not(.button--disabled) {

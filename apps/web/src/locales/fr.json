@@ -85,6 +85,31 @@
           "onlinePlayersOne": "{count} joueur en ligne",
           "onlinePlayersOther": "{count} joueurs en ligne"
         }
+      },
+      "User": {
+        "profile": "Profil",
+        "aiGames": "Parties contre l'IA",
+        "friendsGames": "Parties entre amis",
+        "name": "Nom",
+        "editProfile": "Modifier le profil",
+        "cancel": "Annuler",
+        "saveChanges": "Enregistrer les modifications",
+        "deleteAccount": "Supprimer le compte",
+        "saveError": "Impossible d’enregistrer votre profil.",
+        "CountrySelect": {
+          "country": "Pays",
+          "search": "Rechercher des pays",
+          "noCountry": "Aucun pays"
+        },
+        "DeleteAccountModal": {
+          "title": "Supprimer le compte",
+          "description": "Votre compte sera supprimé définitivement.",
+          "confirmationPlaceholder": "Saisissez Delete pour continuer",
+          "close": "Fermer la boîte de suppression du compte",
+          "cancel": "Annuler",
+          "delete": "Supprimer",
+          "deleteError": "Impossible de supprimer votre compte."
+        }
       }
     },
     "shared": {

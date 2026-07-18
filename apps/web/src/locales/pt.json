@@ -85,6 +85,31 @@
           "onlinePlayersOne": "{count} jogador online",
           "onlinePlayersOther": "{count} jogadores online"
         }
+      },
+      "User": {
+        "profile": "Perfil",
+        "aiGames": "Partidas contra IA",
+        "friendsGames": "Partidas entre amigos",
+        "name": "Nome",
+        "editProfile": "Editar perfil",
+        "cancel": "Cancelar",
+        "saveChanges": "Salvar alterações",
+        "deleteAccount": "Excluir conta",
+        "saveError": "Não foi possível salvar seu perfil.",
+        "CountrySelect": {
+          "country": "País",
+          "search": "Pesquisar países",
+          "noCountry": "Nenhum país"
+        },
+        "DeleteAccountModal": {
+          "title": "Excluir conta",
+          "description": "Sua conta será excluída permanentemente.",
+          "confirmationPlaceholder": "Digite Delete para continuar",
+          "close": "Fechar diálogo de exclusão da conta",
+          "cancel": "Cancelar",
+          "delete": "Excluir",
+          "deleteError": "Não foi possível excluir sua conta."
+        }
       }
     },
     "shared": {

@@ -85,6 +85,31 @@
           "onlinePlayersOne": "{count} Spieler online",
           "onlinePlayersOther": "{count} Spieler online"
         }
+      },
+      "User": {
+        "profile": "Profil",
+        "aiGames": "KI-Spiele",
+        "friendsGames": "Freundesspiele",
+        "name": "Name",
+        "editProfile": "Profil bearbeiten",
+        "cancel": "Abbrechen",
+        "saveChanges": "Änderungen speichern",
+        "deleteAccount": "Konto löschen",
+        "saveError": "Profil konnte nicht gespeichert werden.",
+        "CountrySelect": {
+          "country": "Land",
+          "search": "Länder suchen",
+          "noCountry": "Kein Land"
+        },
+        "DeleteAccountModal": {
+          "title": "Konto löschen",
+          "description": "Dadurch wird dein Konto dauerhaft gelöscht.",
+          "confirmationPlaceholder": "Zum Fortfahren Delete eingeben",
+          "close": "Dialog zum Löschen des Kontos schließen",
+          "cancel": "Abbrechen",
+          "delete": "Löschen",
+          "deleteError": "Konto konnte nicht gelöscht werden."
+        }
       }
     },
     "shared": {

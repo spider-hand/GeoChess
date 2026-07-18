@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/vue-query";
 
 import useApi from "@/composables/useApi";
+import { useAuth } from "@/composables/useAuth";
 import {
   DefaultApi,
   type CreateAiGame201Response,
@@ -10,6 +11,7 @@ import {
 
 const useAiGameQuery = () => {
   const { apiConfig } = useApi();
+  const { isRegisteredUser } = useAuth();
   const aiGameApi = new DefaultApi(apiConfig);
   const aiGamesQuery = useQuery({
     queryKey: ["ai-games", 5, "updated_at", "desc"],
@@ -19,6 +21,7 @@ const useAiGameQuery = () => {
         sortBy: "updated_at",
         orderBy: "desc",
       }),
+    enabled: isRegisteredUser,
     staleTime: Infinity,
   });
 

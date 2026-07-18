@@ -33,12 +33,10 @@ it("should render the default state properly", async () => {
   await expect.element(getByTestId("game-map")).toBeVisible();
 });
 
-it("should open and close the map modal", async () => {
-  const onClose = vi.fn();
+it("should retain the map after it has been opened", async () => {
   const onOpen = vi.fn();
-  const { container, getByRole } = renderGameMapModal({
+  const { container, getByRole, rerender } = renderGameMapModal({
     isOpen: false,
-    onClose,
     onOpen,
   });
 
@@ -46,6 +44,33 @@ it("should open and close the map modal", async () => {
 
   await getByRole("button", { name: "Show map" }).click();
   expect(onOpen).toHaveBeenCalledTimes(1);
+
+  await rerender({
+    isFinished: false,
+    isOpen: true,
+    markers: [],
+  });
+  expect(container.querySelectorAll('[data-testid="game-map"]')).toHaveLength(
+    1,
+  );
+
+  await rerender({
+    isFinished: false,
+    isOpen: false,
+    markers: [],
+  });
+  expect(container.querySelectorAll('[data-testid="game-map"]')).toHaveLength(
+    1,
+  );
+
+  await rerender({
+    isFinished: false,
+    isOpen: true,
+    markers: [],
+  });
+  expect(container.querySelectorAll('[data-testid="game-map"]')).toHaveLength(
+    1,
+  );
 });
 
 it("should emit close when the close button is clicked", async () => {

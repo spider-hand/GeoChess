@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Map, X } from "@lucide/vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import GameMap from "@/components/pages/Game/GameMap.vue";
@@ -22,6 +23,16 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const hasOpened = ref(props.isOpen);
+
+watch(
+  () => props.isOpen,
+  (isOpen) => {
+    if (isOpen) {
+      hasOpened.value = true;
+    }
+  },
+);
 
 const emitClose = () => {
   emit("close");
@@ -41,7 +52,12 @@ const emitOpen = () => {
     <Map :size="20" aria-hidden="true" />
   </IconButton>
 
-  <div v-if="props.isOpen" class="game-map-modal" role="presentation">
+  <div
+    v-if="hasOpened"
+    v-show="props.isOpen"
+    class="game-map-modal"
+    role="presentation"
+  >
     <div
       class="game-map-modal__panel"
       role="dialog"

@@ -1,6 +1,8 @@
 # GeoChess
 
-A location-based multiplayer strategy game
+A a fast-paced geography strategy game where you claim neighboring countries and outsmart your opponents
+
+**[geochess.org](https://geochess.org/)**
 
 ## Setup
 
@@ -34,3 +36,16 @@ Refer to the server setup guide for AWS SSO authentication and profile configura
 - Message Queue: AWS SQS
 - Hosting: Cloudflare
 - Infrastructure: SST
+
+## Contribution
+
+- Bug fix PRs are always appreciated.
+- UI changes or new features should not be submitted without prior discussion. Please open an issue first to propose and discuss them.
+
+Thanks for your understanding and contributions.
+
+## License
+
+[MIT](./LICENSE)
+
+Copyright (c) 2026-present, Akinori Hoshina

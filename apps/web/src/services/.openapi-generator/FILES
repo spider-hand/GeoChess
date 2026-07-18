@@ -8,6 +8,7 @@ models/CreateAiGameMoveRequest.ts
 models/CreateAiGameRequest.ts
 models/CreateAiGameResponse.ts
 models/CreateAiGameResponseMove.ts
+models/CreateCurrentUser200Response.ts
 models/CreateCurrentUserRequest.ts
 models/CreateUserRequest.ts
 models/CreateUserResponse.ts
@@ -15,13 +16,10 @@ models/CreateWithFriendsGame201Response.ts
 models/CreateWithFriendsGameMoveRequest.ts
 models/CreateWithFriendsGameResponse.ts
 models/ErrorResponse.ts
-models/GetAiGames200Response.ts
-models/GetAiGames200ResponseByDifficulty.ts
-models/GetAiGames200ResponseByDifficultyEasy.ts
-models/GetAiGames200ResponseRecentGamesInner.ts
+models/GetAiGames200ResponseInner.ts
 models/GetAiGames400Response.ts
-models/GetAiGamesResponse.ts
 models/GetCurrentUser200Response.ts
+models/GetCurrentUserResponse.ts
 models/GetHealth200Response.ts
 models/GetHealthResponse.ts
 models/GetUserResponse.ts

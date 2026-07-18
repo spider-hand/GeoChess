@@ -16,83 +16,83 @@ import { mapValues } from "../runtime";
 /**
  *
  * @export
- * @interface GetCurrentUser200Response
+ * @interface GetCurrentUserResponse
  */
-export interface GetCurrentUser200Response {
+export interface GetCurrentUserResponse {
   /**
    *
    * @type {string}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   userId: string;
   /**
    *
    * @type {string}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   displayName: string;
   /**
    *
    * @type {string}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   country?: string;
   /**
    *
    * @type {number}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   aiEasyWins: number;
   /**
    *
    * @type {number}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   aiEasyLosses: number;
   /**
    *
    * @type {number}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   aiMediumWins: number;
   /**
    *
    * @type {number}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   aiMediumLosses: number;
   /**
    *
    * @type {number}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   aiHardWins: number;
   /**
    *
    * @type {number}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   aiHardLosses: number;
   /**
    *
    * @type {Date}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   createdAt: Date;
   /**
    *
    * @type {Date}
-   * @memberof GetCurrentUser200Response
+   * @memberof GetCurrentUserResponse
    */
   updatedAt: Date;
 }
 
 /**
- * Check if a given object implements the GetCurrentUser200Response interface.
+ * Check if a given object implements the GetCurrentUserResponse interface.
  */
-export function instanceOfGetCurrentUser200Response(
+export function instanceOfGetCurrentUserResponse(
   value: object,
-): value is GetCurrentUser200Response {
+): value is GetCurrentUserResponse {
   if (!("userId" in value) || value["userId"] === undefined) return false;
   if (!("displayName" in value) || value["displayName"] === undefined)
     return false;
@@ -113,16 +113,16 @@ export function instanceOfGetCurrentUser200Response(
   return true;
 }
 
-export function GetCurrentUser200ResponseFromJSON(
+export function GetCurrentUserResponseFromJSON(
   json: any,
-): GetCurrentUser200Response {
-  return GetCurrentUser200ResponseFromJSONTyped(json, false);
+): GetCurrentUserResponse {
+  return GetCurrentUserResponseFromJSONTyped(json, false);
 }
 
-export function GetCurrentUser200ResponseFromJSONTyped(
+export function GetCurrentUserResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): GetCurrentUser200Response {
+): GetCurrentUserResponse {
   if (json == null) {
     return json;
   }
@@ -141,14 +141,14 @@ export function GetCurrentUser200ResponseFromJSONTyped(
   };
 }
 
-export function GetCurrentUser200ResponseToJSON(
+export function GetCurrentUserResponseToJSON(
   json: any,
-): GetCurrentUser200Response {
-  return GetCurrentUser200ResponseToJSONTyped(json, false);
+): GetCurrentUserResponse {
+  return GetCurrentUserResponseToJSONTyped(json, false);
 }
 
-export function GetCurrentUser200ResponseToJSONTyped(
-  value?: GetCurrentUser200Response | null,
+export function GetCurrentUserResponseToJSONTyped(
+  value?: GetCurrentUserResponse | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

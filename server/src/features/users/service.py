@@ -4,7 +4,12 @@ from pydantic import ValidationError
 
 from core.firebase import get_firebase_app
 from core.http import ApiError
-from features.users.models import CreateUserInput, UpdateUserInput, UserRecord
+from features.users.models import (
+    CreateUserInput,
+    CurrentUserRecord,
+    UpdateUserInput,
+    UserRecord,
+)
 from features.users.repository import UsersRepository
 
 
@@ -17,6 +22,17 @@ class UsersService:
 
     def get_user(self, user_id: str) -> UserRecord:
         user = self.users_repository.get_by_id(user_id)
+        if user is None:
+            raise ApiError(
+                status_code=HTTPStatus.NOT_FOUND,
+                code="user_not_found",
+                message="User was not found.",
+            )
+
+        return user
+
+    def get_current_user(self, user_id: str) -> CurrentUserRecord:
+        user = self.users_repository.get_current_by_id(user_id)
         if user is None:
             raise ApiError(
                 status_code=HTTPStatus.NOT_FOUND,

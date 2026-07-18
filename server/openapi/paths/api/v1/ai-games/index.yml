@@ -1,6 +1,6 @@
 get:
   operationId: getAiGames
-  summary: Get current user's ai game history and statistics
+  summary: List current user's completed ai games
   security:
     - BearerAuth: []
   parameters:
@@ -25,7 +25,7 @@ get:
         default: desc
   responses:
     '200':
-      description: Ai game history and statistics
+      description: Completed ai games
       content:
         application/json:
           schema:

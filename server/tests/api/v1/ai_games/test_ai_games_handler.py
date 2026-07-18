@@ -2,15 +2,17 @@ import json
 from unittest.mock import MagicMock, patch
 
 from api.v1.ai_games import handler
-from features.ai_games.models import RealtimeAiGameRecord
+from features.ai_games.models import AiGameRecord, RealtimeAiGameRecord
 from tests.factories.http_events import make_api_gateway_event
 
 
-def make_event(body=None, game_id="game-123", authenticated_uid="user-123"):
+def make_event(
+    body=None, game_id="game-123", authenticated_uid="user-123", method="POST"
+):
     return make_api_gateway_event(
-        route_key="POST /api/v1/ai-games",
+        route_key=f"{method} /api/v1/ai-games",
         raw_path="/api/v1/ai-games",
-        method="POST",
+        method=method,
         body=body,
         path_parameters={"gameId": game_id},
         authenticated_uid=authenticated_uid,
@@ -33,6 +35,37 @@ def make_realtime_ai_game():
             "updatedAt": 1751155200000,
         }
     )
+
+
+def make_ai_game():
+    return AiGameRecord.model_validate(
+        {
+            "id": "game-123",
+            "userId": "user-123",
+            "difficulty": "medium",
+            "result": "win",
+            "createdAt": "2026-07-18T00:00:00Z",
+            "updatedAt": "2026-07-18T00:01:00Z",
+        }
+    )
+
+
+def test_get_ai_games_returns_a_list_of_completed_games():
+    with patch.object(handler._ai_games_service, "get_ai_games", return_value=[make_ai_game()]):
+        response = handler.get_ai_games(make_event(method="GET"), MagicMock())
+
+    assert response["statusCode"] == 200
+    body = json.loads(response["body"])
+    assert body == [
+        {
+            "id": "game-123",
+            "userId": "user-123",
+            "difficulty": "medium",
+            "result": "win",
+            "createdAt": "2026-07-18T00:00:00Z",
+            "updatedAt": "2026-07-18T00:01:00Z",
+        }
+    ]
 
 
 def test_create_ai_game_returns_201():

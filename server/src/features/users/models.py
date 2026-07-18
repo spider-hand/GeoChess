@@ -21,6 +21,15 @@ class UserRecord(BaseModel):
     updated_at: datetime = Field(alias="updatedAt")
 
 
+class CurrentUserRecord(UserRecord):
+    ai_easy_wins: int = Field(alias="aiEasyWins")
+    ai_easy_losses: int = Field(alias="aiEasyLosses")
+    ai_medium_wins: int = Field(alias="aiMediumWins")
+    ai_medium_losses: int = Field(alias="aiMediumLosses")
+    ai_hard_wins: int = Field(alias="aiHardWins")
+    ai_hard_losses: int = Field(alias="aiHardLosses")
+
+
 class CreateUserInput(BaseModel):
     display_name: DisplayName = Field(alias="displayName")
     country: CountryCode | None = None

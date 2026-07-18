@@ -17,10 +17,11 @@ import type {
   CreateAiGame201Response,
   CreateAiGameMoveRequest,
   CreateAiGameRequest,
+  CreateCurrentUser200Response,
   CreateCurrentUserRequest,
   CreateWithFriendsGame201Response,
   CreateWithFriendsGameMoveRequest,
-  GetAiGames200Response,
+  GetAiGames200ResponseInner,
   GetAiGames400Response,
   GetCurrentUser200Response,
   JoinWithFriendsGame200Response,
@@ -34,14 +35,16 @@ import {
   CreateAiGameMoveRequestToJSON,
   CreateAiGameRequestFromJSON,
   CreateAiGameRequestToJSON,
+  CreateCurrentUser200ResponseFromJSON,
+  CreateCurrentUser200ResponseToJSON,
   CreateCurrentUserRequestFromJSON,
   CreateCurrentUserRequestToJSON,
   CreateWithFriendsGame201ResponseFromJSON,
   CreateWithFriendsGame201ResponseToJSON,
   CreateWithFriendsGameMoveRequestFromJSON,
   CreateWithFriendsGameMoveRequestToJSON,
-  GetAiGames200ResponseFromJSON,
-  GetAiGames200ResponseToJSON,
+  GetAiGames200ResponseInnerFromJSON,
+  GetAiGames200ResponseInnerToJSON,
   GetAiGames400ResponseFromJSON,
   GetAiGames400ResponseToJSON,
   GetCurrentUser200ResponseFromJSON,
@@ -231,7 +234,7 @@ export class DefaultApi extends runtime.BaseAPI {
   async createCurrentUserRaw(
     requestParameters: CreateCurrentUserOperationRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetCurrentUser200Response>> {
+  ): Promise<runtime.ApiResponse<CreateCurrentUser200Response>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -263,7 +266,7 @@ export class DefaultApi extends runtime.BaseAPI {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetCurrentUser200ResponseFromJSON(jsonValue),
+      CreateCurrentUser200ResponseFromJSON(jsonValue),
     );
   }
 
@@ -273,7 +276,7 @@ export class DefaultApi extends runtime.BaseAPI {
   async createCurrentUser(
     requestParameters: CreateCurrentUserOperationRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetCurrentUser200Response> {
+  ): Promise<CreateCurrentUser200Response> {
     const response = await this.createCurrentUserRaw(
       requestParameters,
       initOverrides,
@@ -439,12 +442,12 @@ export class DefaultApi extends runtime.BaseAPI {
   }
 
   /**
-   * Get current user\'s ai game history and statistics
+   * List current user\'s completed ai games
    */
   async getAiGamesRaw(
     requestParameters: GetAiGamesRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetAiGames200Response>> {
+  ): Promise<runtime.ApiResponse<Array<GetAiGames200ResponseInner>>> {
     const queryParameters: any = {};
 
     if (requestParameters["limit"] != null) {
@@ -483,17 +486,17 @@ export class DefaultApi extends runtime.BaseAPI {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetAiGames200ResponseFromJSON(jsonValue),
+      jsonValue.map(GetAiGames200ResponseInnerFromJSON),
     );
   }
 
   /**
-   * Get current user\'s ai game history and statistics
+   * List current user\'s completed ai games
    */
   async getAiGames(
     requestParameters: GetAiGamesRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetAiGames200Response> {
+  ): Promise<Array<GetAiGames200ResponseInner>> {
     const response = await this.getAiGamesRaw(requestParameters, initOverrides);
     return await response.value();
   }
@@ -550,7 +553,7 @@ export class DefaultApi extends runtime.BaseAPI {
   async getUserRaw(
     requestParameters: GetUserRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetCurrentUser200Response>> {
+  ): Promise<runtime.ApiResponse<CreateCurrentUser200Response>> {
     if (requestParameters["userId"] == null) {
       throw new runtime.RequiredError(
         "userId",
@@ -588,7 +591,7 @@ export class DefaultApi extends runtime.BaseAPI {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetCurrentUser200ResponseFromJSON(jsonValue),
+      CreateCurrentUser200ResponseFromJSON(jsonValue),
     );
   }
 
@@ -598,7 +601,7 @@ export class DefaultApi extends runtime.BaseAPI {
   async getUser(
     requestParameters: GetUserRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetCurrentUser200Response> {
+  ): Promise<CreateCurrentUser200Response> {
     const response = await this.getUserRaw(requestParameters, initOverrides);
     return await response.value();
   }

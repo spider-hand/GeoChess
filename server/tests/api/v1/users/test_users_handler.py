@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 from api.v1.users import handler
 from core.http import ApiError
-from features.users.models import UserRecord
+from features.users.models import CurrentUserRecord, UserRecord
 from tests.factories.http_events import make_api_gateway_event
 
 
@@ -45,6 +45,24 @@ def make_user(display_name="Taylor Swift", country=None):
     )
 
 
+def make_current_user(display_name="Taylor Swift", country=None):
+    return CurrentUserRecord.model_validate(
+        {
+            "userId": "user-123",
+            "displayName": display_name,
+            "country": country,
+            "aiEasyWins": 6,
+            "aiEasyLosses": 1,
+            "aiMediumWins": 4,
+            "aiMediumLosses": 2,
+            "aiHardWins": 2,
+            "aiHardLosses": 1,
+            "createdAt": "2026-06-28T00:00:00Z",
+            "updatedAt": "2026-06-28T00:00:00Z",
+        }
+    )
+
+
 def test_get_user_returns_200_for_another_authenticated_user():
     with patch.object(handler._users_service, "get_user", return_value=make_user(country="JP")):
         response = handler.get_user(
@@ -56,6 +74,7 @@ def test_get_user_returns_200_for_another_authenticated_user():
     body = json.loads(response["body"])
     assert body["userId"] == "user-123"
     assert body["country"] == "JP"
+    assert "aiEasyWins" not in body
 
 
 def test_get_user_returns_404_when_missing():
@@ -74,8 +93,10 @@ def test_get_user_returns_404_when_missing():
     assert body["code"] == "user_not_found"
 
 
-def test_get_current_user_returns_200_for_authenticated_user():
-    with patch.object(handler._users_service, "get_user", return_value=make_user(country="JP")):
+def test_get_current_user_returns_200_with_ai_game_counters():
+    with patch.object(
+        handler._users_service, "get_current_user", return_value=make_current_user(country="JP")
+    ):
         response = handler.get_current_user(
             make_current_user_event(method="GET"),
             MagicMock(),
@@ -85,6 +106,8 @@ def test_get_current_user_returns_200_for_authenticated_user():
     body = json.loads(response["body"])
     assert body["userId"] == "user-123"
     assert body["country"] == "JP"
+    assert body["aiEasyWins"] == 6
+    assert body["aiHardLosses"] == 1
 
 
 def test_create_user_returns_existing_row_without_validating_body():

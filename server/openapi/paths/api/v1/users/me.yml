@@ -9,7 +9,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: ../../../../components/schemas/get-user-response.yml
+            $ref: ../../../../components/schemas/get-current-user-response.yml
     '401':
       description: Authentication failed
       content:

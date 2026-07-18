@@ -3,7 +3,7 @@ import { ref } from "vue";
 
 const mockDefaultCreateCurrentUser = vi.fn();
 const mockDefaultGetUser = vi.fn();
-const mockSetQueryData = vi.fn();
+const mockInvalidateQueries = vi.fn();
 const mockConfiguration = vi.fn();
 const mockUseQuery = vi.fn();
 
@@ -24,7 +24,7 @@ vi.mock("@tanstack/vue-query", () => ({
     isPending: false,
   }),
   useQueryClient: () => ({
-    setQueryData: mockSetQueryData,
+    invalidateQueries: mockInvalidateQueries,
   }),
   useQuery: ({
     queryFn,
@@ -95,12 +95,12 @@ vi.mock("@/services", async () => {
 beforeEach(() => {
   mockDefaultCreateCurrentUser.mockReset();
   mockDefaultGetUser.mockReset();
-  mockSetQueryData.mockReset();
+  mockInvalidateQueries.mockReset();
   mockConfiguration.mockReset();
   mockUseQuery.mockReset();
 });
 
-it("should create a user with the provided id token and cache the created user", async () => {
+it("should create a user with the provided id token and invalidate the current user", async () => {
   const createdUser = {
     userId: "user-123",
     displayName: "Taylor Swift",
@@ -129,10 +129,9 @@ it("should create a user with the provided id token and cache the created user",
       displayName: "Taylor Swift",
     },
   });
-  expect(mockSetQueryData).toHaveBeenCalledWith(
-    ["user", "user-123"],
-    createdUser,
-  );
+  expect(mockInvalidateQueries).toHaveBeenCalledWith({
+    queryKey: ["user", "user-123"],
+  });
 });
 
 it("should fetch the current user when a current user id is available", async () => {

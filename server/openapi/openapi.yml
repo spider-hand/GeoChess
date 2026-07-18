@@ -51,6 +51,8 @@ components:
       $ref: ./components/schemas/create-with-friends-game-move-request.yml
     GetUserResponse:
       $ref: ./components/schemas/get-user-response.yml
+    GetCurrentUserResponse:
+      $ref: ./components/schemas/get-current-user-response.yml
     CreateUserRequest:
       $ref: ./components/schemas/create-user-request.yml
     CreateUserResponse:

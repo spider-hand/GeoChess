@@ -3,11 +3,21 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { ArrowRight, Signal, SignalHigh, SignalMedium } from "@lucide/vue";
 
+import { useAuth } from "@/composables/useAuth";
 import useAiGameQuery from "@/composables/useAiGameQuery";
 
 const { locale, t } = useI18n();
 const { data, isError, isLoading } = useAiGameQuery();
+const { isLoadingUser, user } = useAuth();
 const difficulties = ["easy", "medium", "hard"] as const;
+const statsByDifficulty = computed(() => ({
+  easy: { wins: user.value?.aiEasyWins, losses: user.value?.aiEasyLosses },
+  medium: {
+    wins: user.value?.aiMediumWins,
+    losses: user.value?.aiMediumLosses,
+  },
+  hard: { wins: user.value?.aiHardWins, losses: user.value?.aiHardLosses },
+}));
 const difficultyIcons = {
   easy: SignalMedium,
   medium: SignalHigh,
@@ -26,10 +36,10 @@ const resultLabel = (result: "win" | "lose") =>
 
 <template>
   <section class="ai-games-section">
-    <p v-if="isLoading">
+    <p v-if="isLoading || isLoadingUser">
       {{ t("components.pages.User.AiGamesSection.loading") }}
     </p>
-    <p v-else-if="isError">
+    <p v-else-if="isError || !user">
       {{ t("components.pages.User.AiGamesSection.loadError") }}
     </p>
     <template v-else-if="data">
@@ -48,7 +58,7 @@ const resultLabel = (result: "win" | "lose") =>
               <div
                 class="ai-games-section__outcome ai-games-section__outcome--won"
               >
-                <strong>{{ data.byDifficulty[difficulty].wins }}</strong>
+                <strong>{{ statsByDifficulty[difficulty].wins }}</strong>
                 <span>{{
                   t("components.pages.User.AiGamesSection.winsLabel")
                 }}</span>
@@ -56,7 +66,7 @@ const resultLabel = (result: "win" | "lose") =>
               <div
                 class="ai-games-section__outcome ai-games-section__outcome--lost"
               >
-                <strong>{{ data.byDifficulty[difficulty].losses }}</strong>
+                <strong>{{ statsByDifficulty[difficulty].losses }}</strong>
                 <span>{{
                   t("components.pages.User.AiGamesSection.lossesLabel")
                 }}</span>
@@ -67,11 +77,11 @@ const resultLabel = (result: "win" | "lose") =>
       </div>
       <article class="ai-games-section__history data-table-card">
         <h2>{{ t("components.pages.User.AiGamesSection.recentGames") }}</h2>
-        <p v-if="data.recentGames.length === 0">
+        <p v-if="data.length === 0">
           {{ t("components.pages.User.AiGamesSection.noRecentGames") }}
         </p>
         <ul v-else class="ai-games-section__games">
-          <li v-for="game in data.recentGames" :key="game.id">
+          <li v-for="game in data" :key="game.id">
             <div class="ai-games-section__game-summary">
               <span class="ai-games-section__difficulty">
                 {{ difficultyLabel(game.difficulty) }}

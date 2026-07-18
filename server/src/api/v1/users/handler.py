@@ -62,7 +62,7 @@ def get_user(event: CustomApiGatewayEvent, context: LambdaContext):
 @event_parser(model=CustomApiGatewayEvent)
 def get_current_user(event: CustomApiGatewayEvent, context: LambdaContext):
     try:
-        user = _users_service.get_user(_get_current_user_id(event))
+        user = _users_service.get_current_user(_get_current_user_id(event))
         return json_response(
             HTTPStatus.OK, user.model_dump(by_alias=True, mode="json"), CORS_HEADERS
         )

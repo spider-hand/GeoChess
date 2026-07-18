@@ -1,7 +1,7 @@
 from typing import Any
 
 from core.db import get_connection
-from features.users.models import UserRecord
+from features.users.models import CurrentUserRecord, UserRecord
 
 
 def _map_user_row(row: dict[str, Any]) -> UserRecord:
@@ -16,7 +16,46 @@ def _map_user_row(row: dict[str, Any]) -> UserRecord:
     )
 
 
+def _map_current_user_row(row: dict[str, Any]) -> CurrentUserRecord:
+    return CurrentUserRecord.model_validate(
+        {
+            "userId": row["user_id"],
+            "displayName": row["display_name"],
+            "country": row["country"],
+            "aiEasyWins": row["ai_easy_total_win"],
+            "aiEasyLosses": row["ai_easy_total_lose"],
+            "aiMediumWins": row["ai_medium_total_win"],
+            "aiMediumLosses": row["ai_medium_total_lose"],
+            "aiHardWins": row["ai_hard_total_win"],
+            "aiHardLosses": row["ai_hard_total_lose"],
+            "createdAt": row["created_at"],
+            "updatedAt": row["updated_at"],
+        }
+    )
+
+
 class UsersRepository:
+    def get_current_by_id(self, user_id: str) -> CurrentUserRecord | None:
+        with get_connection() as connection, connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT user_id, display_name, country,
+                       ai_easy_total_win, ai_easy_total_lose,
+                       ai_medium_total_win, ai_medium_total_lose,
+                       ai_hard_total_win, ai_hard_total_lose,
+                       created_at, updated_at
+                FROM users
+                WHERE user_id = %s
+                """,
+                (user_id,),
+            )
+            row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        return _map_current_user_row(row)
+
     def get_by_id(self, user_id: str) -> UserRecord | None:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute(

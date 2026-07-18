@@ -3,12 +3,21 @@ import { render } from "vitest-browser-vue";
 import { ref } from "vue";
 
 import { createAppI18n } from "@/i18n";
-import type { GetAiGamesResponse } from "@/services";
+import type { GetAiGames200ResponseInner } from "@/services";
 
 const mocks = vi.hoisted(() => ({
-  data: undefined as GetAiGamesResponse | undefined,
+  data: undefined as GetAiGames200ResponseInner[] | undefined,
   isError: false,
   isLoading: false,
+  isLoadingUser: false,
+  user: {
+    aiEasyWins: 6,
+    aiEasyLosses: 1,
+    aiMediumWins: 4,
+    aiMediumLosses: 2,
+    aiHardWins: 2,
+    aiHardLosses: 1,
+  },
 }));
 
 vi.mock("@/composables/useAiGameQuery", () => ({
@@ -19,25 +28,25 @@ vi.mock("@/composables/useAiGameQuery", () => ({
   }),
 }));
 
+vi.mock("@/composables/useAuth", () => ({
+  useAuth: () => ({
+    isLoadingUser: ref(mocks.isLoadingUser),
+    user: ref(mocks.user),
+  }),
+}));
+
 const AiGamesSection = (
   await import("@/components/pages/User/AiGamesSection.vue")
 ).default;
 
-const response: GetAiGamesResponse = {
-  byDifficulty: {
-    easy: { wins: 6, losses: 1 },
-    medium: { wins: 4, losses: 2 },
-    hard: { wins: 2, losses: 1 },
+const response: GetAiGames200ResponseInner[] = [
+  {
+    id: "game-1",
+    difficulty: "hard",
+    result: "win",
+    createdAt: new Date("2026-07-18T00:00:00.000Z"),
   },
-  recentGames: [
-    {
-      id: "game-1",
-      difficulty: "hard",
-      result: "win",
-      createdAt: new Date("2026-07-18T00:00:00.000Z"),
-    },
-  ],
-};
+];
 
 const renderAiGamesSection = () =>
   render(AiGamesSection, {
@@ -50,6 +59,7 @@ beforeEach(() => {
   mocks.data = response;
   mocks.isError = false;
   mocks.isLoading = false;
+  mocks.isLoadingUser = false;
 });
 
 it("should render the default state properly", async () => {
@@ -96,8 +106,16 @@ it.each([
   await expect.element(getByText(message)).toBeVisible();
 });
 
+it("should show loading while the current user is loading", async () => {
+  mocks.isLoadingUser = true;
+
+  const { getByText } = renderAiGamesSection();
+
+  await expect.element(getByText("Loading AI games…")).toBeVisible();
+});
+
 it("should show the empty history message", async () => {
-  mocks.data = { ...response, recentGames: [] };
+  mocks.data = [];
 
   const { getByText } = renderAiGamesSection();
 

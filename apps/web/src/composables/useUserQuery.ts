@@ -45,8 +45,8 @@ const useUserQuery = (userId?: MaybeRefOrGetter<string | null>) => {
         createCurrentUserRequest,
       });
     },
-    onSuccess: (user: GetCurrentUser200Response) => {
-      queryClient.setQueryData(["user", user.userId], user);
+    onSuccess: (user) => {
+      queryClient.invalidateQueries({ queryKey: ["user", user.userId] });
     },
   });
 
@@ -56,8 +56,8 @@ const useUserQuery = (userId?: MaybeRefOrGetter<string | null>) => {
         createCurrentUserRequest: updateUserRequest,
       });
     },
-    onSuccess: (user: GetCurrentUser200Response) => {
-      queryClient.setQueryData(["user", user.userId], user);
+    onSuccess: (user) => {
+      queryClient.invalidateQueries({ queryKey: ["user", user.userId] });
     },
   });
 

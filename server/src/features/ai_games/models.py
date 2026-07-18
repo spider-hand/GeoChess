@@ -23,13 +23,6 @@ class AiGameRecord(BaseModel):
     updated_at: datetime = Field(alias="updatedAt")
 
 
-class AiGamesSummary(BaseModel):
-    by_difficulty: dict[Difficulty, dict[Literal["wins", "losses"], int]] = Field(
-        alias="byDifficulty"
-    )
-    recent_games: list[AiGameRecord] = Field(alias="recentGames")
-
-
 class CreateAiGameInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

@@ -29,7 +29,8 @@ export const useAuth = () => {
 
     return currentUser.value.uid;
   });
-  const { createUserAsync, isCreatingUser, user } = useUserQuery(userId);
+  const { createUserAsync, isCreatingUser, isLoadingUser, refetchUser, user } =
+    useUserQuery(userId);
 
   const isAuthenticatedUser = computed(() => !!currentUser.value);
   const isAnonymousUser = computed(
@@ -82,6 +83,7 @@ export const useAuth = () => {
         },
         idToken,
       });
+      await refetchUser();
     } catch (error) {
       await signOut(firebaseAuth);
       throw error;
@@ -104,11 +106,13 @@ export const useAuth = () => {
     isAuthenticatedUser,
     isRegisteredUser,
     isCreatingUser,
+    isLoadingUser,
     isCurrentUserLoaded,
     signInAnonymously,
     signInWithGoogle,
     signOutUser,
     userCountry,
+    user,
     username,
   };
 };

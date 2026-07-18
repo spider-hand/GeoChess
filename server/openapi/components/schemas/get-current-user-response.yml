@@ -1,0 +1,40 @@
+type: object
+required:
+  - userId
+  - displayName
+  - aiEasyWins
+  - aiEasyLosses
+  - aiMediumWins
+  - aiMediumLosses
+  - aiHardWins
+  - aiHardLosses
+  - createdAt
+  - updatedAt
+properties:
+  userId:
+    type: string
+  displayName:
+    type: string
+  country:
+    type: string
+    minLength: 2
+    maxLength: 2
+    pattern: '^[A-Z]{2}$'
+  aiEasyWins:
+    type: integer
+  aiEasyLosses:
+    type: integer
+  aiMediumWins:
+    type: integer
+  aiMediumLosses:
+    type: integer
+  aiHardWins:
+    type: integer
+  aiHardLosses:
+    type: integer
+  createdAt:
+    type: string
+    format: date-time
+  updatedAt:
+    type: string
+    format: date-time

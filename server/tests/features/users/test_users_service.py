@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from core.http import ApiError
-from features.users.models import UserRecord
+from features.users.models import CurrentUserRecord, UserRecord
 from features.users.service import UsersService
 
 
@@ -17,6 +17,35 @@ def make_user(display_name="Taylor Swift", country=None):
             "updatedAt": "2026-06-28T00:00:00Z",
         }
     )
+
+
+def make_current_user():
+    return CurrentUserRecord.model_validate(
+        {
+            "userId": "user-123",
+            "displayName": "Taylor Swift",
+            "aiEasyWins": 6,
+            "aiEasyLosses": 1,
+            "aiMediumWins": 4,
+            "aiMediumLosses": 2,
+            "aiHardWins": 2,
+            "aiHardLosses": 1,
+            "createdAt": "2026-06-28T00:00:00Z",
+            "updatedAt": "2026-06-28T00:00:00Z",
+        }
+    )
+
+
+def test_get_current_user_returns_ai_game_counters():
+    users_repository = MagicMock()
+    users_repository.get_current_by_id.return_value = make_current_user()
+    service = UsersService(users_repository=users_repository)
+
+    user = service.get_current_user("user-123")
+
+    assert user.ai_easy_wins == 6
+    assert user.ai_hard_losses == 1
+    users_repository.get_current_by_id.assert_called_once_with("user-123")
 
 
 def test_create_user_creates_country_when_provided():

@@ -68,9 +68,13 @@ def create_ai_game(event: CustomApiGatewayEvent, context: LambdaContext):
 def get_ai_games(event: CustomApiGatewayEvent, context: LambdaContext):
     try:
         limit, sort_by, order_by = _get_list_parameters(event)
-        summary = _ai_games_service.get_ai_games(
+        ai_games = _ai_games_service.get_ai_games(
             get_authorized_uid(event), limit, sort_by, order_by
         )
-        return json_response(200, summary.model_dump(by_alias=True, mode="json"), CORS_HEADERS)
+        return json_response(
+            200,
+            [ai_game.model_dump(by_alias=True, mode="json") for ai_game in ai_games],
+            CORS_HEADERS,
+        )
     except Exception as error:
         return _handle_api_error(error)

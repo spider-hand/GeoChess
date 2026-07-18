@@ -16,7 +16,6 @@ from features.ai_games.models import (
     AiGameRecord,
     AiGameResult,
     AiGamesSortBy,
-    AiGamesSummary,
     AiGameTurn,
     CreateAiGameInput,
     CreateAiGameMoveInput,
@@ -44,8 +43,8 @@ class AiGamesService:
 
     def get_ai_games(
         self, user_id: str, limit: int, sort_by: AiGamesSortBy, order_by: OrderBy
-    ) -> AiGamesSummary:
-        return self.ai_games_repository.get_user_summary(user_id, limit, sort_by, order_by)
+    ) -> list[AiGameRecord]:
+        return self.ai_games_repository.list_for_user(user_id, limit, sort_by, order_by)
 
     def _get_game_ref(self, game_id: str):
         return self._get_ai_games_ref().child(game_id)

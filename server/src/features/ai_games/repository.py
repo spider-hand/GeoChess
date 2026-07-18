@@ -6,7 +6,6 @@ from features.ai_games.models import (
     AiGameRecord,
     AiGameResult,
     AiGamesSortBy,
-    AiGamesSummary,
     Difficulty,
     OrderBy,
 )
@@ -26,24 +25,13 @@ def _map_ai_game_row(row: dict[str, Any]) -> AiGameRecord:
 
 
 class AiGamesRepository:
-    def get_user_summary(
+    def list_for_user(
         self, user_id: str, limit: int, sort_by: AiGamesSortBy, order_by: OrderBy
-    ) -> AiGamesSummary:
+    ) -> list[AiGameRecord]:
         sort_column = {"created_at": "created_at", "updated_at": "updated_at"}[sort_by]
         sort_direction = order_by.upper()
 
         with get_connection() as connection, connection.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT difficulty, result, COUNT(*) AS count
-                FROM ai_games
-                WHERE user_id = %s
-                  AND result IN ('win', 'lose')
-                GROUP BY difficulty, result
-                """,
-                (user_id,),
-            )
-            stat_rows = cursor.fetchall()
             cursor.execute(
                 f"""
                 SELECT id, user_id, difficulty, result, created_at, updated_at
@@ -55,23 +43,9 @@ class AiGamesRepository:
                 """,
                 (user_id, limit),
             )
-            recent_rows = cursor.fetchall()
+            rows = cursor.fetchall()
 
-        by_difficulty = {
-            difficulty: {"wins": 0, "losses": 0}
-            for difficulty in ("easy", "medium", "hard")
-        }
-        for row in stat_rows:
-            stats = by_difficulty[row["difficulty"]]
-            if row["result"] == "win":
-                stats["wins"] += row["count"]
-            else:
-                stats["losses"] += row["count"]
-
-        return AiGamesSummary(
-            byDifficulty=by_difficulty,
-            recentGames=[_map_ai_game_row(row) for row in recent_rows],
-        )
+        return [_map_ai_game_row(row) for row in rows]
 
     def get_by_id(self, game_id: str) -> AiGameRecord | None:
         with get_connection() as connection, connection.cursor() as cursor:

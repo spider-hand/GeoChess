@@ -37,6 +37,10 @@ Refer to the server setup guide for AWS SSO authentication and profile configura
 - Hosting: Cloudflare
 - Infrastructure: SST
 
+## Credits
+
+Country data is provided by [REST Countries](https://restcountries.com/).
+
 ## Contribution
 
 - Bug fix PRs are always appreciated.

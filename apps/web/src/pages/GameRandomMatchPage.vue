@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
 import CountdownTimer from "@/components/pages/Game/CountdownTimer.vue";
 import GameMap from "@/components/pages/Game/GameMap.vue";
+import GameMapModal from "@/components/pages/Game/GameMapModal.vue";
 import PathHistoryCard from "@/components/pages/Game/PathHistoryCard.vue";
 import PathResultCard from "@/components/pages/Game/PathResultCard.vue";
 import PlayerMatchupCard from "@/components/pages/Game/PlayerMatchupCard.vue";
@@ -21,6 +22,7 @@ defineOptions({
 });
 
 const turnStatus = computed<MultiplayerTurnStatus>(() => "opponent");
+const isMapModalOpen = ref(false);
 const historySteps = computed<Array<MultiplayerPathStep>>(() => [
   { countryCode: "bb", owner: "neutral", turn: 0 },
   { countryCode: "us", owner: "player", turn: 1 },
@@ -69,6 +71,14 @@ const finishedMarkers = computed<Array<MultiplayerGameMapMarker>>(() => [
       />
     </section>
 
+    <GameMapModal
+      :is-finished="false"
+      :is-open="isMapModalOpen"
+      :markers="[]"
+      @close="isMapModalOpen = false"
+      @open="isMapModalOpen = true"
+    />
+
     <NavigationFooter />
   </main>
 </template>
@@ -106,6 +116,10 @@ const finishedMarkers = computed<Array<MultiplayerGameMapMarker>>(() => [
 @media (max-width: 960px) {
   .game-page__map-card-row {
     flex-direction: column;
+  }
+
+  .game-page__map {
+    display: none;
   }
 }
 </style>

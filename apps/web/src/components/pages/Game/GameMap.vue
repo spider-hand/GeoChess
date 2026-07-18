@@ -20,10 +20,16 @@ defineOptions({
   name: "GameMap",
 });
 
-const props = defineProps<{
-  isFinished: boolean;
-  markers: Array<AiGameMapMarker | MultiplayerGameMapMarker>;
-}>();
+const props = withDefaults(
+  defineProps<{
+    isFinished: boolean;
+    isFullscreen?: boolean;
+    markers: Array<AiGameMapMarker | MultiplayerGameMapMarker>;
+  }>(),
+  {
+    isFullscreen: false,
+  },
+);
 
 const mapElement = useTemplateRef("mapElement");
 const isMapReady = ref(false);
@@ -201,7 +207,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="mapElement" class="game-map" data-testid="game-map" />
+  <div
+    ref="mapElement"
+    class="game-map"
+    :class="{ 'game-map--fullscreen': props.isFullscreen }"
+    data-testid="game-map"
+  />
 </template>
 
 <style scoped>
@@ -210,6 +221,11 @@ onBeforeUnmount(() => {
   width: 100%;
   border-radius: var(--radius-token-xl);
   overflow: hidden;
+}
+
+.game-map--fullscreen {
+  height: 100%;
+  border-radius: 0;
 }
 
 :global(.game-map-marker) {

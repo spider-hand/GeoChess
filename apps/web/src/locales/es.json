@@ -28,6 +28,10 @@
             "ca": "Canadá"
           }
         },
+        "GameMapModal": {
+          "showMap": "Mostrar mapa",
+          "close": "Cerrar mapa"
+        },
         "GameVsAiPage": {
           "playAgain": "Jugar de nuevo",
           "exit": "Salir"

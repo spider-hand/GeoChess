@@ -10,6 +10,7 @@ import useRealtimeAiGame from "@/composables/useRealtimeAiGame";
 import AvailableMovesCard from "@/components/pages/Game/AvailableMovesCard.vue";
 import CountdownTimer from "@/components/pages/Game/CountdownTimer.vue";
 import GameMap from "@/components/pages/Game/GameMap.vue";
+import GameMapModal from "@/components/pages/Game/GameMapModal.vue";
 import PathHistoryCard from "@/components/pages/Game/PathHistoryCard.vue";
 import PathResultCard from "@/components/pages/Game/PathResultCard.vue";
 import PlayerMatchupCard from "@/components/pages/Game/PlayerMatchupCard.vue";
@@ -39,6 +40,7 @@ const { realtimeAiGame, realtimeAiGameError, isLoadingRealtimeAiGame } =
 
 const isSubmittingMove = ref(false);
 const isStartingNewGame = ref(false);
+const isMapModalOpen = ref(false);
 
 const isFinished = computed(() => {
   if (realtimeAiGame.value === null) {
@@ -259,6 +261,14 @@ const handleExit = async () => {
       </div>
     </section>
 
+    <GameMapModal
+      :is-finished="isFinished"
+      :is-open="isMapModalOpen"
+      :markers="mapMarkers"
+      @close="isMapModalOpen = false"
+      @open="isMapModalOpen = true"
+    />
+
     <NavigationFooter />
   </main>
 </template>
@@ -332,6 +342,10 @@ const handleExit = async () => {
 @media (max-width: 960px) {
   .game-page__map-card-row {
     flex-direction: column;
+  }
+
+  .game-page__map {
+    display: none;
   }
 }
 

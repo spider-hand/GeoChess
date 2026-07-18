@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-from features.ai_games.models import AiGameHistoryMoveRecord
 from features.ai_games.repository import AiGamesRepository
 
 
@@ -12,45 +11,11 @@ def make_connection_and_cursor():
     return connection, cursor
 
 
-def make_history_move(
-    move_id="move-1",
-    move_index=0,
-    country="BB",
-    actor="start",
-    user_id=None,
-):
-    return AiGameHistoryMoveRecord.model_validate(
-        {
-            "id": move_id,
-            "gameId": "game-123",
-            "moveIndex": move_index,
-            "country": country,
-            "actor": actor,
-            "userId": user_id,
-        }
-    )
-
-
-def test_finish_game_updates_result_and_persists_history_once():
+def test_finish_game_updates_result_and_user_stats_once():
     connection, cursor = make_connection_and_cursor()
     cursor.fetchone.return_value = {"user_id": "user-123", "difficulty": "medium"}
-    history_moves = [
-        make_history_move(),
-        make_history_move(
-            move_id="move-2",
-            move_index=1,
-            country="CC",
-            actor="player",
-            user_id="user-123",
-        ),
-    ]
-
     with patch("features.ai_games.repository.get_connection", return_value=connection):
-        did_finish = AiGamesRepository().finish_game(
-            "game-123",
-            "win",
-            history_moves,
-        )
+        did_finish = AiGamesRepository().finish_game("game-123", "win")
 
     assert did_finish is True
     assert cursor.execute.call_args_list == [
@@ -86,23 +51,7 @@ def test_finish_game_updates_result_and_persists_history_once():
             {},
         ),
     ]
-    cursor.executemany.assert_called_once_with(
-        """
-                    INSERT INTO ai_game_moves (id, game_id, move_index, country, actor, user_id)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                    """,
-        [
-            (
-                move.id,
-                move.game_id,
-                move.move_index,
-                move.country,
-                move.actor,
-                move.user_id,
-            )
-            for move in history_moves
-        ],
-    )
+    cursor.executemany.assert_not_called()
 
 
 def test_finish_game_returns_false_when_game_was_already_finished():
@@ -110,11 +59,7 @@ def test_finish_game_returns_false_when_game_was_already_finished():
     cursor.fetchone.return_value = None
 
     with patch("features.ai_games.repository.get_connection", return_value=connection):
-        did_finish = AiGamesRepository().finish_game(
-            "game-123",
-            "win",
-            [make_history_move()],
-        )
+        did_finish = AiGamesRepository().finish_game("game-123", "win")
 
     assert did_finish is False
     cursor.execute.assert_called_once_with(
@@ -133,33 +78,12 @@ def test_finish_game_returns_false_when_game_was_already_finished():
 def test_finish_game_skips_user_stats_for_cancelled_games():
     connection, cursor = make_connection_and_cursor()
     cursor.fetchone.return_value = {"user_id": "user-123", "difficulty": "medium"}
-    history_move = make_history_move()
-
     with patch("features.ai_games.repository.get_connection", return_value=connection):
-        did_finish = AiGamesRepository().finish_game(
-            "game-123",
-            "cancelled",
-            [history_move],
-        )
+        did_finish = AiGamesRepository().finish_game("game-123", "cancelled")
 
     assert did_finish is True
     assert cursor.execute.call_count == 1
-    cursor.executemany.assert_called_once_with(
-        """
-                    INSERT INTO ai_game_moves (id, game_id, move_index, country, actor, user_id)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                    """,
-        [
-            (
-                history_move.id,
-                history_move.game_id,
-                history_move.move_index,
-                history_move.country,
-                history_move.actor,
-                history_move.user_id,
-            )
-        ],
-    )
+    cursor.executemany.assert_not_called()
 
 
 def test_delete_expired_games_uses_strict_30_day_cutoff():

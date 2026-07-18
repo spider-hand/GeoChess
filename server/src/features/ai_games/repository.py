@@ -2,7 +2,6 @@ from typing import Any
 
 from core.db import get_connection
 from features.ai_games.models import (
-    AiGameHistoryMoveRecord,
     AiGameRecord,
     AiGameResult,
     AiGamesSortBy,
@@ -94,7 +93,6 @@ class AiGamesRepository:
         self,
         game_id: str,
         result: AiGameResult,
-        moves: list[AiGameHistoryMoveRecord] | None = None,
     ) -> bool:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute(
@@ -112,25 +110,6 @@ class AiGamesRepository:
 
             if row is None:
                 return False
-
-            if moves:
-                cursor.executemany(
-                    """
-                    INSERT INTO ai_game_moves (id, game_id, move_index, country, actor, user_id)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                    """,
-                    [
-                        (
-                            move.id,
-                            move.game_id,
-                            move.move_index,
-                            move.country,
-                            move.actor,
-                            move.user_id,
-                        )
-                        for move in moves
-                    ],
-                )
 
             if result in ("win", "lose"):
                 difficulty = row["difficulty"]

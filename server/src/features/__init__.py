@@ -1,5 +1,4 @@
 from features.ai_games import (
-    AiGameHistoryMoveRecord,
     AiGameRecord,
     AiGamesRepository,
     AiGamesService,
@@ -27,7 +26,6 @@ from features.with_friends_games import (
 )
 
 __all__ = [
-    "AiGameHistoryMoveRecord",
     "AiGameRecord",
     "RealtimeAiGameRecord",
     "RealtimeAiGameMoveRecord",

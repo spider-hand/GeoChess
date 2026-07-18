@@ -1,0 +1,13 @@
+type: array
+items:
+  type: object
+  required: [displayName, wins, losses]
+  properties:
+    displayName:
+      type: string
+    wins:
+      type: integer
+      minimum: 0
+    losses:
+      type: integer
+      minimum: 0

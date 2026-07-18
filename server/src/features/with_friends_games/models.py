@@ -9,17 +9,39 @@ WithFriendsGameResult = Literal["player1_win", "player2_win", "cancelled"]
 WithFriendsGameStatus = Literal["waiting", "starting", "active", "finished"]
 WithFriendsGameTurn = Literal["player1", "player2"]
 WithFriendsGameMoveActor = Literal["player1", "player2"]
+WithFriendsGamesSortBy = Literal["created_at", "updated_at"]
+OrderBy = Literal["asc", "desc"]
 
 
 class WithFriendsGameRecord(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     id: str
-    player1_user_id: str = Field(alias="player1UserId")
+    player1_user_id: str | None = Field(alias="player1UserId")
     player2_user_id: str | None = Field(alias="player2UserId", default=None)
     result: WithFriendsGameResult | None = None
+    expired: bool = False
     created_at: datetime = Field(alias="createdAt")
     updated_at: datetime = Field(alias="updatedAt")
+
+
+class WithFriendsGameHistoryRecord(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    id: str
+    opponent_display_name: str = Field(alias="opponentDisplayName")
+    result: Literal["win", "lose"]
+    expired: bool
+    created_at: datetime = Field(alias="createdAt")
+    updated_at: datetime = Field(alias="updatedAt")
+
+
+class WithFriendsGameStatsRecord(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    display_name: str = Field(alias="displayName")
+    wins: int
+    losses: int
 
 
 class CreateWithFriendsGameJoinInput(BaseModel):

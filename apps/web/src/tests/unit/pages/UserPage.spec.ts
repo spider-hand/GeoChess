@@ -9,6 +9,12 @@ vi.mock("@/components/pages/User/AiGamesSection.vue", () => ({
   },
 }));
 
+vi.mock("@/components/pages/User/FriendsGamesSection.vue", () => ({
+  default: {
+    template: '<section data-testid="friends-games-section" />',
+  },
+}));
+
 vi.mock("@/components/pages/User/UserProfileSection.vue", () => ({
   default: {
     template: '<section data-testid="user-profile-section" />',

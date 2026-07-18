@@ -3,7 +3,9 @@ from features.with_friends_games.models import (
     CreateWithFriendsGameMoveInput,
     RealtimeWithFriendsGameMoveRecord,
     RealtimeWithFriendsGameRecord,
+    WithFriendsGameHistoryRecord,
     WithFriendsGameRecord,
+    WithFriendsGameStatsRecord,
     WithFriendsGameTurn,
 )
 from features.with_friends_games.repository import WithFriendsGamesRepository
@@ -14,7 +16,9 @@ __all__ = [
     "CreateWithFriendsGameMoveInput",
     "RealtimeWithFriendsGameMoveRecord",
     "RealtimeWithFriendsGameRecord",
+    "WithFriendsGameHistoryRecord",
     "WithFriendsGameRecord",
+    "WithFriendsGameStatsRecord",
     "WithFriendsGameTurn",
     "WithFriendsGamesRepository",
     "WithFriendsGamesService",

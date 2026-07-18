@@ -24,6 +24,8 @@ import type {
   GetAiGames200ResponseInner,
   GetAiGames400Response,
   GetCurrentUser200Response,
+  GetWithFriendsGameStats200ResponseInner,
+  GetWithFriendsGames200ResponseInner,
   JoinWithFriendsGame200Response,
   JoinWithFriendsGameRequest,
   UpdateCurrentUser200Response,
@@ -49,6 +51,10 @@ import {
   GetAiGames400ResponseToJSON,
   GetCurrentUser200ResponseFromJSON,
   GetCurrentUser200ResponseToJSON,
+  GetWithFriendsGameStats200ResponseInnerFromJSON,
+  GetWithFriendsGameStats200ResponseInnerToJSON,
+  GetWithFriendsGames200ResponseInnerFromJSON,
+  GetWithFriendsGames200ResponseInnerToJSON,
   JoinWithFriendsGame200ResponseFromJSON,
   JoinWithFriendsGame200ResponseToJSON,
   JoinWithFriendsGameRequestFromJSON,
@@ -83,6 +89,12 @@ export interface GetAiGamesRequest {
 
 export interface GetUserRequest {
   userId: string;
+}
+
+export interface GetWithFriendsGamesRequest {
+  limit?: number;
+  sortBy?: GetWithFriendsGamesSortByEnum;
+  orderBy?: GetWithFriendsGamesOrderByEnum;
 }
 
 export interface JoinWithFriendsGameOperationRequest {
@@ -607,6 +619,117 @@ export class DefaultApi extends runtime.BaseAPI {
   }
 
   /**
+   * List current user\'s top friends by completed games
+   */
+  async getWithFriendsGameStatsRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<
+    runtime.ApiResponse<Array<GetWithFriendsGameStats200ResponseInner>>
+  > {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/with-friends-games/stats`;
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "GET",
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      jsonValue.map(GetWithFriendsGameStats200ResponseInnerFromJSON),
+    );
+  }
+
+  /**
+   * List current user\'s top friends by completed games
+   */
+  async getWithFriendsGameStats(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<Array<GetWithFriendsGameStats200ResponseInner>> {
+    const response = await this.getWithFriendsGameStatsRaw(initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * List current user\'s completed with-friends games
+   */
+  async getWithFriendsGamesRaw(
+    requestParameters: GetWithFriendsGamesRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<Array<GetWithFriendsGames200ResponseInner>>> {
+    const queryParameters: any = {};
+
+    if (requestParameters["limit"] != null) {
+      queryParameters["limit"] = requestParameters["limit"];
+    }
+
+    if (requestParameters["sortBy"] != null) {
+      queryParameters["sort_by"] = requestParameters["sortBy"];
+    }
+
+    if (requestParameters["orderBy"] != null) {
+      queryParameters["order_by"] = requestParameters["orderBy"];
+    }
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("BearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+
+    let urlPath = `/api/v1/with-friends-games`;
+
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: "GET",
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      jsonValue.map(GetWithFriendsGames200ResponseInnerFromJSON),
+    );
+  }
+
+  /**
+   * List current user\'s completed with-friends games
+   */
+  async getWithFriendsGames(
+    requestParameters: GetWithFriendsGamesRequest = {},
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<Array<GetWithFriendsGames200ResponseInner>> {
+    const response = await this.getWithFriendsGamesRaw(
+      requestParameters,
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
    * Join with-friends game
    */
   async joinWithFriendsGameRaw(
@@ -751,3 +874,21 @@ export const GetAiGamesOrderByEnum = {
 } as const;
 export type GetAiGamesOrderByEnum =
   (typeof GetAiGamesOrderByEnum)[keyof typeof GetAiGamesOrderByEnum];
+/**
+ * @export
+ */
+export const GetWithFriendsGamesSortByEnum = {
+  CreatedAt: "created_at",
+  UpdatedAt: "updated_at",
+} as const;
+export type GetWithFriendsGamesSortByEnum =
+  (typeof GetWithFriendsGamesSortByEnum)[keyof typeof GetWithFriendsGamesSortByEnum];
+/**
+ * @export
+ */
+export const GetWithFriendsGamesOrderByEnum = {
+  Asc: "asc",
+  Desc: "desc",
+} as const;
+export type GetWithFriendsGamesOrderByEnum =
+  (typeof GetWithFriendsGamesOrderByEnum)[keyof typeof GetWithFriendsGamesOrderByEnum];

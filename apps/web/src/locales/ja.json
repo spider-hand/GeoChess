@@ -117,6 +117,19 @@
           "noRecentGames": "完了したAI対戦はまだありません。",
           "viewGame": "対戦を見る"
         },
+        "FriendsGamesSection": {
+          "loading": "フレンド対戦を読み込み中…",
+          "loadError": "フレンド対戦を読み込めませんでした。",
+          "winsLabel": "勝ち",
+          "lossesLabel": "負け",
+          "win": "勝ち",
+          "lose": "負け",
+          "topFriends": "よく対戦するフレンド",
+          "recentGames": "最近の対戦",
+          "noRecentGames": "完了したフレンド対戦はまだありません。",
+          "viewGame": "対戦を見る",
+          "archived": "アーカイブ済み"
+        },
         "DeleteAccountModal": {
           "title": "アカウントを削除",
           "description": "アカウントは完全に削除されます。",

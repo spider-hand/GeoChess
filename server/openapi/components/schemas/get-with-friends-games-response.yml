@@ -1,0 +1,20 @@
+type: array
+items:
+  type: object
+  required: [id, opponentDisplayName, result, expired, createdAt, updatedAt]
+  properties:
+    id:
+      type: string
+    opponentDisplayName:
+      type: string
+    result:
+      type: string
+      enum: [win, lose]
+    expired:
+      type: boolean
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time

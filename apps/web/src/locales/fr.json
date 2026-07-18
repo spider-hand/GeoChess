@@ -117,6 +117,19 @@
           "noRecentGames": "Aucune partie contre l’IA terminée.",
           "viewGame": "Voir la partie"
         },
+        "FriendsGamesSection": {
+          "loading": "Chargement des parties entre amis…",
+          "loadError": "Impossible de charger les parties entre amis.",
+          "winsLabel": "Victoires",
+          "lossesLabel": "Défaites",
+          "win": "Victoire",
+          "lose": "Défaite",
+          "topFriends": "Meilleurs amis",
+          "recentGames": "Parties récentes",
+          "noRecentGames": "Aucune partie entre amis terminée.",
+          "viewGame": "Voir la partie",
+          "archived": "Archivée"
+        },
         "DeleteAccountModal": {
           "title": "Supprimer le compte",
           "description": "Votre compte sera supprimé définitivement.",

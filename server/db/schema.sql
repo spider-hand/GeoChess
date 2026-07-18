@@ -70,11 +70,12 @@ CREATE TABLE public.users (
 
 CREATE TABLE public.with_friends_games (
     id text NOT NULL,
-    player1_user_id text NOT NULL,
+    player1_user_id text,
     player2_user_id text,
     result text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    expired boolean DEFAULT false NOT NULL,
     CONSTRAINT with_friends_games_result_check CHECK (((result IS NULL) OR (result = ANY (ARRAY['player1_win'::text, 'player2_win'::text, 'cancelled'::text]))))
 );
 
@@ -124,7 +125,7 @@ ALTER TABLE ONLY public.ai_games
 --
 
 ALTER TABLE ONLY public.with_friends_games
-    ADD CONSTRAINT with_friends_games_player1_user_id_fkey FOREIGN KEY (player1_user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+    ADD CONSTRAINT with_friends_games_player1_user_id_fkey FOREIGN KEY (player1_user_id) REFERENCES public.users(user_id) ON DELETE SET NULL;
 
 
 --
@@ -155,4 +156,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260713000002'),
     ('20260718204659'),
     ('20260718205756'),
-    ('20260718210000');
+    ('20260718210000'),
+    ('20260718220000');

@@ -6,6 +6,7 @@ import { ArrowRight, Signal, SignalHigh, SignalMedium } from "@lucide/vue";
 import { useAuth } from "@/composables/useAuth";
 import useAiGameQuery from "@/composables/useAiGameQuery";
 import type { Difficulty } from "@/types/game";
+import { formatMediumDate } from "@/utils/formatMediumDate";
 
 const { locale, t } = useI18n();
 const { data, isError, isLoading } = useAiGameQuery();
@@ -24,10 +25,6 @@ const difficultyIcons = {
   medium: SignalHigh,
   hard: Signal,
 };
-const dateFormatter = computed(
-  () => new Intl.DateTimeFormat(locale.value, { dateStyle: "medium" }),
-);
-
 const difficultyLabel = (difficulty: Difficulty) =>
   t(`components.pages.User.AiGamesSection.${difficulty}`);
 
@@ -98,7 +95,7 @@ const resultLabel = (result: "win" | "lose") =>
               </span>
             </div>
             <time :datetime="game.createdAt.toISOString()">{{
-              dateFormatter.format(game.createdAt)
+              formatMediumDate(game.createdAt, locale)
             }}</time>
             <a :href="`/game/vs-ai/${game.id}`">
               {{ t("components.pages.User.AiGamesSection.viewGame") }}

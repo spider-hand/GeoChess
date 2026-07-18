@@ -13,10 +13,14 @@ from features.users.repository import UsersRepository
 from features.with_friends_games.models import (
     CreateWithFriendsGameJoinInput,
     CreateWithFriendsGameMoveInput,
+    OrderBy,
     RealtimeWithFriendsGameRecord,
+    WithFriendsGameHistoryRecord,
     WithFriendsGameMoveActor,
     WithFriendsGameRecord,
     WithFriendsGameResult,
+    WithFriendsGamesSortBy,
+    WithFriendsGameStatsRecord,
     WithFriendsGameTurn,
 )
 from features.with_friends_games.queue import (
@@ -50,6 +54,18 @@ class WithFriendsGamesService:
 
     def _get_game_ref(self, game_id: str):
         return self._get_with_friends_games_ref().child(game_id)
+
+    def get_with_friends_games(
+        self, user_id: str, limit: int, sort_by: WithFriendsGamesSortBy, order_by: OrderBy
+    ) -> list[WithFriendsGameHistoryRecord]:
+        return self.with_friends_games_repository.list_for_user(
+            user_id, limit, sort_by, order_by
+        )
+
+    def get_with_friends_game_stats(
+        self, user_id: str
+    ) -> list[WithFriendsGameStatsRecord]:
+        return self.with_friends_games_repository.get_stats_for_user(user_id)
 
     def _get_room_key_ref(self, room_key: str):
         return self._get_room_keys_ref().child(room_key)
@@ -512,5 +528,6 @@ class WithFriendsGamesService:
                     }
                 )
             self._get_root_ref().update(updates)
+            self.with_friends_games_repository.mark_expired(deleted_game_ids)
 
         return len(deleted_game_ids)

@@ -117,6 +117,19 @@
           "noRecentGames": "Noch keine abgeschlossenen KI-Spiele.",
           "viewGame": "Spiel ansehen"
         },
+        "FriendsGamesSection": {
+          "loading": "Freundesspiele werden geladen…",
+          "loadError": "Freundesspiele konnten nicht geladen werden.",
+          "winsLabel": "Siege",
+          "lossesLabel": "Niederlagen",
+          "win": "Sieg",
+          "lose": "Niederlage",
+          "topFriends": "Beste Freunde",
+          "recentGames": "Letzte Spiele",
+          "noRecentGames": "Noch keine abgeschlossenen Freundesspiele.",
+          "viewGame": "Spiel ansehen",
+          "archived": "Archiviert"
+        },
         "DeleteAccountModal": {
           "title": "Konto löschen",
           "description": "Dadurch wird dein Konto dauerhaft gelöscht.",

@@ -29,6 +29,7 @@ def test_get_expired_game_ids_uses_strict_30_day_cutoff():
                 SELECT id
                 FROM with_friends_games
                 WHERE created_at < NOW() - INTERVAL '30 days'
+                  AND expired = FALSE
                 """
     )
 
@@ -41,6 +42,7 @@ def test_create_does_not_persist_a_room_key():
         "player2_user_id": None,
         "result": None,
         "created_at": "2026-07-18T00:00:00Z",
+        "expired": False,
         "updated_at": "2026-07-18T00:00:00Z",
     }
 
@@ -54,7 +56,7 @@ def test_create_does_not_persist_a_room_key():
         """
                 INSERT INTO with_friends_games (id, player1_user_id)
                 VALUES (%s, %s)
-                RETURNING id, player1_user_id, player2_user_id, result, created_at, updated_at
+                RETURNING id, player1_user_id, player2_user_id, result, expired, created_at, updated_at
                 """,
         ("game-1", "user-1"),
     )

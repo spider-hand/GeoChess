@@ -202,6 +202,28 @@ export default $config({
     );
 
     api.route(
+      "GET /api/v1/with-friends-games",
+      {
+        runtime: "python3.14",
+        handler: "src/api/v1/with_friends_games/handler.get_with_friends_games",
+        environment: { ENVIRONMENT: $app.stage },
+        permissions: databasePermissions,
+      },
+      { auth: { lambda: firebaseAuthorizer.id } },
+    );
+
+    api.route(
+      "GET /api/v1/with-friends-games/stats",
+      {
+        runtime: "python3.14",
+        handler: "src/api/v1/with_friends_games/handler.get_with_friends_game_stats",
+        environment: { ENVIRONMENT: $app.stage },
+        permissions: databasePermissions,
+      },
+      { auth: { lambda: firebaseAuthorizer.id } },
+    );
+
+    api.route(
       "POST /api/v1/with-friends-games/join",
       {
         runtime: "python3.14",

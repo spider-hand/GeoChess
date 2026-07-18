@@ -21,6 +21,8 @@ export * from "./GetCurrentUserResponse";
 export * from "./GetHealth200Response";
 export * from "./GetHealthResponse";
 export * from "./GetUserResponse";
+export * from "./GetWithFriendsGameStats200ResponseInner";
+export * from "./GetWithFriendsGames200ResponseInner";
 export * from "./JoinWithFriendsGame200Response";
 export * from "./JoinWithFriendsGameRequest";
 export * from "./JoinWithFriendsGameResponse";

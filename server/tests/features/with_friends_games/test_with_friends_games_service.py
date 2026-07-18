@@ -359,6 +359,9 @@ def test_delete_expired_with_friends_games_removes_only_realtime_records():
 
     assert deleted_count == 2
     with_friends_games_repository.get_expired_game_ids.assert_called_once_with()
+    with_friends_games_repository.mark_expired.assert_called_once_with(
+        ["game-1", "game-2"]
+    )
     root_ref.update.assert_called_once_with(
         {
             "withFriendsGames/game-1": None,
@@ -395,3 +398,4 @@ def test_delete_expired_with_friends_games_skips_realtime_delete_when_nothing_wa
     with_friends_games_repository.get_expired_game_ids.assert_called_once_with()
     room_keys_ref.get.assert_not_called()
     root_ref.update.assert_not_called()
+    with_friends_games_repository.mark_expired.assert_not_called()

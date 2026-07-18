@@ -23,6 +23,8 @@ models/GetCurrentUserResponse.ts
 models/GetHealth200Response.ts
 models/GetHealthResponse.ts
 models/GetUserResponse.ts
+models/GetWithFriendsGameStats200ResponseInner.ts
+models/GetWithFriendsGames200ResponseInner.ts
 models/JoinWithFriendsGame200Response.ts
 models/JoinWithFriendsGameRequest.ts
 models/JoinWithFriendsGameResponse.ts

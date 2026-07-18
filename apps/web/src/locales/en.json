@@ -127,6 +127,19 @@
           "recentGames": "Recent Games",
           "noRecentGames": "No completed AI games yet.",
           "viewGame": "View game"
+        },
+        "FriendsGamesSection": {
+          "loading": "Loading friends games…",
+          "loadError": "Unable to load friends games.",
+          "winsLabel": "Wins",
+          "lossesLabel": "Losses",
+          "win": "Win",
+          "lose": "Lose",
+          "topFriends": "Top Friends",
+          "recentGames": "Recent Games",
+          "noRecentGames": "No completed friends games yet.",
+          "viewGame": "View game",
+          "archived": "Archived"
         }
       }
     },

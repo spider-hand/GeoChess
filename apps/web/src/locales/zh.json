@@ -117,6 +117,19 @@
           "noRecentGames": "尚无已完成的人机对战。",
           "viewGame": "查看对局"
         },
+        "FriendsGamesSection": {
+          "loading": "正在加载好友对局…",
+          "loadError": "无法加载好友对局。",
+          "winsLabel": "胜利",
+          "lossesLabel": "失败",
+          "win": "胜利",
+          "lose": "失败",
+          "topFriends": "常玩好友",
+          "recentGames": "最近对局",
+          "noRecentGames": "还没有已完成的好友对局。",
+          "viewGame": "查看对局",
+          "archived": "已归档"
+        },
         "DeleteAccountModal": {
           "title": "删除账户",
           "description": "这将永久删除您的账户。",

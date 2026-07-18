@@ -117,6 +117,19 @@
           "noRecentGames": "Ainda não há partidas contra IA concluídas.",
           "viewGame": "Ver partida"
         },
+        "FriendsGamesSection": {
+          "loading": "Carregando jogos entre amigos…",
+          "loadError": "Não foi possível carregar os jogos entre amigos.",
+          "winsLabel": "Vitórias",
+          "lossesLabel": "Derrotas",
+          "win": "Vitória",
+          "lose": "Derrota",
+          "topFriends": "Melhores amigos",
+          "recentGames": "Jogos recentes",
+          "noRecentGames": "Ainda não há jogos entre amigos concluídos.",
+          "viewGame": "Ver partida",
+          "archived": "Arquivado"
+        },
         "DeleteAccountModal": {
           "title": "Excluir conta",
           "description": "Sua conta será excluída permanentemente.",

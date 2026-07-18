@@ -1,0 +1,18 @@
+get:
+  operationId: getWithFriendsGameStats
+  summary: List current user's top friends by completed games
+  security:
+    - BearerAuth: []
+  responses:
+    '200':
+      description: Current user's top friends
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/get-with-friends-games-stats-response.yml
+    '401':
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: ../../../../components/schemas/error-response.yml

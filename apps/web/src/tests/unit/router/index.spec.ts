@@ -34,7 +34,7 @@ beforeEach(() => {
   mockGetCurrentUser.mockResolvedValue({ isAnonymous: false });
 });
 
-it.each(["/", "/game/random-match"])(
+it.each(["/", "/privacy", "/terms", "/game/random-match"])(
   "should allow navigation to %s without requiring vs ai auth",
   async (path) => {
     const { default: router } = await import("@/router");

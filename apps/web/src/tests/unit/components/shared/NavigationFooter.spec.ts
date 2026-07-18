@@ -1,14 +1,22 @@
-import { expect, it, vi } from "vitest";
+import { createMemoryHistory, createRouter } from "vue-router";
+import { expect, it } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
 import { createAppI18n } from "@/i18n";
 
-const renderNavigationFooter = (props: Record<string, unknown> = {}) =>
+const router = createRouter({
+  history: createMemoryHistory(),
+  routes: [
+    { path: "/privacy", component: { template: "<div />" } },
+    { path: "/terms", component: { template: "<div />" } },
+  ],
+});
+
+const renderNavigationFooter = () =>
   render(NavigationFooter, {
-    props,
     global: {
-      plugins: [createAppI18n()],
+      plugins: [createAppI18n(), router],
     },
   });
 
@@ -24,27 +32,12 @@ it("should render the default state properly", async () => {
     .element(getByRole("navigation", { name: "Footer navigation" }))
     .toBeInTheDocument();
   await expect
-    .element(getByRole("button", { name: "Privacy" }))
-    .toBeInTheDocument();
+    .element(getByRole("link", { name: "Privacy" }))
+    .toHaveAttribute("href", "/privacy");
   await expect
-    .element(getByRole("button", { name: "Terms" }))
-    .toBeInTheDocument();
+    .element(getByRole("link", { name: "Terms" }))
+    .toHaveAttribute("href", "/terms");
   await expect
     .element(getByRole("link", { name: "Contact" }))
     .toHaveAttribute("href", "mailto:creative.spider.hand@gmail.com");
-});
-
-it.each([
-  { label: "Privacy", prop: "onPrivacyClick" },
-  { label: "Terms", prop: "onTermsClick" },
-] as const)("should emit the $label action", async ({ label, prop }) => {
-  const handler = vi.fn();
-  const { getByRole } = renderNavigationFooter({
-    [prop]: handler,
-  });
-
-  await getByRole("button", { name: label }).click();
-
-  expect(handler).toHaveBeenCalledTimes(1);
-  expect(handler).toHaveBeenCalledWith(expect.any(MouseEvent));
 });

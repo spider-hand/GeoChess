@@ -6,6 +6,8 @@ import GameRandomMatchPage from "@/pages/GameRandomMatchPage.vue";
 import GameVsAiPage from "@/pages/GameVsAiPage.vue";
 import GameWithFriendsPage from "@/pages/GameWithFriendsPage.vue";
 import HomePage from "@/pages/HomePage.vue";
+import PrivacyPage from "@/pages/PrivacyPage.vue";
+import TermsPage from "@/pages/TermsPage.vue";
 import UserPage from "@/pages/UserPage.vue";
 
 declare module "vue-router" {
@@ -21,6 +23,14 @@ const router = createRouter({
     {
       path: "/",
       component: HomePage,
+    },
+    {
+      path: "/privacy",
+      component: PrivacyPage,
+    },
+    {
+      path: "/terms",
+      component: TermsPage,
     },
     {
       path: "/user",

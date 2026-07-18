@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
+import { RouterLink } from "vue-router";
 
 defineOptions({
   name: "SharedNavigationFooter",
@@ -7,20 +8,7 @@ defineOptions({
 
 const { t } = useI18n();
 
-const emit = defineEmits<{
-  privacyClick: [event: MouseEvent];
-  termsClick: [event: MouseEvent];
-}>();
-
 const year = new Date().getFullYear();
-
-const emitPrivacyClick = (event: MouseEvent) => {
-  emit("privacyClick", event);
-};
-
-const emitTermsClick = (event: MouseEvent) => {
-  emit("termsClick", event);
-};
 </script>
 
 <template>
@@ -34,20 +22,12 @@ const emitTermsClick = (event: MouseEvent) => {
         class="navigation-footer__actions"
         :aria-label="t('components.shared.NavigationFooter.navigationLabel')"
       >
-        <button
-          class="navigation-footer__action"
-          type="button"
-          @click="emitPrivacyClick"
-        >
+        <RouterLink class="navigation-footer__action" to="/privacy">
           {{ t("components.shared.NavigationFooter.privacy") }}
-        </button>
-        <button
-          class="navigation-footer__action"
-          type="button"
-          @click="emitTermsClick"
-        >
+        </RouterLink>
+        <RouterLink class="navigation-footer__action" to="/terms">
           {{ t("components.shared.NavigationFooter.terms") }}
-        </button>
+        </RouterLink>
         <a
           class="navigation-footer__action"
           href="mailto:creative.spider.hand@gmail.com"

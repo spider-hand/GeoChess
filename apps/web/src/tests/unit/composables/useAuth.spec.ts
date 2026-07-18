@@ -61,7 +61,7 @@ it.each([
     expectedCountry: undefined,
     isAnonymousUser: false,
     isAuthenticatedUser: true,
-    isRegisteredUser: true,
+    isRegisteredUser: false,
   },
   {
     currentUser: { uid: "guest-123", isAnonymous: true },
@@ -77,7 +77,7 @@ it.each([
     expectedCountry: undefined,
     isAnonymousUser: false,
     isAuthenticatedUser: true,
-    isRegisteredUser: true,
+    isRegisteredUser: false,
   },
   {
     currentUser: { uid: "user-789", displayName: "Ignored Firebase Name" },

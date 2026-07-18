@@ -37,7 +37,7 @@ export const useAuth = () => {
     () => currentUser.value?.isAnonymous ?? false,
   );
   const isRegisteredUser = computed(
-    () => isAuthenticatedUser.value && !isAnonymousUser.value,
+    () => isAuthenticatedUser.value && !isAnonymousUser.value && !!user.value,
   );
   const username = computed(() => {
     if (currentUser.value?.isAnonymous) {

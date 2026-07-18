@@ -65,23 +65,6 @@ CREATE TABLE public.users (
 
 
 --
--- Name: with_friends_game_moves; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.with_friends_game_moves (
-    id text NOT NULL,
-    game_id text NOT NULL,
-    move_index integer NOT NULL,
-    country text NOT NULL,
-    actor text NOT NULL,
-    user_id text,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL,
-    CONSTRAINT with_friends_game_moves_actor_check CHECK ((actor = ANY (ARRAY['start'::text, 'player1'::text, 'player2'::text])))
-);
-
-
---
 -- Name: with_friends_games; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -122,22 +105,6 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: with_friends_game_moves with_friends_game_moves_game_id_move_index_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.with_friends_game_moves
-    ADD CONSTRAINT with_friends_game_moves_game_id_move_index_key UNIQUE (game_id, move_index);
-
-
---
--- Name: with_friends_game_moves with_friends_game_moves_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.with_friends_game_moves
-    ADD CONSTRAINT with_friends_game_moves_pkey PRIMARY KEY (id);
-
-
---
 -- Name: with_friends_games with_friends_games_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -159,22 +126,6 @@ ALTER TABLE ONLY public.with_friends_games
 
 ALTER TABLE ONLY public.ai_games
     ADD CONSTRAINT ai_games_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
-
-
---
--- Name: with_friends_game_moves with_friends_game_moves_game_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.with_friends_game_moves
-    ADD CONSTRAINT with_friends_game_moves_game_id_fkey FOREIGN KEY (game_id) REFERENCES public.with_friends_games(id) ON DELETE CASCADE;
-
-
---
--- Name: with_friends_game_moves with_friends_game_moves_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.with_friends_game_moves
-    ADD CONSTRAINT with_friends_game_moves_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE SET NULL;
 
 
 --
@@ -211,4 +162,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260713000000'),
     ('20260713000001'),
     ('20260713000002'),
-    ('20260718204659');
+    ('20260718204659'),
+    ('20260718205756');

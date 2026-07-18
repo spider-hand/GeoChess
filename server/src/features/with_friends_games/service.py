@@ -14,7 +14,6 @@ from features.with_friends_games.models import (
     CreateWithFriendsGameJoinInput,
     CreateWithFriendsGameMoveInput,
     RealtimeWithFriendsGameRecord,
-    WithFriendsGameHistoryMoveRecord,
     WithFriendsGameMoveActor,
     WithFriendsGameRecord,
     WithFriendsGameResult,
@@ -46,72 +45,12 @@ class WithFriendsGamesService:
     def _get_game_ref(self, game_id: str):
         return self._get_with_friends_games_ref().child(game_id)
 
-    def _build_history_moves(
-        self,
-        realtime_game: RealtimeWithFriendsGameRecord,
-        final_move: WithFriendsGameHistoryMoveRecord | None = None,
-    ) -> list[WithFriendsGameHistoryMoveRecord]:
-        history_moves = [
-            WithFriendsGameHistoryMoveRecord(
-                id=f"{realtime_game.id}:0",
-                gameId=realtime_game.id,
-                moveIndex=0,
-                country=realtime_game.start,
-                actor="start",
-                userId=None,
-            )
-        ]
-        sorted_moves = sorted(
-            realtime_game.moves.items(),
-            key=lambda item: (item[1].created_at, item[0]),
-        )
-
-        for move_index, (move_id, move) in enumerate(sorted_moves, start=1):
-            history_moves.append(
-                WithFriendsGameHistoryMoveRecord(
-                    id=move_id,
-                    gameId=realtime_game.id,
-                    moveIndex=move_index,
-                    country=move.country,
-                    actor=move.actor,
-                    userId=realtime_game.participants.get(move.actor),
-                )
-            )
-
-        if final_move is not None:
-            history_moves.append(final_move)
-
-        return history_moves
-
     def _finish_game(
         self,
         result: WithFriendsGameResult,
         realtime_game: RealtimeWithFriendsGameRecord,
-        final_move: WithFriendsGameHistoryMoveRecord | None = None,
     ) -> bool:
-        return self.with_friends_games_repository.finish_game(
-            realtime_game.id,
-            result,
-            self._build_history_moves(realtime_game, final_move),
-        )
-
-    def _build_final_move(
-        self,
-        realtime_game: RealtimeWithFriendsGameRecord,
-        move_id: str,
-        country_code: str,
-        actor: WithFriendsGameMoveActor,
-    ) -> WithFriendsGameHistoryMoveRecord:
-        # Firebase returns unresolved server-timestamp placeholders after a terminal transaction,
-        # so we append the last move from inputs that has already been validated.
-        return WithFriendsGameHistoryMoveRecord(
-            id=move_id,
-            gameId=realtime_game.id,
-            moveIndex=len(realtime_game.moves) + 1,
-            country=country_code,
-            actor=actor,
-            userId=realtime_game.participants.get(actor),
-        )
+        return self.with_friends_games_repository.finish_game(realtime_game.id, result)
 
     def _compute_available_moves(
         self, country_code: str, used_countries: list[str]
@@ -401,11 +340,10 @@ class WithFriendsGamesService:
 
         terminal_result: WithFriendsGameResult | None = None
         terminal_realtime_game: RealtimeWithFriendsGameRecord | None = None
-        final_move: WithFriendsGameHistoryMoveRecord | None = None
         should_enqueue_timeout = False
 
         def apply_move(current_value: dict[str, object] | None):
-            nonlocal final_move, terminal_realtime_game, terminal_result, should_enqueue_timeout
+            nonlocal terminal_realtime_game, terminal_result, should_enqueue_timeout
 
             if current_value is None:
                 raise ApiError(
@@ -444,12 +382,6 @@ class WithFriendsGamesService:
 
             if terminal_result is not None:
                 terminal_realtime_game = realtime_game
-                final_move = self._build_final_move(
-                    realtime_game,
-                    move_key,
-                    create_move_input.country_code,
-                    actor,
-                )
             else:
                 should_enqueue_timeout = True
 
@@ -459,7 +391,7 @@ class WithFriendsGamesService:
 
         if terminal_result is not None:
             if terminal_realtime_game is not None:
-                self._finish_game(terminal_result, terminal_realtime_game, final_move)
+                self._finish_game(terminal_result, terminal_realtime_game)
             return
 
         # Send a message to SQS to handle timeout for the player who moves next if the game continues
@@ -549,7 +481,7 @@ class WithFriendsGamesService:
             )
 
     def delete_expired_with_friends_games(self) -> int:
-        deleted_game_ids = self.with_friends_games_repository.delete_expired_game_moves()
+        deleted_game_ids = self.with_friends_games_repository.delete_expired_games()
         if deleted_game_ids:
             self._get_with_friends_games_ref().update(
                 {game_id: None for game_id in deleted_game_ids}

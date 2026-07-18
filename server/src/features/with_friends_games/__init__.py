@@ -3,7 +3,6 @@ from features.with_friends_games.models import (
     CreateWithFriendsGameMoveInput,
     RealtimeWithFriendsGameMoveRecord,
     RealtimeWithFriendsGameRecord,
-    WithFriendsGameHistoryMoveRecord,
     WithFriendsGameRecord,
     WithFriendsGameTurn,
 )
@@ -15,7 +14,6 @@ __all__ = [
     "CreateWithFriendsGameMoveInput",
     "RealtimeWithFriendsGameMoveRecord",
     "RealtimeWithFriendsGameRecord",
-    "WithFriendsGameHistoryMoveRecord",
     "WithFriendsGameRecord",
     "WithFriendsGameTurn",
     "WithFriendsGamesRepository",

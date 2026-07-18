@@ -9,7 +9,6 @@ WithFriendsGameResult = Literal["player1_win", "player2_win", "cancelled"]
 WithFriendsGameStatus = Literal["waiting", "starting", "active", "finished"]
 WithFriendsGameTurn = Literal["player1", "player2"]
 WithFriendsGameMoveActor = Literal["player1", "player2"]
-WithFriendsGameHistoryMoveActor = Literal["start", "player1", "player2"]
 
 
 class WithFriendsGameRecord(BaseModel):
@@ -61,12 +60,3 @@ class RealtimeWithFriendsGameRecord(BaseModel):
     moves: dict[str, RealtimeWithFriendsGameMoveRecord] = Field(default_factory=dict)
     created_at: int = Field(alias="createdAt")
     updated_at: int = Field(alias="updatedAt")
-
-
-class WithFriendsGameHistoryMoveRecord(BaseModel):
-    id: str
-    game_id: str = Field(alias="gameId")
-    move_index: int = Field(alias="moveIndex")
-    country: str
-    actor: WithFriendsGameHistoryMoveActor
-    user_id: str | None = Field(alias="userId", default=None)

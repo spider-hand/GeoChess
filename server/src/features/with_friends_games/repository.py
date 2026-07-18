@@ -2,7 +2,6 @@ from typing import Any
 
 from core.db import get_connection
 from features.with_friends_games.models import (
-    WithFriendsGameHistoryMoveRecord,
     WithFriendsGameRecord,
     WithFriendsGameResult,
 )
@@ -90,7 +89,6 @@ class WithFriendsGamesRepository:
         self,
         game_id: str,
         result: WithFriendsGameResult,
-        moves: list[WithFriendsGameHistoryMoveRecord] | None = None,
     ) -> bool:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute(
@@ -107,37 +105,14 @@ class WithFriendsGamesRepository:
             if cursor.rowcount != 1:
                 return False
 
-            if moves:
-                cursor.executemany(
-                    """
-                    INSERT INTO with_friends_game_moves (id, game_id, move_index, country, actor, user_id)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                    """,
-                    [
-                        (
-                            move.id,
-                            move.game_id,
-                            move.move_index,
-                            move.country,
-                            move.actor,
-                            move.user_id,
-                        )
-                        for move in moves
-                    ],
-                )
-
             return True
 
-    def delete_expired_game_moves(self) -> list[str]:
+    def delete_expired_games(self) -> list[str]:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute("""
-                DELETE FROM with_friends_game_moves
-                WHERE game_id IN (
-                    SELECT id
-                    FROM with_friends_games
-                    WHERE created_at < NOW() - INTERVAL '30 days'
-                )
-                RETURNING game_id
+                DELETE FROM with_friends_games
+                WHERE created_at < NOW() - INTERVAL '30 days'
+                RETURNING id
                 """)
 
-            return list(dict.fromkeys(row["game_id"] for row in cursor.fetchall()))
+            return [row["id"] for row in cursor.fetchall()]

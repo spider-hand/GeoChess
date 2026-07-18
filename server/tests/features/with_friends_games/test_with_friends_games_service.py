@@ -250,7 +250,7 @@ def test_create_with_friends_game_move_enqueues_timeout_for_non_terminal_move():
 
 def test_delete_expired_with_friends_games_returns_deleted_count():
     with_friends_games_repository = MagicMock()
-    with_friends_games_repository.delete_expired_game_moves.return_value = [
+    with_friends_games_repository.delete_expired_games.return_value = [
         "game-1",
         "game-2",
     ]
@@ -271,7 +271,7 @@ def test_delete_expired_with_friends_games_returns_deleted_count():
         deleted_count = service.delete_expired_with_friends_games()
 
     assert deleted_count == 2
-    with_friends_games_repository.delete_expired_game_moves.assert_called_once_with()
+    with_friends_games_repository.delete_expired_games.assert_called_once_with()
     with_friends_games_ref.update.assert_called_once_with(
         {"game-1": None, "game-2": None}
     )
@@ -279,7 +279,7 @@ def test_delete_expired_with_friends_games_returns_deleted_count():
 
 def test_delete_expired_with_friends_games_skips_realtime_delete_when_nothing_was_deleted():
     with_friends_games_repository = MagicMock()
-    with_friends_games_repository.delete_expired_game_moves.return_value = []
+    with_friends_games_repository.delete_expired_games.return_value = []
     service = WithFriendsGamesService(
         with_friends_games_repository=with_friends_games_repository
     )
@@ -297,5 +297,5 @@ def test_delete_expired_with_friends_games_skips_realtime_delete_when_nothing_wa
         deleted_count = service.delete_expired_with_friends_games()
 
     assert deleted_count == 0
-    with_friends_games_repository.delete_expired_game_moves.assert_called_once_with()
+    with_friends_games_repository.delete_expired_games.assert_called_once_with()
     with_friends_games_ref.update.assert_not_called()

@@ -11,28 +11,23 @@ def make_connection_and_cursor():
     return connection, cursor
 
 
-def test_delete_expired_game_moves_uses_strict_30_day_cutoff_and_deduplicates_game_ids():
+def test_delete_expired_games_uses_strict_30_day_cutoff():
     connection, cursor = make_connection_and_cursor()
     cursor.fetchall.return_value = [
-        {"game_id": "game-1"},
-        {"game_id": "game-1"},
-        {"game_id": "game-2"},
+        {"id": "game-1"},
+        {"id": "game-2"},
     ]
 
     with patch(
         "features.with_friends_games.repository.get_connection", return_value=connection
     ):
-        deleted_ids = WithFriendsGamesRepository().delete_expired_game_moves()
+        deleted_ids = WithFriendsGamesRepository().delete_expired_games()
 
     assert deleted_ids == ["game-1", "game-2"]
     cursor.execute.assert_called_once_with(
         """
-                DELETE FROM with_friends_game_moves
-                WHERE game_id IN (
-                    SELECT id
-                    FROM with_friends_games
-                    WHERE created_at < NOW() - INTERVAL '30 days'
-                )
-                RETURNING game_id
+                DELETE FROM with_friends_games
+                WHERE created_at < NOW() - INTERVAL '30 days'
+                RETURNING id
                 """
     )

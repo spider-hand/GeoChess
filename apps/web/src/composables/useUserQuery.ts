@@ -8,6 +8,8 @@ import {
   type CreateCurrentUserRequest,
   type GetCurrentUser200Response,
   type UpdateUserRequest,
+  type CreateUserResponse,
+  type UpdateCurrentUser200Response,
 } from "@/services";
 
 type CreateUserVariables = {
@@ -45,7 +47,7 @@ const useUserQuery = (userId?: MaybeRefOrGetter<string | null>) => {
         createCurrentUserRequest,
       });
     },
-    onSuccess: (user) => {
+    onSuccess: (user: CreateUserResponse) => {
       queryClient.invalidateQueries({ queryKey: ["user", user.userId] });
     },
   });
@@ -56,7 +58,7 @@ const useUserQuery = (userId?: MaybeRefOrGetter<string | null>) => {
         createCurrentUserRequest: updateUserRequest,
       });
     },
-    onSuccess: (user) => {
+    onSuccess: (user: UpdateCurrentUser200Response) => {
       queryClient.invalidateQueries({ queryKey: ["user", user.userId] });
     },
   });

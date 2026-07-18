@@ -5,6 +5,7 @@ import { ArrowRight, Signal, SignalHigh, SignalMedium } from "@lucide/vue";
 
 import { useAuth } from "@/composables/useAuth";
 import useAiGameQuery from "@/composables/useAiGameQuery";
+import type { Difficulty } from "@/types/game";
 
 const { locale, t } = useI18n();
 const { data, isError, isLoading } = useAiGameQuery();
@@ -27,7 +28,7 @@ const dateFormatter = computed(
   () => new Intl.DateTimeFormat(locale.value, { dateStyle: "medium" }),
 );
 
-const difficultyLabel = (difficulty: "easy" | "medium" | "hard") =>
+const difficultyLabel = (difficulty: Difficulty) =>
   t(`components.pages.User.AiGamesSection.${difficulty}`);
 
 const resultLabel = (result: "win" | "lose") =>

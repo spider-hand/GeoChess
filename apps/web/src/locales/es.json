@@ -32,6 +32,9 @@
           "showMap": "Mostrar mapa",
           "close": "Cerrar mapa"
         },
+        "RoomKeyStrip": {
+          "label": "Clave de sala"
+        },
         "GameVsAiPage": {
           "playAgain": "Jugar de nuevo",
           "exit": "Salir"

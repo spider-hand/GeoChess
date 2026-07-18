@@ -32,6 +32,9 @@
           "showMap": "地図を表示",
           "close": "地図を閉じる"
         },
+        "RoomKeyStrip": {
+          "label": "ルームキー"
+        },
         "GameVsAiPage": {
           "playAgain": "もう一度プレイ",
           "exit": "終了"

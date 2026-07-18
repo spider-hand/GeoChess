@@ -32,6 +32,9 @@
           "showMap": "Karte anzeigen",
           "close": "Karte schließen"
         },
+        "RoomKeyStrip": {
+          "label": "Raumcode"
+        },
         "GameVsAiPage": {
           "playAgain": "Nochmal spielen",
           "exit": "Beenden"

@@ -219,6 +219,7 @@ class WithFriendsGamesService:
 
         payload = {
             "id": with_friends_game.id,
+            "roomKey": with_friends_game.room_key,
             "player1UserId": with_friends_game.player1_user_id,
             "participants": {
                 "player1": with_friends_game.player1_user_id,

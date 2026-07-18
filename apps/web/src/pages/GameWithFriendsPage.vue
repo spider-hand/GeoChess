@@ -16,6 +16,7 @@ import PathHistoryCard from "@/components/pages/Game/PathHistoryCard.vue";
 import PathResultCard from "@/components/pages/Game/PathResultCard.vue";
 import PlayerMatchupCard from "@/components/pages/Game/PlayerMatchupCard.vue";
 import ResultBadge from "@/components/pages/Game/ResultBadge.vue";
+import RoomKeyStrip from "@/components/pages/Game/RoomKeyStrip.vue";
 import TurnStatusStrip from "@/components/pages/Game/TurnStatusStrip.vue";
 import Button from "@/components/shared/Button.vue";
 import NavigationFooter from "@/components/shared/NavigationFooter.vue";
@@ -324,6 +325,10 @@ const handleExit = async () => {
         />
 
         <div class="game-page__status-group">
+          <RoomKeyStrip
+            v-if="isPreGame && realtimeWithFriendsGame.roomKey"
+            :room-key="realtimeWithFriendsGame.roomKey"
+          />
           <TurnStatusStrip
             v-if="!isPreGame && !isFinished"
             :status="turnStatus"

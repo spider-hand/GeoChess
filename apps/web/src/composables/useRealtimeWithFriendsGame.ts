@@ -18,6 +18,7 @@ type RealtimeWithFriendsGameMove = {
 
 type RealtimeWithFriendsGameSnapshot = {
   id: string;
+  roomKey?: string;
   player1UserId: string;
   player2UserId?: string;
   participants: Record<"player1" | "player2", string>;

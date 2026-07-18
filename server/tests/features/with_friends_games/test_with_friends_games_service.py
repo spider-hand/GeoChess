@@ -36,6 +36,7 @@ def make_realtime_with_friends_game(
     return RealtimeWithFriendsGameRecord.model_validate(
         {
             "id": "game-123",
+            "roomKey": "654321",
             "player1UserId": "user-123",
             "player2UserId": "user-456",
             "participants": {
@@ -115,6 +116,7 @@ def test_create_with_friends_game_creates_realtime_record():
     game_ref.set.assert_called_once_with(
         {
             "id": "game-123",
+            "roomKey": "654321",
             "player1UserId": "user-123",
             "participants": {
                 "player1": "user-123",

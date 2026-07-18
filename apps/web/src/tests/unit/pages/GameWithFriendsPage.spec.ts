@@ -9,6 +9,7 @@ const username = ref("Taylor Swift");
 const userCountry = ref<string | undefined>(undefined);
 const realtimeWithFriendsGame = ref({
   id: "game-123",
+  roomKey: "654321",
   player1UserId: "user-123",
   player2UserId: "user-456",
   participants: {
@@ -128,6 +129,14 @@ vi.mock("@/components/pages/Game/TurnStatusStrip.vue", () => ({
   },
 }));
 
+vi.mock("@/components/pages/Game/RoomKeyStrip.vue", () => ({
+  default: {
+    name: "RoomKeyStrip",
+    props: ["roomKey"],
+    template: '<div data-testid="room-key-strip" :data-room-key="roomKey" />',
+  },
+}));
+
 vi.mock("@/components/pages/Game/ResultBadge.vue", () => ({
   default: {
     name: "ResultBadge",
@@ -199,6 +208,7 @@ beforeEach(() => {
   userCountry.value = undefined;
   realtimeWithFriendsGame.value = {
     id: "game-123",
+    roomKey: "654321",
     player1UserId: "user-123",
     player2UserId: "user-456",
     participants: {
@@ -256,6 +266,7 @@ it("should render the active game layout for player1", async () => {
   expect(
     container.querySelector('[data-testid="turn-status-strip"]'),
   ).not.toBeNull();
+  expect(container.querySelector('[data-testid="room-key-strip"]')).toBeNull();
   expect(
     container.querySelector('[data-testid="countdown-timer"]'),
   ).not.toBeNull();
@@ -302,6 +313,11 @@ it.each(["waiting", "starting"] as const)(
     expect(
       container.querySelector('[data-testid="countdown-timer"]'),
     ).toBeNull();
+    expect(
+      container
+        .querySelector('[data-testid="room-key-strip"]')
+        ?.getAttribute("data-room-key"),
+    ).toBe("654321");
   },
 );
 

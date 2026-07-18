@@ -32,6 +32,9 @@
           "showMap": "显示地图",
           "close": "关闭地图"
         },
+        "RoomKeyStrip": {
+          "label": "房间密钥"
+        },
         "GameVsAiPage": {
           "playAgain": "再玩一次",
           "exit": "退出"

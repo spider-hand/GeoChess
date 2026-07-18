@@ -32,6 +32,9 @@
           "showMap": "Show map",
           "close": "Close map"
         },
+        "RoomKeyStrip": {
+          "label": "Room Key"
+        },
         "GameVsAiPage": {
           "playAgain": "Play Again",
           "exit": "Exit"

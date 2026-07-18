@@ -32,6 +32,9 @@
           "showMap": "Afficher la carte",
           "close": "Fermer la carte"
         },
+        "RoomKeyStrip": {
+          "label": "Code de salle"
+        },
         "GameVsAiPage": {
           "playAgain": "Rejouer",
           "exit": "Quitter"

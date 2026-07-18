@@ -48,6 +48,7 @@ class RealtimeWithFriendsGameRecord(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     id: str
+    room_key: RoomKey | None = Field(alias="roomKey", default=None)
     player1_user_id: str = Field(alias="player1UserId")
     player2_user_id: str | None = Field(alias="player2UserId", default=None)
     participants: dict[WithFriendsGameTurn, str]

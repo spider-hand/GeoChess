@@ -2,7 +2,7 @@ import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import LanguageSelector from "@/components/shared/LanguageSelector.vue";
-import { createAppI18n } from "@/i18n";
+import { createAppI18n, getStoredLocale, LOCALE_STORAGE_KEY } from "@/i18n";
 
 const nextTick = async () => {
   await new Promise((resolve) => window.setTimeout(resolve, 0));
@@ -67,7 +67,14 @@ it("should select a language, emit the value, and close the menu", async () => {
   await getByRole("menuitemradio", { name: /日本語/ }).click();
 
   expect(onSelect).toHaveBeenCalledWith("ja");
+  expect(window.localStorage.getItem(LOCALE_STORAGE_KEY)).toBe("ja");
   expect(container.querySelector('[role="menu"]')).toBeNull();
+});
+
+it("should restore a saved language", () => {
+  window.localStorage.setItem(LOCALE_STORAGE_KEY, "fr");
+
+  expect(getStoredLocale()).toBe("fr");
 });
 
 it("should reflect the selected state when reopened", async () => {

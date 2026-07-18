@@ -22,6 +22,18 @@ export const messages = {
 
 export type AppLocale = keyof typeof messages;
 
+export const LOCALE_STORAGE_KEY = "geo-chess.locale";
+
+export const getStoredLocale = (): AppLocale => {
+  const locale = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+
+  return locale && locale in messages ? (locale as AppLocale) : DEFAULT_LOCALE;
+};
+
+export const saveLocale = (locale: AppLocale) => {
+  window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+};
+
 export const createAppI18n = (locale: AppLocale = DEFAULT_LOCALE) => {
   return createI18n({
     legacy: false,
@@ -31,4 +43,4 @@ export const createAppI18n = (locale: AppLocale = DEFAULT_LOCALE) => {
   });
 };
 
-export const appI18n = createAppI18n();
+export const appI18n = createAppI18n(getStoredLocale());

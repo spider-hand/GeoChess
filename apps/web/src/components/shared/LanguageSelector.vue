@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n";
 import { SUPPORTED_LANGUAGES } from "@/constants/languages";
 import useOnClickOutside from "@/composables/useOnClickOutside";
 import IconButton from "@/components/shared/IconButton.vue";
+import { saveLocale } from "@/i18n";
 import type { SupportedLanguage } from "@/types/language";
 
 defineOptions({
@@ -35,6 +36,7 @@ const toggleMenu = () => {
 
 const selectLanguage = (language: SupportedLanguage) => {
   locale.value = language;
+  saveLocale(language);
   emit("select", language);
   closeMenu();
 };

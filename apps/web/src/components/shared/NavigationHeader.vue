@@ -13,6 +13,7 @@ import HowToPlayButton from "@/components/shared/HowToPlayButton.vue";
 import IconButton from "@/components/shared/IconButton.vue";
 import LanguageSelector from "@/components/shared/LanguageSelector.vue";
 import UserAvatarMenu from "@/components/shared/UserAvatarMenu.vue";
+import { saveLocale } from "@/i18n";
 import type { SupportedLanguage } from "@/types/language";
 
 defineOptions({
@@ -75,6 +76,7 @@ const toggleMobileLanguage = () => {
 
 const selectMobileLanguage = (language: SupportedLanguage) => {
   locale.value = language;
+  saveLocale(language);
   emitLanguageSelect(language);
   closeMobileMenu();
 };

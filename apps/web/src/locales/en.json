@@ -82,6 +82,7 @@
         "RandomMatchCard": {
           "title": "Random Match",
           "joinLobby": "Join Lobby",
+          "comingSoon": "Coming Soon",
           "onlinePlayersOne": "{count} player online",
           "onlinePlayersOther": "{count} players online"
         }

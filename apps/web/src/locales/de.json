@@ -82,6 +82,7 @@
         "RandomMatchCard": {
           "title": "Zufallsmatch",
           "joinLobby": "Lobby beitreten",
+          "comingSoon": "Demnächst verfügbar",
           "onlinePlayersOne": "{count} Spieler online",
           "onlinePlayersOther": "{count} Spieler online"
         }

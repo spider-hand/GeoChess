@@ -82,6 +82,7 @@
         "RandomMatchCard": {
           "title": "ランダムマッチ",
           "joinLobby": "ロビーに参加",
+          "comingSoon": "近日公開",
           "onlinePlayersOne": "オンライン {count} 人",
           "onlinePlayersOther": "オンライン {count} 人"
         }

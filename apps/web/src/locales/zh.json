@@ -82,6 +82,7 @@
         "RandomMatchCard": {
           "title": "随机匹配",
           "joinLobby": "加入大厅",
+          "comingSoon": "即将推出",
           "onlinePlayersOne": "{count} 名玩家在线",
           "onlinePlayersOther": "{count} 名玩家在线"
         }

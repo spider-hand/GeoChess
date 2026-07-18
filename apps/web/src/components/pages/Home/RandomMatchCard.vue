@@ -14,10 +14,6 @@ const props = defineProps<{
   onlinePlayers: number;
 }>();
 
-const emit = defineEmits<{
-  joinRandomMatch: [];
-}>();
-
 const { locale, t } = useI18n();
 
 const onlinePlayersLabel = computed(() => {
@@ -33,10 +29,6 @@ const onlinePlayersLabel = computed(() => {
         count: formattedCount,
       });
 });
-
-const emitJoinRandomMatch = () => {
-  emit("joinRandomMatch");
-};
 </script>
 
 <template>
@@ -54,12 +46,8 @@ const emitJoinRandomMatch = () => {
       </span>
     </div>
 
-    <Button
-      class="random-match-card__join-button"
-      :disabled="props.disabled"
-      @click="emitJoinRandomMatch"
-    >
-      {{ t("components.pages.Home.RandomMatchCard.joinLobby") }}
+    <Button class="random-match-card__join-button" disabled>
+      {{ t("components.pages.Home.RandomMatchCard.comingSoon") }}
     </Button>
   </section>
 </template>

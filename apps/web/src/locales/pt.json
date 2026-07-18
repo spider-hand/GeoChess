@@ -82,6 +82,7 @@
         "RandomMatchCard": {
           "title": "Partida aleatória",
           "joinLobby": "Entrar no lobby",
+          "comingSoon": "Em breve",
           "onlinePlayersOne": "{count} jogador online",
           "onlinePlayersOther": "{count} jogadores online"
         }

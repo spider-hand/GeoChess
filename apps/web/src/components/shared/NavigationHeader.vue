@@ -21,6 +21,7 @@ defineOptions({
 });
 
 const GITHUB_URL = "https://github.com/spider-hand/GeoChess";
+const DISCORD_URL = "https://discord.gg/WEndwwmwue";
 
 const { locale, t } = useI18n({ useScope: "global" });
 const router = useRouter();
@@ -39,13 +40,8 @@ const isMobileHowToPlayOpen = ref(false);
 const isMobileLanguageOpen = ref(false);
 
 const emit = defineEmits<{
-  discordClick: [event: MouseEvent];
   languageSelect: [language: string];
 }>();
-
-const emitDiscordClick = (event: MouseEvent) => {
-  emit("discordClick", event);
-};
 
 const emitLanguageSelect = (language: string) => {
   emit("languageSelect", language);
@@ -119,9 +115,9 @@ const handleGithubClick = () => {
   window.open(GITHUB_URL, "_blank", "noopener,noreferrer");
 };
 
-const handleDiscordClick = (event: MouseEvent) => {
+const handleDiscordClick = () => {
   closeMobileMenu();
-  emitDiscordClick(event);
+  window.open(DISCORD_URL, "_blank", "noopener,noreferrer");
 };
 
 useOnClickOutside({
@@ -188,7 +184,7 @@ useOnClickOutside({
             :ariaLabel="
               t('components.shared.NavigationHeader.discordServerLink')
             "
-            @click="emitDiscordClick"
+            @click="handleDiscordClick"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

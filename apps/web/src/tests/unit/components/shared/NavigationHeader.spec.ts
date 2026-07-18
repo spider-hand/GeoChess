@@ -151,17 +151,21 @@ it("should show the mobile how to play accordion content", async () => {
   await expect.element(getByText("That's it. Enjoy!")).toBeInTheDocument();
 });
 
-it("should emit Discord from the mobile menu", async () => {
+it("should open Discord from the mobile control", async () => {
   resetAuthState();
-  const handler = vi.fn();
-  const { getByRole } = renderNavigationHeader({
-    onDiscordClick: handler,
-  });
+  const open = vi.spyOn(window, "open").mockImplementation(() => null);
+  const { getByRole } = renderNavigationHeader();
 
   await getByRole("button", { name: "Open navigation menu" }).click();
   await getByRole("button", { name: "Discord", exact: true }).click();
 
-  expect(handler).toHaveBeenCalledTimes(1);
+  expect(open).toHaveBeenCalledWith(
+    "https://discord.gg/WEndwwmwue",
+    "_blank",
+    "noopener,noreferrer",
+  );
+
+  open.mockRestore();
 });
 
 it("should open GitHub from the mobile control", async () => {

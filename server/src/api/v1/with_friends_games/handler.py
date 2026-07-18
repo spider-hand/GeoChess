@@ -38,7 +38,7 @@ def _handle_api_error(error: Exception):
 @event_parser(model=CustomApiGatewayEvent)
 def create_with_friends_game(event: CustomApiGatewayEvent, context: LambdaContext):
     try:
-        with_friends_game, status_code = (
+        with_friends_game, room_key, status_code = (
             _with_friends_games_service.create_with_friends_game(
                 get_authorized_uid(event)
             )
@@ -48,7 +48,7 @@ def create_with_friends_game(event: CustomApiGatewayEvent, context: LambdaContex
             status_code,
             {
                 "id": with_friends_game.id,
-                "roomKey": with_friends_game.room_key,
+                "roomKey": room_key,
             },
             CORS_HEADERS,
         )

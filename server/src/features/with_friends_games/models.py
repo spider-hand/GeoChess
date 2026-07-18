@@ -15,7 +15,6 @@ class WithFriendsGameRecord(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     id: str
-    room_key: RoomKey = Field(alias="roomKey")
     player1_user_id: str = Field(alias="player1UserId")
     player2_user_id: str | None = Field(alias="player2UserId", default=None)
     result: WithFriendsGameResult | None = None

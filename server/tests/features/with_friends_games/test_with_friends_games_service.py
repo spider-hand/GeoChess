@@ -16,7 +16,6 @@ def make_with_friends_game(
     return WithFriendsGameRecord.model_validate(
         {
             "id": "game-123",
-            "roomKey": "654321",
             "player1UserId": player1_user_id,
             "player2UserId": player2_user_id,
             "result": result,
@@ -80,6 +79,12 @@ def test_create_with_friends_game_creates_realtime_record():
         users_repository=users_repository,
     )
     game_ref = MagicMock()
+    with_friends_games_ref = MagicMock()
+    with_friends_games_ref.child.return_value = game_ref
+    room_key_ref = MagicMock()
+    room_key_ref.transaction.side_effect = lambda callback: callback(None)
+    room_keys_ref = MagicMock()
+    room_keys_ref.child.return_value = room_key_ref
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
@@ -98,21 +103,24 @@ def test_create_with_friends_game_creates_realtime_record():
             "features.with_friends_games.service.random.choice",
             lambda values: "BB",
         )
+        monkeypatch.setattr(service, "_generate_room_key", lambda: "654321")
         monkeypatch.setattr(
             "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
             "features.with_friends_games.service.firebase_db.reference",
-            lambda path, app: MagicMock(child=lambda game_id: game_ref),
+            lambda path, app: {
+                "withFriendsGames": with_friends_games_ref,
+                "withFriendsGameRoomKeys": room_keys_ref,
+            }[path],
         )
 
-        result, status_code = service.create_with_friends_game("user-123")
+        result, room_key, status_code = service.create_with_friends_game("user-123")
 
     assert status_code == 201
-    assert result.room_key == "654321"
-    with_friends_games_repository.create.assert_called_once_with(
-        ANY, ANY, "user-123"
-    )
+    assert room_key == "654321"
+    with_friends_games_repository.create.assert_called_once_with(ANY, "user-123")
+    room_key_ref.transaction.assert_called_once()
     game_ref.set.assert_called_once_with(
         {
             "id": "game-123",
@@ -136,29 +144,68 @@ def test_create_with_friends_game_creates_realtime_record():
 
 def test_join_with_friends_game_returns_existing_game_for_participant():
     with_friends_games_repository = MagicMock()
-    with_friends_games_repository.get_by_room_key.return_value = (
-        make_with_friends_game()
-    )
+    with_friends_games_repository.get_by_id.return_value = make_with_friends_game()
     service = WithFriendsGamesService(
         with_friends_games_repository=with_friends_games_repository
     )
+    room_key_ref = MagicMock()
+    room_key_ref.get.return_value = "game-123"
+    room_keys_ref = MagicMock()
+    room_keys_ref.child.return_value = room_key_ref
 
-    game_id = service.join_with_friends_game("user-123", {"roomKey": "654321"})
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.with_friends_games.service.firebase_db.reference",
+            lambda path, app: room_keys_ref,
+        )
+
+        game_id = service.join_with_friends_game("user-123", {"roomKey": "654321"})
 
     assert game_id == "game-123"
+    with_friends_games_repository.get_by_id.assert_called_once_with("game-123")
     with_friends_games_repository.assign_player2.assert_not_called()
+
+
+def test_join_with_friends_game_returns_404_for_missing_room_key():
+    service = WithFriendsGamesService(with_friends_games_repository=MagicMock())
+    room_key_ref = MagicMock()
+    room_key_ref.get.return_value = None
+    room_keys_ref = MagicMock()
+    room_keys_ref.child.return_value = room_key_ref
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.with_friends_games.service.firebase_db.reference",
+            lambda path, app: room_keys_ref,
+        )
+
+        with pytest.raises(ApiError) as error:
+            service.join_with_friends_game("user-123", {"roomKey": "654321"})
+
+    assert error.value.status_code == 404
+    assert error.value.code == "with_friends_game_not_found"
 
 
 def test_join_with_friends_game_assigns_player2_and_enqueues_start():
     with_friends_games_repository = MagicMock()
-    with_friends_games_repository.get_by_room_key.return_value = (
-        make_with_friends_game()
-    )
+    with_friends_games_repository.get_by_id.return_value = make_with_friends_game()
     with_friends_games_repository.assign_player2.return_value = True
     service = WithFriendsGamesService(
         with_friends_games_repository=with_friends_games_repository
     )
     game_ref = MagicMock()
+    with_friends_games_ref = MagicMock()
+    with_friends_games_ref.child.return_value = game_ref
+    room_key_ref = MagicMock()
+    room_key_ref.get.return_value = "game-123"
+    room_keys_ref = MagicMock()
+    room_keys_ref.child.return_value = room_key_ref
     updated_state = {}
 
     def transaction(callback):
@@ -176,7 +223,10 @@ def test_join_with_friends_game_assigns_player2_and_enqueues_start():
         )
         monkeypatch.setattr(
             "features.with_friends_games.service.firebase_db.reference",
-            lambda path, app: MagicMock(child=lambda game_id: game_ref),
+            lambda path, app: {
+                "withFriendsGames": with_friends_games_ref,
+                "withFriendsGameRoomKeys": room_keys_ref,
+            }[path],
         )
         enqueue_mock = MagicMock()
         monkeypatch.setattr(
@@ -190,6 +240,38 @@ def test_join_with_friends_game_assigns_player2_and_enqueues_start():
     assert updated_state["value"]["player2UserId"] == "user-456"
     assert updated_state["value"]["status"] == "starting"
     enqueue_mock.assert_called_once_with("game-123")
+
+
+def test_create_with_friends_game_retries_when_room_key_is_taken():
+    with_friends_games_repository = MagicMock()
+    with_friends_games_repository.create.return_value = make_with_friends_game()
+    service = WithFriendsGamesService(
+        with_friends_games_repository=with_friends_games_repository
+    )
+    room_key_ref = MagicMock()
+    room_key_ref.transaction.side_effect = ["other-game", "game-123"]
+    room_keys_ref = MagicMock()
+    room_keys_ref.child.return_value = room_key_ref
+
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setattr(
+            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+        )
+        monkeypatch.setattr(
+            "features.with_friends_games.service.firebase_db.reference",
+            lambda path, app: room_keys_ref,
+        )
+        monkeypatch.setattr(
+            service, "_generate_room_key", MagicMock(side_effect=["111111", "222222"])
+        )
+
+        _, room_key = service._create_room("user-123")
+
+    assert room_key == "222222"
+    assert room_keys_ref.child.call_args_list == [
+        (("111111",),),
+        (("222222",),),
+    ]
 
 
 def test_create_with_friends_game_move_enqueues_timeout_for_non_terminal_move():
@@ -248,16 +330,18 @@ def test_create_with_friends_game_move_enqueues_timeout_for_non_terminal_move():
     enqueue_mock.assert_called_once_with("game-123")
 
 
-def test_delete_expired_with_friends_games_returns_deleted_count():
+def test_delete_expired_with_friends_games_removes_only_realtime_records():
     with_friends_games_repository = MagicMock()
-    with_friends_games_repository.delete_expired_games.return_value = [
+    with_friends_games_repository.get_expired_game_ids.return_value = [
         "game-1",
         "game-2",
     ]
     service = WithFriendsGamesService(
         with_friends_games_repository=with_friends_games_repository
     )
-    with_friends_games_ref = MagicMock()
+    room_keys_ref = MagicMock()
+    room_keys_ref.get.return_value = {"111111": "game-1", "222222": "other-game"}
+    root_ref = MagicMock()
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
@@ -265,25 +349,33 @@ def test_delete_expired_with_friends_games_returns_deleted_count():
         )
         monkeypatch.setattr(
             "features.with_friends_games.service.firebase_db.reference",
-            lambda path, app: with_friends_games_ref,
+            lambda path, app: {
+                "withFriendsGameRoomKeys": room_keys_ref,
+                "/": root_ref,
+            }[path],
         )
 
         deleted_count = service.delete_expired_with_friends_games()
 
     assert deleted_count == 2
-    with_friends_games_repository.delete_expired_games.assert_called_once_with()
-    with_friends_games_ref.update.assert_called_once_with(
-        {"game-1": None, "game-2": None}
+    with_friends_games_repository.get_expired_game_ids.assert_called_once_with()
+    root_ref.update.assert_called_once_with(
+        {
+            "withFriendsGames/game-1": None,
+            "withFriendsGames/game-2": None,
+            "withFriendsGameRoomKeys/111111": None,
+        }
     )
 
 
 def test_delete_expired_with_friends_games_skips_realtime_delete_when_nothing_was_deleted():
     with_friends_games_repository = MagicMock()
-    with_friends_games_repository.delete_expired_games.return_value = []
+    with_friends_games_repository.get_expired_game_ids.return_value = []
     service = WithFriendsGamesService(
         with_friends_games_repository=with_friends_games_repository
     )
-    with_friends_games_ref = MagicMock()
+    room_keys_ref = MagicMock()
+    root_ref = MagicMock()
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
@@ -291,11 +383,15 @@ def test_delete_expired_with_friends_games_skips_realtime_delete_when_nothing_wa
         )
         monkeypatch.setattr(
             "features.with_friends_games.service.firebase_db.reference",
-            lambda path, app: with_friends_games_ref,
+            lambda path, app: {
+                "withFriendsGameRoomKeys": room_keys_ref,
+                "/": root_ref,
+            }[path],
         )
 
         deleted_count = service.delete_expired_with_friends_games()
 
     assert deleted_count == 0
-    with_friends_games_repository.delete_expired_games.assert_called_once_with()
-    with_friends_games_ref.update.assert_not_called()
+    with_friends_games_repository.get_expired_game_ids.assert_called_once_with()
+    room_keys_ref.get.assert_not_called()
+    root_ref.update.assert_not_called()

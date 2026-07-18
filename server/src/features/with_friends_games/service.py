@@ -42,8 +42,17 @@ class WithFriendsGamesService:
     def _get_with_friends_games_ref(self):
         return firebase_db.reference("withFriendsGames", app=get_firebase_app())
 
+    def _get_room_keys_ref(self):
+        return firebase_db.reference("withFriendsGameRoomKeys", app=get_firebase_app())
+
+    def _get_root_ref(self):
+        return firebase_db.reference("/", app=get_firebase_app())
+
     def _get_game_ref(self, game_id: str):
         return self._get_with_friends_games_ref().child(game_id)
+
+    def _get_room_key_ref(self, room_key: str):
+        return self._get_room_keys_ref().child(room_key)
 
     def _finish_game(
         self,
@@ -150,7 +159,7 @@ class WithFriendsGamesService:
         }
 
     def _build_initial_realtime_game(
-        self, with_friends_game: WithFriendsGameRecord
+        self, with_friends_game: WithFriendsGameRecord, room_key: str
     ) -> tuple[dict[str, object], RealtimeWithFriendsGameRecord]:
         country_code = random.choice(get_countries_with_borders())
         available_moves = self._compute_available_moves(country_code, [country_code])
@@ -158,7 +167,7 @@ class WithFriendsGamesService:
 
         payload = {
             "id": with_friends_game.id,
-            "roomKey": with_friends_game.room_key,
+            "roomKey": room_key,
             "player1UserId": with_friends_game.player1_user_id,
             "participants": {
                 "player1": with_friends_game.player1_user_id,
@@ -186,21 +195,24 @@ class WithFriendsGamesService:
     def _generate_room_key(self) -> str:
         return f"{random.randint(0, 999999):06d}"
 
-    def _create_room(self, user_id: str) -> WithFriendsGameRecord:
+    def _create_room(self, user_id: str) -> tuple[WithFriendsGameRecord, str]:
+        created_game = self.with_friends_games_repository.create(str(uuid4()), user_id)
+
         for _ in range(10):
-            try:
-                return self.with_friends_games_repository.create(
-                    str(uuid4()), self._generate_room_key(), user_id
+            room_key = self._generate_room_key()
+            claimed_game_id = self._get_room_key_ref(room_key).transaction(
+                lambda current_value: (
+                    created_game.id if current_value is None else current_value
                 )
-            except Exception as error:
-                if "with_friends_games_room_key_key" not in str(error):
-                    raise error
+            )
+            if claimed_game_id == created_game.id:
+                return created_game, room_key
 
         raise RuntimeError("Failed to generate a unique room key.")
 
     def create_with_friends_game(
         self, user_id: str
-    ) -> tuple[WithFriendsGameRecord, int]:
+    ) -> tuple[WithFriendsGameRecord, str, int]:
         if self.users_repository.get_by_id(user_id) is None:
             raise ApiError(
                 status_code=HTTPStatus.NOT_FOUND,
@@ -208,11 +220,11 @@ class WithFriendsGamesService:
                 message="User was not found.",
             )
 
-        created_game = self._create_room(user_id)
-        realtime_payload, _ = self._build_initial_realtime_game(created_game)
+        created_game, room_key = self._create_room(user_id)
+        realtime_payload, _ = self._build_initial_realtime_game(created_game, room_key)
         self._get_game_ref(created_game.id).set(realtime_payload)
 
-        return created_game, HTTPStatus.CREATED
+        return created_game, room_key, HTTPStatus.CREATED
 
     def join_with_friends_game(self, user_id: str, payload: dict[str, object]) -> str:
         try:
@@ -224,8 +236,11 @@ class WithFriendsGamesService:
                 message="roomKey is required.",
             ) from error
 
-        with_friends_game = self.with_friends_games_repository.get_by_room_key(
-            join_input.room_key
+        game_id = self._get_room_key_ref(join_input.room_key).get()
+        with_friends_game = (
+            self.with_friends_games_repository.get_by_id(game_id)
+            if isinstance(game_id, str)
+            else None
         )
         if with_friends_game is None:
             raise ApiError(
@@ -481,10 +496,21 @@ class WithFriendsGamesService:
             )
 
     def delete_expired_with_friends_games(self) -> int:
-        deleted_game_ids = self.with_friends_games_repository.delete_expired_games()
+        deleted_game_ids = self.with_friends_games_repository.get_expired_game_ids()
         if deleted_game_ids:
-            self._get_with_friends_games_ref().update(
-                {game_id: None for game_id in deleted_game_ids}
-            )
+            deleted_game_id_set = set(deleted_game_ids)
+            room_key_index = self._get_room_keys_ref().get()
+            updates = {
+                f"withFriendsGames/{game_id}": None for game_id in deleted_game_ids
+            }
+            if isinstance(room_key_index, dict):
+                updates.update(
+                    {
+                        f"withFriendsGameRoomKeys/{room_key}": None
+                        for room_key, game_id in room_key_index.items()
+                        if game_id in deleted_game_id_set
+                    }
+                )
+            self._get_root_ref().update(updates)
 
         return len(deleted_game_ids)

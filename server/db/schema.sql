@@ -70,7 +70,6 @@ CREATE TABLE public.users (
 
 CREATE TABLE public.with_friends_games (
     id text NOT NULL,
-    room_key text NOT NULL,
     player1_user_id text NOT NULL,
     player2_user_id text,
     result text,
@@ -110,14 +109,6 @@ ALTER TABLE ONLY public.users
 
 ALTER TABLE ONLY public.with_friends_games
     ADD CONSTRAINT with_friends_games_pkey PRIMARY KEY (id);
-
-
---
--- Name: with_friends_games with_friends_games_room_key_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.with_friends_games
-    ADD CONSTRAINT with_friends_games_room_key_key UNIQUE (room_key);
 
 
 --
@@ -163,4 +154,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260713000001'),
     ('20260713000002'),
     ('20260718204659'),
-    ('20260718205756');
+    ('20260718205756'),
+    ('20260718210000');

@@ -11,7 +11,6 @@ def _map_with_friends_game_row(row: dict[str, Any]) -> WithFriendsGameRecord:
     return WithFriendsGameRecord.model_validate(
         {
             "id": row["id"],
-            "roomKey": row["room_key"],
             "player1UserId": row["player1_user_id"],
             "player2UserId": row["player2_user_id"],
             "result": row["result"],
@@ -26,7 +25,7 @@ class WithFriendsGamesRepository:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT id, room_key, player1_user_id, player2_user_id, result, created_at, updated_at
+                SELECT id, player1_user_id, player2_user_id, result, created_at, updated_at
                 FROM with_friends_games
                 WHERE id = %s
                 """,
@@ -39,32 +38,15 @@ class WithFriendsGamesRepository:
 
         return _map_with_friends_game_row(row)
 
-    def get_by_room_key(self, room_key: str) -> WithFriendsGameRecord | None:
+    def create(self, game_id: str, player1_user_id: str) -> WithFriendsGameRecord:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT id, room_key, player1_user_id, player2_user_id, result, created_at, updated_at
-                FROM with_friends_games
-                WHERE room_key = %s
+                INSERT INTO with_friends_games (id, player1_user_id)
+                VALUES (%s, %s)
+                RETURNING id, player1_user_id, player2_user_id, result, created_at, updated_at
                 """,
-                (room_key,),
-            )
-            row = cursor.fetchone()
-
-        if row is None:
-            return None
-
-        return _map_with_friends_game_row(row)
-
-    def create(self, game_id: str, room_key: str, player1_user_id: str) -> WithFriendsGameRecord:
-        with get_connection() as connection, connection.cursor() as cursor:
-            cursor.execute(
-                """
-                INSERT INTO with_friends_games (id, room_key, player1_user_id)
-                VALUES (%s, %s, %s)
-                RETURNING id, room_key, player1_user_id, player2_user_id, result, created_at, updated_at
-                """,
-                (game_id, room_key, player1_user_id),
+                (game_id, player1_user_id),
             )
             row = cursor.fetchone()
 
@@ -107,12 +89,12 @@ class WithFriendsGamesRepository:
 
             return True
 
-    def delete_expired_games(self) -> list[str]:
+    def get_expired_game_ids(self) -> list[str]:
         with get_connection() as connection, connection.cursor() as cursor:
             cursor.execute("""
-                DELETE FROM with_friends_games
+                SELECT id
+                FROM with_friends_games
                 WHERE created_at < NOW() - INTERVAL '30 days'
-                RETURNING id
                 """)
 
             return [row["id"] for row in cursor.fetchall()]

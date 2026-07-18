@@ -16,44 +16,44 @@ import { mapValues } from "../runtime";
 /**
  *
  * @export
- * @interface GetAiGames200ResponseTotal
+ * @interface GetAiGames200ResponseByDifficultyEasy
  */
-export interface GetAiGames200ResponseTotal {
+export interface GetAiGames200ResponseByDifficultyEasy {
   /**
    *
    * @type {number}
-   * @memberof GetAiGames200ResponseTotal
+   * @memberof GetAiGames200ResponseByDifficultyEasy
    */
   wins: number;
   /**
    *
    * @type {number}
-   * @memberof GetAiGames200ResponseTotal
+   * @memberof GetAiGames200ResponseByDifficultyEasy
    */
   losses: number;
 }
 
 /**
- * Check if a given object implements the GetAiGames200ResponseTotal interface.
+ * Check if a given object implements the GetAiGames200ResponseByDifficultyEasy interface.
  */
-export function instanceOfGetAiGames200ResponseTotal(
+export function instanceOfGetAiGames200ResponseByDifficultyEasy(
   value: object,
-): value is GetAiGames200ResponseTotal {
+): value is GetAiGames200ResponseByDifficultyEasy {
   if (!("wins" in value) || value["wins"] === undefined) return false;
   if (!("losses" in value) || value["losses"] === undefined) return false;
   return true;
 }
 
-export function GetAiGames200ResponseTotalFromJSON(
+export function GetAiGames200ResponseByDifficultyEasyFromJSON(
   json: any,
-): GetAiGames200ResponseTotal {
-  return GetAiGames200ResponseTotalFromJSONTyped(json, false);
+): GetAiGames200ResponseByDifficultyEasy {
+  return GetAiGames200ResponseByDifficultyEasyFromJSONTyped(json, false);
 }
 
-export function GetAiGames200ResponseTotalFromJSONTyped(
+export function GetAiGames200ResponseByDifficultyEasyFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): GetAiGames200ResponseTotal {
+): GetAiGames200ResponseByDifficultyEasy {
   if (json == null) {
     return json;
   }
@@ -63,14 +63,14 @@ export function GetAiGames200ResponseTotalFromJSONTyped(
   };
 }
 
-export function GetAiGames200ResponseTotalToJSON(
+export function GetAiGames200ResponseByDifficultyEasyToJSON(
   json: any,
-): GetAiGames200ResponseTotal {
-  return GetAiGames200ResponseTotalToJSONTyped(json, false);
+): GetAiGames200ResponseByDifficultyEasy {
+  return GetAiGames200ResponseByDifficultyEasyToJSONTyped(json, false);
 }
 
-export function GetAiGames200ResponseTotalToJSONTyped(
-  value?: GetAiGames200ResponseTotal | null,
+export function GetAiGames200ResponseByDifficultyEasyToJSONTyped(
+  value?: GetAiGames200ResponseByDifficultyEasy | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

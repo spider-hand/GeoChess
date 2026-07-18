@@ -27,13 +27,6 @@ import {
   GetAiGames200ResponseRecentGamesInnerToJSON,
   GetAiGames200ResponseRecentGamesInnerToJSONTyped,
 } from "./GetAiGames200ResponseRecentGamesInner";
-import type { GetAiGames200ResponseTotal } from "./GetAiGames200ResponseTotal";
-import {
-  GetAiGames200ResponseTotalFromJSON,
-  GetAiGames200ResponseTotalFromJSONTyped,
-  GetAiGames200ResponseTotalToJSON,
-  GetAiGames200ResponseTotalToJSONTyped,
-} from "./GetAiGames200ResponseTotal";
 
 /**
  *
@@ -41,12 +34,6 @@ import {
  * @interface GetAiGames200Response
  */
 export interface GetAiGames200Response {
-  /**
-   *
-   * @type {GetAiGames200ResponseTotal}
-   * @memberof GetAiGames200Response
-   */
-  total: GetAiGames200ResponseTotal;
   /**
    *
    * @type {GetAiGames200ResponseByDifficulty}
@@ -67,7 +54,6 @@ export interface GetAiGames200Response {
 export function instanceOfGetAiGames200Response(
   value: object,
 ): value is GetAiGames200Response {
-  if (!("total" in value) || value["total"] === undefined) return false;
   if (!("byDifficulty" in value) || value["byDifficulty"] === undefined)
     return false;
   if (!("recentGames" in value) || value["recentGames"] === undefined)
@@ -89,7 +75,6 @@ export function GetAiGames200ResponseFromJSONTyped(
     return json;
   }
   return {
-    total: GetAiGames200ResponseTotalFromJSON(json["total"]),
     byDifficulty: GetAiGames200ResponseByDifficultyFromJSON(
       json["byDifficulty"],
     ),
@@ -112,7 +97,6 @@ export function GetAiGames200ResponseToJSONTyped(
   }
 
   return {
-    total: GetAiGames200ResponseTotalToJSON(value["total"]),
     byDifficulty: GetAiGames200ResponseByDifficultyToJSON(
       value["byDifficulty"],
     ),

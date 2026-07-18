@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from "../runtime";
-import type { GetAiGames200ResponseTotal } from "./GetAiGames200ResponseTotal";
+import type { GetAiGames200ResponseByDifficultyEasy } from "./GetAiGames200ResponseByDifficultyEasy";
 import {
-  GetAiGames200ResponseTotalFromJSON,
-  GetAiGames200ResponseTotalFromJSONTyped,
-  GetAiGames200ResponseTotalToJSON,
-  GetAiGames200ResponseTotalToJSONTyped,
-} from "./GetAiGames200ResponseTotal";
+  GetAiGames200ResponseByDifficultyEasyFromJSON,
+  GetAiGames200ResponseByDifficultyEasyFromJSONTyped,
+  GetAiGames200ResponseByDifficultyEasyToJSON,
+  GetAiGames200ResponseByDifficultyEasyToJSONTyped,
+} from "./GetAiGames200ResponseByDifficultyEasy";
 
 /**
  *
@@ -29,22 +29,22 @@ import {
 export interface GetAiGames200ResponseByDifficulty {
   /**
    *
-   * @type {GetAiGames200ResponseTotal}
+   * @type {GetAiGames200ResponseByDifficultyEasy}
    * @memberof GetAiGames200ResponseByDifficulty
    */
-  easy: GetAiGames200ResponseTotal;
+  easy: GetAiGames200ResponseByDifficultyEasy;
   /**
    *
-   * @type {GetAiGames200ResponseTotal}
+   * @type {GetAiGames200ResponseByDifficultyEasy}
    * @memberof GetAiGames200ResponseByDifficulty
    */
-  medium: GetAiGames200ResponseTotal;
+  medium: GetAiGames200ResponseByDifficultyEasy;
   /**
    *
-   * @type {GetAiGames200ResponseTotal}
+   * @type {GetAiGames200ResponseByDifficultyEasy}
    * @memberof GetAiGames200ResponseByDifficulty
    */
-  hard: GetAiGames200ResponseTotal;
+  hard: GetAiGames200ResponseByDifficultyEasy;
 }
 
 /**
@@ -73,9 +73,9 @@ export function GetAiGames200ResponseByDifficultyFromJSONTyped(
     return json;
   }
   return {
-    easy: GetAiGames200ResponseTotalFromJSON(json["easy"]),
-    medium: GetAiGames200ResponseTotalFromJSON(json["medium"]),
-    hard: GetAiGames200ResponseTotalFromJSON(json["hard"]),
+    easy: GetAiGames200ResponseByDifficultyEasyFromJSON(json["easy"]),
+    medium: GetAiGames200ResponseByDifficultyEasyFromJSON(json["medium"]),
+    hard: GetAiGames200ResponseByDifficultyEasyFromJSON(json["hard"]),
   };
 }
 
@@ -94,8 +94,8 @@ export function GetAiGames200ResponseByDifficultyToJSONTyped(
   }
 
   return {
-    easy: GetAiGames200ResponseTotalToJSON(value["easy"]),
-    medium: GetAiGames200ResponseTotalToJSON(value["medium"]),
-    hard: GetAiGames200ResponseTotalToJSON(value["hard"]),
+    easy: GetAiGames200ResponseByDifficultyEasyToJSON(value["easy"]),
+    medium: GetAiGames200ResponseByDifficultyEasyToJSON(value["medium"]),
+    hard: GetAiGames200ResponseByDifficultyEasyToJSON(value["hard"]),
   };
 }

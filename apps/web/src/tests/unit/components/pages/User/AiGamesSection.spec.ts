@@ -24,7 +24,6 @@ const AiGamesSection = (
 ).default;
 
 const response: GetAiGamesResponse = {
-  total: { wins: 12, losses: 4 },
   byDifficulty: {
     easy: { wins: 6, losses: 1 },
     medium: { wins: 4, losses: 2 },

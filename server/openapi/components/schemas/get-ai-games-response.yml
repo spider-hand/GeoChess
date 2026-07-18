@@ -1,8 +1,6 @@
 type: object
-required: [total, byDifficulty, recentGames]
+required: [byDifficulty, recentGames]
 properties:
-  total:
-    $ref: '#/$defs/stats'
   byDifficulty:
     type: object
     required: [easy, medium, hard]

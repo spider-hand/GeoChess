@@ -7,7 +7,6 @@ from features.ai_games.models import (
     AiGameResult,
     AiGamesSortBy,
     AiGamesSummary,
-    AiGameStats,
     Difficulty,
     OrderBy,
 )
@@ -59,21 +58,17 @@ class AiGamesRepository:
             recent_rows = cursor.fetchall()
 
         by_difficulty = {
-            difficulty: AiGameStats(wins=0, losses=0)
+            difficulty: {"wins": 0, "losses": 0}
             for difficulty in ("easy", "medium", "hard")
         }
         for row in stat_rows:
             stats = by_difficulty[row["difficulty"]]
             if row["result"] == "win":
-                stats.wins += row["count"]
+                stats["wins"] += row["count"]
             else:
-                stats.losses += row["count"]
+                stats["losses"] += row["count"]
 
         return AiGamesSummary(
-            total=AiGameStats(
-                wins=sum(stats.wins for stats in by_difficulty.values()),
-                losses=sum(stats.losses for stats in by_difficulty.values()),
-            ),
             byDifficulty=by_difficulty,
             recentGames=[_map_ai_game_row(row) for row in recent_rows],
         )

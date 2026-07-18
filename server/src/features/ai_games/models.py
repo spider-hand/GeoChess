@@ -23,14 +23,10 @@ class AiGameRecord(BaseModel):
     updated_at: datetime = Field(alias="updatedAt")
 
 
-class AiGameStats(BaseModel):
-    wins: int
-    losses: int
-
-
 class AiGamesSummary(BaseModel):
-    total: AiGameStats
-    by_difficulty: dict[Difficulty, AiGameStats] = Field(alias="byDifficulty")
+    by_difficulty: dict[Difficulty, dict[Literal["wins", "losses"], int]] = Field(
+        alias="byDifficulty"
+    )
     recent_games: list[AiGameRecord] = Field(alias="recentGames")
 
 

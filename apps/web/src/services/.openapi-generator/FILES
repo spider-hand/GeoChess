@@ -1,4 +1,3 @@
-.openapi-generator-ignore
 apis/DefaultApi.ts
 apis/HealthApi.ts
 apis/index.ts
@@ -18,8 +17,8 @@ models/CreateWithFriendsGameResponse.ts
 models/ErrorResponse.ts
 models/GetAiGames200Response.ts
 models/GetAiGames200ResponseByDifficulty.ts
+models/GetAiGames200ResponseByDifficultyEasy.ts
 models/GetAiGames200ResponseRecentGamesInner.ts
-models/GetAiGames200ResponseTotal.ts
 models/GetAiGames400Response.ts
 models/GetAiGamesResponse.ts
 models/GetCurrentUser200Response.ts

@@ -1,7 +1,7 @@
 from typing import Any
 
-from core.db import get_connection
-from features.with_friends_games.models import (
+from src.core.db import get_connection
+from src.features.with_friends_games.models import (
     OrderBy,
     WithFriendsGameHistoryRecord,
     WithFriendsGameRecord,

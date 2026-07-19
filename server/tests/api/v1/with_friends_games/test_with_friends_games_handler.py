@@ -1,8 +1,8 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from api.v1.with_friends_games import handler
-from features.with_friends_games.models import (
+from src.api.v1.with_friends_games import handler
+from src.features.with_friends_games.models import (
     WithFriendsGameHistoryRecord,
     WithFriendsGameStatsRecord,
 )

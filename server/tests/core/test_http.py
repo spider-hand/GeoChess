@@ -1,7 +1,7 @@
 import pytest
 
-from core.events import CustomApiGatewayEvent
-from core.http import ApiError, parse_json_body
+from src.core.events import CustomApiGatewayEvent
+from src.core.http import ApiError, parse_json_body
 from tests.factories.http_events import make_api_gateway_event
 
 

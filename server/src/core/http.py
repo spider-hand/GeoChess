@@ -2,7 +2,7 @@ import json
 from http import HTTPStatus
 from typing import Any
 
-from core.events import CustomApiGatewayEvent
+from src.core.events import CustomApiGatewayEvent
 
 
 def json_response(status_code: int, body: Any, headers: dict[str, str]):

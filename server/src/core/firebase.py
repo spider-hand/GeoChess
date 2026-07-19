@@ -1,6 +1,6 @@
 from typing import Any
 
-from core.secret import get_secrets
+from src.core.secret import get_secrets
 
 FIREBASE_SERVER_TIMESTAMP = {".sv": "timestamp"}
 

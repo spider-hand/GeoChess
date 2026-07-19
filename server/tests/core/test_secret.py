@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from core.secret import get_app_secret_name, get_secrets
+from src.core.secret import get_app_secret_name, get_secrets
 
 
 def setup_function():
@@ -24,7 +24,7 @@ def test_get_app_secret_name_requires_environment():
 
 
 @patch.dict("os.environ", {"ENVIRONMENT": "dev"}, clear=True)
-@patch("core.secret.get_secret_json")
+@patch("src.core.secret.get_secret_json")
 def test_get_secrets_reads_stage_scoped_json_secret(mock_get_secret_json):
     mock_get_secret_json.return_value = {
         "neon_db_uri": "postgresql://example",
@@ -41,7 +41,7 @@ def test_get_secrets_reads_stage_scoped_json_secret(mock_get_secret_json):
 
 
 @patch.dict("os.environ", {"ENVIRONMENT": "dev"}, clear=True)
-@patch("core.secret.get_secret_json")
+@patch("src.core.secret.get_secret_json")
 def test_get_secrets_requires_neon_db_uri(mock_get_secret_json):
     mock_get_secret_json.return_value = {
         "firebase_service_account": '{"type":"service_account"}',
@@ -55,7 +55,7 @@ def test_get_secrets_requires_neon_db_uri(mock_get_secret_json):
 
 
 @patch.dict("os.environ", {"ENVIRONMENT": "dev"}, clear=True)
-@patch("core.secret.get_secret_json")
+@patch("src.core.secret.get_secret_json")
 def test_get_secrets_requires_firebase_service_account_object(mock_get_secret_json):
     mock_get_secret_json.return_value = {
         "neon_db_uri": "postgresql://example",

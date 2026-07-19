@@ -1,9 +1,9 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from api.v1.users import handler
-from core.http import ApiError
-from features.users.models import CurrentUserRecord, UserRecord
+from src.api.v1.users import handler
+from src.core.http import ApiError
+from src.features.users.models import CurrentUserRecord, UserRecord
 from tests.factories.http_events import make_api_gateway_event
 
 

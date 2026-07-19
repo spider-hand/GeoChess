@@ -2,12 +2,12 @@ from unittest.mock import ANY, MagicMock
 
 import pytest
 
-from core.http import ApiError
-from features.with_friends_games.models import (
+from src.core.http import ApiError
+from src.features.with_friends_games.models import (
     RealtimeWithFriendsGameRecord,
     WithFriendsGameRecord,
 )
-from features.with_friends_games.service import WithFriendsGamesService
+from src.features.with_friends_games.service import WithFriendsGamesService
 
 
 def make_with_friends_game(
@@ -88,7 +88,7 @@ def test_create_with_friends_game_creates_realtime_record():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_countries",
+            "src.features.with_friends_games.service.get_countries",
             lambda: {
                 "BB": {"borders": ["CC", "DD"]},
                 "CC": {"borders": ["BB"]},
@@ -96,19 +96,19 @@ def test_create_with_friends_game_creates_realtime_record():
             },
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_countries_with_borders",
+            "src.features.with_friends_games.service.get_countries_with_borders",
             lambda: ("BB",),
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.random.choice",
+            "src.features.with_friends_games.service.random.choice",
             lambda values: "BB",
         )
         monkeypatch.setattr(service, "_generate_room_key", lambda: "654321")
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.firebase_db.reference",
+            "src.features.with_friends_games.service.firebase_db.reference",
             lambda path, app: {
                 "withFriendsGames": with_friends_games_ref,
                 "withFriendsGameRoomKeys": room_keys_ref,
@@ -155,10 +155,10 @@ def test_join_with_friends_game_returns_existing_game_for_participant():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.firebase_db.reference",
+            "src.features.with_friends_games.service.firebase_db.reference",
             lambda path, app: room_keys_ref,
         )
 
@@ -178,10 +178,10 @@ def test_join_with_friends_game_returns_404_for_missing_room_key():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.firebase_db.reference",
+            "src.features.with_friends_games.service.firebase_db.reference",
             lambda path, app: room_keys_ref,
         )
 
@@ -219,10 +219,10 @@ def test_join_with_friends_game_assigns_player2_and_enqueues_start():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.firebase_db.reference",
+            "src.features.with_friends_games.service.firebase_db.reference",
             lambda path, app: {
                 "withFriendsGames": with_friends_games_ref,
                 "withFriendsGameRoomKeys": room_keys_ref,
@@ -230,7 +230,7 @@ def test_join_with_friends_game_assigns_player2_and_enqueues_start():
         )
         enqueue_mock = MagicMock()
         monkeypatch.setattr(
-            "features.with_friends_games.service.enqueue_with_friends_game_start",
+            "src.features.with_friends_games.service.enqueue_with_friends_game_start",
             enqueue_mock,
         )
 
@@ -255,10 +255,10 @@ def test_create_with_friends_game_retries_when_room_key_is_taken():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.firebase_db.reference",
+            "src.features.with_friends_games.service.firebase_db.reference",
             lambda path, app: room_keys_ref,
         )
         monkeypatch.setattr(
@@ -295,7 +295,7 @@ def test_create_with_friends_game_move_enqueues_timeout_for_non_terminal_move():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_countries",
+            "src.features.with_friends_games.service.get_countries",
             lambda: {
                 "BB": {"borders": ["CC"]},
                 "CC": {"borders": ["BB", "DD"]},
@@ -303,19 +303,19 @@ def test_create_with_friends_game_move_enqueues_timeout_for_non_terminal_move():
             },
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.firebase_db.reference",
+            "src.features.with_friends_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.uuid4",
+            "src.features.with_friends_games.service.uuid4",
             lambda: MagicMock(hex="move-1"),
         )
         enqueue_mock = MagicMock()
         monkeypatch.setattr(
-            "features.with_friends_games.service.enqueue_with_friends_game_timeout",
+            "src.features.with_friends_games.service.enqueue_with_friends_game_timeout",
             enqueue_mock,
         )
 
@@ -345,10 +345,10 @@ def test_delete_expired_with_friends_games_removes_only_realtime_records():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.firebase_db.reference",
+            "src.features.with_friends_games.service.firebase_db.reference",
             lambda path, app: {
                 "withFriendsGameRoomKeys": room_keys_ref,
                 "/": root_ref,
@@ -382,10 +382,10 @@ def test_delete_expired_with_friends_games_skips_realtime_delete_when_nothing_wa
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.with_friends_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.with_friends_games.service.firebase_db.reference",
+            "src.features.with_friends_games.service.firebase_db.reference",
             lambda path, app: {
                 "withFriendsGameRoomKeys": room_keys_ref,
                 "/": root_ref,

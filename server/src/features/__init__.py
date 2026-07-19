@@ -1,4 +1,4 @@
-from features.ai_games import (
+from src.features.ai_games import (
     AiGameRecord,
     AiGamesRepository,
     AiGamesService,
@@ -7,14 +7,14 @@ from features.ai_games import (
     RealtimeAiGameMoveRecord,
     RealtimeAiGameRecord,
 )
-from features.users import (
+from src.features.users import (
     CreateUserInput,
     UpdateUserInput,
     UserRecord,
     UsersRepository,
     UsersService,
 )
-from features.with_friends_games import (
+from src.features.with_friends_games import (
     CreateWithFriendsGameJoinInput,
     CreateWithFriendsGameMoveInput,
     RealtimeWithFriendsGameMoveRecord,

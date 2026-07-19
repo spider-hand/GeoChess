@@ -1,7 +1,7 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from jobs import process_ai_game_move
+from src.jobs import process_ai_game_move
 
 
 def test_process_ai_game_move_invokes_service_for_each_record():

@@ -1,8 +1,8 @@
 import pytest
 
-from core.http import ApiError
-from features.ai_games.ai_move_selector import choose_ai_move
-from features.ai_games.models import RealtimeAiGameRecord
+from src.core.http import ApiError
+from src.features.ai_games.ai_move_selector import choose_ai_move
+from src.features.ai_games.models import RealtimeAiGameRecord
 
 
 def make_realtime_ai_game(
@@ -33,7 +33,7 @@ def test_choose_ai_move_easy_returns_random_choice(monkeypatch: pytest.MonkeyPat
         choice_calls.append(values)
         return values[-1]
 
-    monkeypatch.setattr("features.ai_games.ai_move_selector.random.choice", choose)
+    monkeypatch.setattr("src.features.ai_games.ai_move_selector.random.choice", choose)
 
     assert choose_ai_move(game) == "CC"
     assert choice_calls == [["BB", "CC"]]
@@ -46,7 +46,7 @@ def test_choose_ai_move_medium_prefers_immediate_winning_move(
     choice_calls: list[list[str]] = []
 
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.get_countries",
+        "src.features.ai_games.ai_move_selector.get_countries",
         lambda: {
             "AA": {"borders": ["BB", "CC"]},
             "BB": {"borders": ["AA"]},
@@ -55,7 +55,7 @@ def test_choose_ai_move_medium_prefers_immediate_winning_move(
         },
     )
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.random.choice",
+        "src.features.ai_games.ai_move_selector.random.choice",
         lambda values: choice_calls.append(values) or values[0],
     )
 
@@ -70,7 +70,7 @@ def test_choose_ai_move_medium_falls_back_to_random_when_no_winning_move(
     choice_calls: list[list[str]] = []
 
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.get_countries",
+        "src.features.ai_games.ai_move_selector.get_countries",
         lambda: {
             "AA": {"borders": ["BB", "CC"]},
             "BB": {"borders": ["AA", "DD"]},
@@ -80,7 +80,7 @@ def test_choose_ai_move_medium_falls_back_to_random_when_no_winning_move(
         },
     )
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.random.choice",
+        "src.features.ai_games.ai_move_selector.random.choice",
         lambda values: choice_calls.append(values) or values[-1],
     )
 
@@ -95,7 +95,7 @@ def test_choose_ai_move_hard_prefers_immediate_winning_move(
     choice_calls: list[list[str]] = []
 
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.get_countries",
+        "src.features.ai_games.ai_move_selector.get_countries",
         lambda: {
             "AA": {"borders": ["BB", "CC"]},
             "BB": {"borders": ["AA"]},
@@ -104,7 +104,7 @@ def test_choose_ai_move_hard_prefers_immediate_winning_move(
         },
     )
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.random.choice",
+        "src.features.ai_games.ai_move_selector.random.choice",
         lambda values: choice_calls.append(values) or values[0],
     )
 
@@ -119,7 +119,7 @@ def test_choose_ai_move_hard_avoids_moves_with_immediate_losing_reply(
     choice_calls: list[list[str]] = []
 
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.get_countries",
+        "src.features.ai_games.ai_move_selector.get_countries",
         lambda: {
             "AA": {"borders": ["BB", "CC"]},
             "BB": {"borders": ["AA", "DD", "EE"]},
@@ -132,7 +132,7 @@ def test_choose_ai_move_hard_avoids_moves_with_immediate_losing_reply(
         },
     )
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.random.choice",
+        "src.features.ai_games.ai_move_selector.random.choice",
         lambda values: choice_calls.append(values) or values[0],
     )
 
@@ -147,7 +147,7 @@ def test_choose_ai_move_hard_prefers_safe_move_with_more_winning_replies(
     choice_calls: list[list[str]] = []
 
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.get_countries",
+        "src.features.ai_games.ai_move_selector.get_countries",
         lambda: {
             "AA": {"borders": ["BB", "CC"]},
             "BB": {"borders": ["AA", "DD", "EE"]},
@@ -164,7 +164,7 @@ def test_choose_ai_move_hard_prefers_safe_move_with_more_winning_replies(
         },
     )
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.random.choice",
+        "src.features.ai_games.ai_move_selector.random.choice",
         lambda values: choice_calls.append(values) or values[0],
     )
 
@@ -179,7 +179,7 @@ def test_choose_ai_move_hard_falls_back_to_random_when_all_moves_are_unsafe(
     choice_calls: list[list[str]] = []
 
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.get_countries",
+        "src.features.ai_games.ai_move_selector.get_countries",
         lambda: {
             "AA": {"borders": ["BB", "CC"]},
             "BB": {"borders": ["AA", "DD"]},
@@ -189,7 +189,7 @@ def test_choose_ai_move_hard_falls_back_to_random_when_all_moves_are_unsafe(
         },
     )
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.random.choice",
+        "src.features.ai_games.ai_move_selector.random.choice",
         lambda values: choice_calls.append(values) or values[-1],
     )
 
@@ -203,7 +203,7 @@ def test_choose_ai_move_raises_when_no_available_moves(
 ):
     game = make_realtime_ai_game(difficulty, [])
     monkeypatch.setattr(
-        "features.ai_games.ai_move_selector.get_countries", lambda: {"AA": {"borders": []}}
+        "src.features.ai_games.ai_move_selector.get_countries", lambda: {"AA": {"borders": []}}
     )
 
     with pytest.raises(ApiError) as error:

@@ -2,9 +2,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from core.http import ApiError
-from features.users.models import CurrentUserRecord, UserRecord
-from features.users.service import UsersService
+from src.core.http import ApiError
+from src.features.users.models import CurrentUserRecord, UserRecord
+from src.features.users.service import UsersService
 
 
 def make_user(display_name="Taylor Swift", country=None):
@@ -124,7 +124,7 @@ def test_delete_user_removes_the_postgresql_and_firebase_accounts():
     service = UsersService(users_repository=users_repository)
 
     with (
-        patch("features.users.service.get_firebase_app", return_value=MagicMock()),
+        patch("src.features.users.service.get_firebase_app", return_value=MagicMock()),
         patch("firebase_admin.auth.delete_user") as delete_user,
     ):
         service.delete_user("user-123")

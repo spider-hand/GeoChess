@@ -1,4 +1,4 @@
-from features.with_friends_games.models import (
+from src.features.with_friends_games.models import (
     CreateWithFriendsGameJoinInput,
     CreateWithFriendsGameMoveInput,
     RealtimeWithFriendsGameMoveRecord,
@@ -8,8 +8,8 @@ from features.with_friends_games.models import (
     WithFriendsGameStatsRecord,
     WithFriendsGameTurn,
 )
-from features.with_friends_games.repository import WithFriendsGamesRepository
-from features.with_friends_games.service import WithFriendsGamesService
+from src.features.with_friends_games.repository import WithFriendsGamesRepository
+from src.features.with_friends_games.service import WithFriendsGamesService
 
 __all__ = [
     "CreateWithFriendsGameJoinInput",

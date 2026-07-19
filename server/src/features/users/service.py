@@ -2,15 +2,15 @@ from http import HTTPStatus
 
 from pydantic import ValidationError
 
-from core.firebase import get_firebase_app
-from core.http import ApiError
-from features.users.models import (
+from src.core.firebase import get_firebase_app
+from src.core.http import ApiError
+from src.features.users.models import (
     CreateUserInput,
     CurrentUserRecord,
     UpdateUserInput,
     UserRecord,
 )
-from features.users.repository import UsersRepository
+from src.features.users.repository import UsersRepository
 
 
 class UsersService:

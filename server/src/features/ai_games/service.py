@@ -6,11 +6,11 @@ from uuid import uuid4
 from firebase_admin import db as firebase_db
 from pydantic import ValidationError
 
-from core.countries import get_countries, get_countries_with_borders
-from core.firebase import FIREBASE_SERVER_TIMESTAMP, get_firebase_app
-from core.http import ApiError
-from features.ai_games.ai_move_selector import choose_ai_move
-from features.ai_games.models import (
+from src.core.countries import get_countries, get_countries_with_borders
+from src.core.firebase import FIREBASE_SERVER_TIMESTAMP, get_firebase_app
+from src.core.http import ApiError
+from src.features.ai_games.ai_move_selector import choose_ai_move
+from src.features.ai_games.models import (
     AiGameMoveActor,
     AiGameRecord,
     AiGameResult,
@@ -21,9 +21,9 @@ from features.ai_games.models import (
     OrderBy,
     RealtimeAiGameRecord,
 )
-from features.ai_games.queue import enqueue_ai_game_move, enqueue_ai_game_timeout
-from features.ai_games.repository import AiGamesRepository
-from features.users.repository import UsersRepository
+from src.features.ai_games.queue import enqueue_ai_game_move, enqueue_ai_game_timeout
+from src.features.ai_games.repository import AiGamesRepository
+from src.features.users.repository import UsersRepository
 
 
 class AiGamesService:

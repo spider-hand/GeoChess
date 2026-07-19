@@ -1,12 +1,17 @@
+import importlib
 from unittest.mock import patch
 
-from core import auth
-from core.events import CustomApiGatewayEvent
-from core.http import ApiError
+from src.core import auth
+from src.core.events import CustomApiGatewayEvent
+from src.core.http import ApiError
 from tests.factories.http_events import make_api_gateway_event, make_authorizer_event
 
 
-@patch("core.auth.verify_firebase_token")
+def test_authorizer_module_imports_from_the_deployed_namespace():
+    assert importlib.import_module("src.core.auth") is auth
+
+
+@patch("src.core.auth.verify_firebase_token")
 def test_lambda_authorizer_returns_simple_allow_response(mock_verify_firebase_token):
     mock_verify_firebase_token.return_value = {"uid": "user-123"}
 
@@ -27,7 +32,7 @@ def test_lambda_authorizer_returns_simple_allow_response(mock_verify_firebase_to
     }
 
 
-@patch("core.auth.verify_firebase_token")
+@patch("src.core.auth.verify_firebase_token")
 def test_lambda_authorizer_rejects_invalid_user(mock_verify_firebase_token):
     mock_verify_firebase_token.side_effect = ApiError(
         401,
@@ -50,7 +55,7 @@ def test_lambda_authorizer_rejects_invalid_user(mock_verify_firebase_token):
     }
 
 
-@patch("core.auth.verify_firebase_token")
+@patch("src.core.auth.verify_firebase_token")
 def test_lambda_authorizer_allows_anonymous_for_ai_games(mock_verify_firebase_token):
     mock_verify_firebase_token.return_value = {"uid": "user-123"}
 
@@ -69,7 +74,7 @@ def test_lambda_authorizer_allows_anonymous_for_ai_games(mock_verify_firebase_to
     )
 
 
-@patch("core.auth.verify_firebase_token")
+@patch("src.core.auth.verify_firebase_token")
 def test_lambda_authorizer_allows_anonymous_for_ai_game_moves(mock_verify_firebase_token):
     mock_verify_firebase_token.return_value = {"uid": "user-123"}
 
@@ -88,7 +93,7 @@ def test_lambda_authorizer_allows_anonymous_for_ai_game_moves(mock_verify_fireba
     )
 
 
-@patch("core.auth.verify_firebase_token")
+@patch("src.core.auth.verify_firebase_token")
 def test_lambda_authorizer_disallows_anonymous_for_non_ai_games(mock_verify_firebase_token):
     mock_verify_firebase_token.return_value = {"uid": "user-123"}
 

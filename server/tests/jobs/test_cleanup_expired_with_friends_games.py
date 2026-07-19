@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 
-from jobs import cleanup_expired_with_friends_games
+from src.jobs import cleanup_expired_with_friends_games
 
 
 def test_cleanup_expired_with_friends_games_returns_deleted_count():

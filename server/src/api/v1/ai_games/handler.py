@@ -1,17 +1,17 @@
 from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from core.auth import CORS_HEADERS, get_authorized_uid
-from core.events import CustomApiGatewayEvent
-from core.http import (
+from src.core.auth import CORS_HEADERS, get_authorized_uid
+from src.core.events import CustomApiGatewayEvent
+from src.core.http import (
     ApiError,
     error_response,
     json_response,
     parse_json_body,
     parse_list_query_parameters,
 )
-from core.logger import dynamic_inject_lambda_context
-from features.ai_games import AiGamesService
+from src.core.logger import dynamic_inject_lambda_context
+from src.features.ai_games import AiGamesService
 
 _ai_games_service = AiGamesService()
 

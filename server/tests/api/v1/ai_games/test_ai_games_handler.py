@@ -1,8 +1,8 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from api.v1.ai_games import handler
-from features.ai_games.models import AiGameRecord, RealtimeAiGameRecord
+from src.api.v1.ai_games import handler
+from src.features.ai_games.models import AiGameRecord, RealtimeAiGameRecord
 from tests.factories.http_events import make_api_gateway_event
 
 

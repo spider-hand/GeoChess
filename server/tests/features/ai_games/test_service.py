@@ -2,12 +2,12 @@ from unittest.mock import ANY, MagicMock
 
 import pytest
 
-from core.http import ApiError
-from features.ai_games.models import (
+from src.core.http import ApiError
+from src.features.ai_games.models import (
     AiGameRecord,
     RealtimeAiGameRecord,
 )
-from features.ai_games.service import AiGamesService
+from src.features.ai_games.service import AiGamesService
 
 
 def make_ai_game(user_id="user-123", result=None):
@@ -97,7 +97,7 @@ def test_create_ai_game_creates_guest_user_and_enqueues_when_ai_starts():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_countries",
+            "src.features.ai_games.service.get_countries",
             lambda: {
                 "BB": {"borders": ["CC", "DD"]},
                 "CC": {"borders": ["BB"]},
@@ -105,24 +105,24 @@ def test_create_ai_game_creates_guest_user_and_enqueues_when_ai_starts():
             },
         )
         monkeypatch.setattr(
-            "features.ai_games.service.get_countries_with_borders",
+            "src.features.ai_games.service.get_countries_with_borders",
             lambda: ("BB",),
         )
         choice_values = iter(["BB", "ai"])
         monkeypatch.setattr(
-            "features.ai_games.service.random.choice",
+            "src.features.ai_games.service.random.choice",
             lambda values: next(choice_values),
         )
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         enqueue_mock = MagicMock()
         monkeypatch.setattr(
-            "features.ai_games.service.enqueue_ai_game_move", enqueue_mock
+            "src.features.ai_games.service.enqueue_ai_game_move", enqueue_mock
         )
 
         result, status_code = service.create_ai_game(
@@ -169,7 +169,7 @@ def test_create_ai_game_enqueues_timeout_when_player_starts():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_countries",
+            "src.features.ai_games.service.get_countries",
             lambda: {
                 "BB": {"borders": ["CC", "DD"]},
                 "CC": {"borders": ["BB"]},
@@ -177,28 +177,28 @@ def test_create_ai_game_enqueues_timeout_when_player_starts():
             },
         )
         monkeypatch.setattr(
-            "features.ai_games.service.get_countries_with_borders",
+            "src.features.ai_games.service.get_countries_with_borders",
             lambda: ("BB",),
         )
         choice_values = iter(["BB", "player"])
         monkeypatch.setattr(
-            "features.ai_games.service.random.choice",
+            "src.features.ai_games.service.random.choice",
             lambda values: next(choice_values),
         )
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         enqueue_move_mock = MagicMock()
         enqueue_timeout_mock = MagicMock()
         monkeypatch.setattr(
-            "features.ai_games.service.enqueue_ai_game_move", enqueue_move_mock
+            "src.features.ai_games.service.enqueue_ai_game_move", enqueue_move_mock
         )
         monkeypatch.setattr(
-            "features.ai_games.service.enqueue_ai_game_timeout", enqueue_timeout_mock
+            "src.features.ai_games.service.enqueue_ai_game_timeout", enqueue_timeout_mock
         )
 
         result, status_code = service.create_ai_game(
@@ -233,10 +233,10 @@ def test_create_ai_game_move_returns_404_when_realtime_game_is_missing():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
 
@@ -262,10 +262,10 @@ def test_create_ai_game_move_returns_400_when_it_is_not_players_turn():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
 
@@ -291,10 +291,10 @@ def test_create_ai_game_move_returns_400_for_unavailable_country():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
 
@@ -324,7 +324,7 @@ def test_create_ai_game_move_enqueues_ai_for_non_terminal_player_move():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_countries",
+            "src.features.ai_games.service.get_countries",
             lambda: {
                 "BB": {"borders": ["CC"]},
                 "CC": {"borders": ["BB", "DD"]},
@@ -332,19 +332,19 @@ def test_create_ai_game_move_enqueues_ai_for_non_terminal_player_move():
             },
         )
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         monkeypatch.setattr(
-            "features.ai_games.service.uuid4",
+            "src.features.ai_games.service.uuid4",
             lambda: MagicMock(hex="move-1"),
         )
         enqueue_mock = MagicMock()
         monkeypatch.setattr(
-            "features.ai_games.service.enqueue_ai_game_move", enqueue_mock
+            "src.features.ai_games.service.enqueue_ai_game_move", enqueue_mock
         )
 
         service.create_ai_game_move("user-123", "game-123", {"countryCode": "CC"})
@@ -374,23 +374,23 @@ def test_create_ai_game_move_finishes_game_for_terminal_player_move():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_countries",
+            "src.features.ai_games.service.get_countries",
             lambda: {"BB": {"borders": ["CC"]}, "CC": {"borders": ["BB"]}},
         )
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         monkeypatch.setattr(
-            "features.ai_games.service.uuid4",
+            "src.features.ai_games.service.uuid4",
             lambda: MagicMock(hex="move-1"),
         )
         enqueue_mock = MagicMock()
         monkeypatch.setattr(
-            "features.ai_games.service.enqueue_ai_game_move", enqueue_mock
+            "src.features.ai_games.service.enqueue_ai_game_move", enqueue_mock
         )
 
         service.create_ai_game_move("user-123", "game-123", {"countryCode": "CC"})
@@ -460,14 +460,14 @@ def test_process_ai_game_timeout_leaves_state_unchanged_for_noop_branches(
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         monkeypatch.setattr(
-            "features.ai_games.service.time",
+            "src.features.ai_games.service.time",
             lambda: current_time_ms / 1000,
         )
 
@@ -495,14 +495,14 @@ def test_process_ai_game_timeout_marks_loss_after_expiry():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         monkeypatch.setattr(
-            "features.ai_games.service.time",
+            "src.features.ai_games.service.time",
             lambda: 1751155200 + 61,
         )
 
@@ -558,10 +558,10 @@ def test_process_ai_game_move_leaves_state_unchanged_for_noop_branches(
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
 
@@ -588,7 +588,7 @@ def test_process_ai_game_move_applies_available_ai_move():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_countries",
+            "src.features.ai_games.service.get_countries",
             lambda: {
                 "BB": {"borders": ["CC"]},
                 "CC": {"borders": ["BB", "DD"]},
@@ -596,22 +596,22 @@ def test_process_ai_game_move_applies_available_ai_move():
             },
         )
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         monkeypatch.setattr(
-            "features.ai_games.service.uuid4",
+            "src.features.ai_games.service.uuid4",
             lambda: MagicMock(hex="move-2"),
         )
         monkeypatch.setattr(
-            "features.ai_games.service.choose_ai_move", lambda game: "CC"
+            "src.features.ai_games.service.choose_ai_move", lambda game: "CC"
         )
         enqueue_timeout_mock = MagicMock()
         monkeypatch.setattr(
-            "features.ai_games.service.enqueue_ai_game_timeout", enqueue_timeout_mock
+            "src.features.ai_games.service.enqueue_ai_game_timeout", enqueue_timeout_mock
         )
 
         service.process_ai_game_move("game-123")
@@ -641,19 +641,19 @@ def test_process_ai_game_move_finishes_game_when_ai_has_no_available_moves():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: MagicMock(child=lambda game_id: game_ref),
         )
         monkeypatch.setattr(
-            "features.ai_games.service.uuid4",
+            "src.features.ai_games.service.uuid4",
             lambda: MagicMock(hex="move-2"),
         )
         enqueue_timeout_mock = MagicMock()
         monkeypatch.setattr(
-            "features.ai_games.service.enqueue_ai_game_timeout", enqueue_timeout_mock
+            "src.features.ai_games.service.enqueue_ai_game_timeout", enqueue_timeout_mock
         )
 
         service.process_ai_game_move("game-123")
@@ -672,10 +672,10 @@ def test_delete_expired_ai_games_returns_deleted_count():
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: ai_games_ref,
         )
 
@@ -694,10 +694,10 @@ def test_delete_expired_ai_games_skips_realtime_delete_when_nothing_was_deleted(
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(
-            "features.ai_games.service.get_firebase_app", lambda: MagicMock()
+            "src.features.ai_games.service.get_firebase_app", lambda: MagicMock()
         )
         monkeypatch.setattr(
-            "features.ai_games.service.firebase_db.reference",
+            "src.features.ai_games.service.firebase_db.reference",
             lambda path, app: ai_games_ref,
         )
 

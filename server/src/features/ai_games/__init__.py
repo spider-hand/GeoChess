@@ -1,4 +1,4 @@
-from features.ai_games.models import (
+from src.features.ai_games.models import (
     AiGameRecord,
     AiGameTurn,
     CreateAiGameInput,
@@ -6,8 +6,8 @@ from features.ai_games.models import (
     RealtimeAiGameMoveRecord,
     RealtimeAiGameRecord,
 )
-from features.ai_games.repository import AiGamesRepository
-from features.ai_games.service import AiGamesService
+from src.features.ai_games.repository import AiGamesRepository
+from src.features.ai_games.service import AiGamesService
 
 __all__ = [
     "AiGameRecord",

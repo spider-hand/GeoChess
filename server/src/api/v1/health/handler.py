@@ -3,9 +3,9 @@ import json
 from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from core.auth import CORS_HEADERS
-from core.events import CustomApiGatewayEvent
-from core.logger import dynamic_inject_lambda_context
+from src.core.auth import CORS_HEADERS
+from src.core.events import CustomApiGatewayEvent
+from src.core.logger import dynamic_inject_lambda_context
 
 
 @dynamic_inject_lambda_context

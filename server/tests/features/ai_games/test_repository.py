@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 
-from features.ai_games.repository import AiGamesRepository
+from src.features.ai_games.repository import AiGamesRepository
 
 
 def make_connection_and_cursor():
@@ -14,7 +14,7 @@ def make_connection_and_cursor():
 def test_finish_game_updates_result_and_user_stats_once():
     connection, cursor = make_connection_and_cursor()
     cursor.fetchone.return_value = {"user_id": "user-123", "difficulty": "medium"}
-    with patch("features.ai_games.repository.get_connection", return_value=connection):
+    with patch("src.features.ai_games.repository.get_connection", return_value=connection):
         did_finish = AiGamesRepository().finish_game("game-123", "win")
 
     assert did_finish is True
@@ -58,7 +58,7 @@ def test_finish_game_returns_false_when_game_was_already_finished():
     connection, cursor = make_connection_and_cursor()
     cursor.fetchone.return_value = None
 
-    with patch("features.ai_games.repository.get_connection", return_value=connection):
+    with patch("src.features.ai_games.repository.get_connection", return_value=connection):
         did_finish = AiGamesRepository().finish_game("game-123", "win")
 
     assert did_finish is False
@@ -85,7 +85,7 @@ def test_create_inserts_ai_game():
         "created_at": "2026-07-19T00:00:00Z",
         "updated_at": "2026-07-19T00:00:00Z",
     }
-    with patch("features.ai_games.repository.get_connection", return_value=connection):
+    with patch("src.features.ai_games.repository.get_connection", return_value=connection):
         game = AiGamesRepository().create("game-123", "user-123", "medium")
 
     assert game.id == "game-123"
@@ -108,7 +108,7 @@ def test_delete_expired_games_uses_strict_30_day_cutoff():
         {"id": "game-3"},
     ]
 
-    with patch("features.ai_games.repository.get_connection", return_value=connection):
+    with patch("src.features.ai_games.repository.get_connection", return_value=connection):
         deleted_ids = AiGamesRepository().delete_expired_games()
 
     assert deleted_ids == ["game-1", "game-2", "game-3"]

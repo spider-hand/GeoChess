@@ -3,8 +3,8 @@ from typing import Any
 
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from core.logger import dynamic_inject_lambda_context
-from features.with_friends_games import WithFriendsGamesService
+from src.core.logger import dynamic_inject_lambda_context
+from src.features.with_friends_games import WithFriendsGamesService
 
 _with_friends_games_service = WithFriendsGamesService()
 

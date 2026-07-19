@@ -1,12 +1,12 @@
 from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from api.v1.with_friends_games.handler import _handle_api_error
-from core.auth import CORS_HEADERS, get_authorized_uid
-from core.events import CustomApiGatewayEvent
-from core.http import json_response, parse_json_body
-from core.logger import dynamic_inject_lambda_context
-from features.with_friends_games import WithFriendsGamesService
+from src.api.v1.with_friends_games.handler import _handle_api_error
+from src.core.auth import CORS_HEADERS, get_authorized_uid
+from src.core.events import CustomApiGatewayEvent
+from src.core.http import json_response, parse_json_body
+from src.core.logger import dynamic_inject_lambda_context
+from src.features.with_friends_games import WithFriendsGamesService
 
 _with_friends_games_service = WithFriendsGamesService()
 

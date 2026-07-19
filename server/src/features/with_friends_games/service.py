@@ -6,11 +6,11 @@ from uuid import uuid4
 from firebase_admin import db as firebase_db
 from pydantic import ValidationError
 
-from core.countries import get_countries, get_countries_with_borders
-from core.firebase import FIREBASE_SERVER_TIMESTAMP, get_firebase_app
-from core.http import ApiError
-from features.users.repository import UsersRepository
-from features.with_friends_games.models import (
+from src.core.countries import get_countries, get_countries_with_borders
+from src.core.firebase import FIREBASE_SERVER_TIMESTAMP, get_firebase_app
+from src.core.http import ApiError
+from src.features.users.repository import UsersRepository
+from src.features.with_friends_games.models import (
     CreateWithFriendsGameJoinInput,
     CreateWithFriendsGameMoveInput,
     OrderBy,
@@ -23,11 +23,11 @@ from features.with_friends_games.models import (
     WithFriendsGameStatsRecord,
     WithFriendsGameTurn,
 )
-from features.with_friends_games.queue import (
+from src.features.with_friends_games.queue import (
     enqueue_with_friends_game_start,
     enqueue_with_friends_game_timeout,
 )
-from features.with_friends_games.repository import WithFriendsGamesRepository
+from src.features.with_friends_games.repository import WithFriendsGamesRepository
 
 
 class WithFriendsGamesService:

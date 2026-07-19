@@ -1,7 +1,7 @@
 from typing import Any
 
-from core.db import get_connection
-from features.users.models import CurrentUserRecord, UserRecord
+from src.core.db import get_connection
+from src.features.users.models import CurrentUserRecord, UserRecord
 
 
 def _map_user_row(row: dict[str, Any]) -> UserRecord:

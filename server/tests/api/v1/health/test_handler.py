@@ -1,7 +1,7 @@
 import json
 from unittest.mock import MagicMock
 
-from api.v1.health.handler import handler
+from src.api.v1.health.handler import handler
 from tests.factories.http_events import make_api_gateway_event
 
 

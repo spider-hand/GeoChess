@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 
-from features.with_friends_games.repository import WithFriendsGamesRepository
+from src.features.with_friends_games.repository import WithFriendsGamesRepository
 
 
 def make_connection_and_cursor():
@@ -19,7 +19,7 @@ def test_get_expired_game_ids_uses_strict_30_day_cutoff():
     ]
 
     with patch(
-        "features.with_friends_games.repository.get_connection", return_value=connection
+        "src.features.with_friends_games.repository.get_connection", return_value=connection
     ):
         expired_game_ids = WithFriendsGamesRepository().get_expired_game_ids()
 
@@ -47,7 +47,7 @@ def test_create_does_not_persist_a_room_key():
     }
 
     with patch(
-        "features.with_friends_games.repository.get_connection", return_value=connection
+        "src.features.with_friends_games.repository.get_connection", return_value=connection
     ):
         game = WithFriendsGamesRepository().create("game-1", "user-1")
 

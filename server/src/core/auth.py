@@ -4,9 +4,9 @@ from typing import Any
 from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from core.events import CustomApiGatewayEvent, CustomAuthorizerEvent
-from core.firebase import get_firebase_app
-from core.http import ApiError
+from src.core.events import CustomApiGatewayEvent, CustomAuthorizerEvent
+from src.core.firebase import get_firebase_app
+from src.core.http import ApiError
 
 CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",

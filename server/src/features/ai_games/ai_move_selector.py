@@ -1,8 +1,8 @@
 import random
 
-from core.countries import get_countries
-from core.http import ApiError
-from features.ai_games.models import RealtimeAiGameRecord
+from src.core.countries import get_countries
+from src.core.http import ApiError
+from src.features.ai_games.models import RealtimeAiGameRecord
 
 
 def _choose_random_move(realtime_ai_game: RealtimeAiGameRecord) -> str:

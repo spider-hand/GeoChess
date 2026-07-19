@@ -1,4 +1,4 @@
-from core.secret import get_secrets
+from src.core.secret import get_secrets
 
 
 def get_connection():

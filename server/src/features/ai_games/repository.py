@@ -1,7 +1,7 @@
 from typing import Any
 
-from core.db import get_connection
-from features.ai_games.models import (
+from src.core.db import get_connection
+from src.features.ai_games.models import (
     AiGameRecord,
     AiGameResult,
     AiGamesSortBy,

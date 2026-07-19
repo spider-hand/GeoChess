@@ -4,7 +4,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 Difficulty = Literal["easy", "medium", "hard"]
-AiGameResult = Literal["win", "lose", "cancelled"]
+AiGameResult = Literal["win", "lose"]
 AiGameTurn = Literal["player", "ai"]
 AiGameMoveActor = Literal["player", "ai"]
 AiGamesSortBy = Literal["created_at", "updated_at"]

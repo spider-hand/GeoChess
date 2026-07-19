@@ -31,7 +31,7 @@ CREATE TABLE public.ai_games (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     CONSTRAINT ai_games_difficulty_check CHECK ((difficulty = ANY (ARRAY['easy'::text, 'medium'::text, 'hard'::text]))),
-    CONSTRAINT ai_games_result_check CHECK (((result IS NULL) OR (result = ANY (ARRAY['win'::text, 'lose'::text, 'cancelled'::text]))))
+    CONSTRAINT ai_games_result_check CHECK (((result IS NULL) OR (result = ANY (ARRAY['win'::text, 'lose'::text]))))
 );
 
 
@@ -76,7 +76,7 @@ CREATE TABLE public.with_friends_games (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     expired boolean DEFAULT false NOT NULL,
-    CONSTRAINT with_friends_games_result_check CHECK (((result IS NULL) OR (result = ANY (ARRAY['player1_win'::text, 'player2_win'::text, 'cancelled'::text]))))
+    CONSTRAINT with_friends_games_result_check CHECK (((result IS NULL) OR (result = ANY (ARRAY['player1_win'::text, 'player2_win'::text]))))
 );
 
 
@@ -86,6 +86,7 @@ CREATE TABLE public.with_friends_games (
 
 ALTER TABLE ONLY public.ai_games
     ADD CONSTRAINT ai_games_pkey PRIMARY KEY (id);
+
 
 
 --
@@ -134,6 +135,7 @@ ALTER TABLE ONLY public.with_friends_games
 
 ALTER TABLE ONLY public.with_friends_games
     ADD CONSTRAINT with_friends_games_player2_user_id_fkey FOREIGN KEY (player2_user_id) REFERENCES public.users(user_id) ON DELETE SET NULL;
+
 
 
 --

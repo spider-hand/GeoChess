@@ -63,20 +63,10 @@ class AiGamesRepository:
 
         return _map_ai_game_row(row)
 
-    def create_after_cancelling_incomplete_games(
+    def create(
         self, game_id: str, user_id: str, difficulty: Difficulty
     ) -> AiGameRecord:
         with get_connection() as connection, connection.cursor() as cursor:
-            cursor.execute(
-                """
-                UPDATE ai_games
-                SET result = %s,
-                    updated_at = NOW()
-                WHERE user_id = %s
-                  AND result IS NULL
-                """,
-                ("cancelled", user_id),
-            )
             cursor.execute(
                 """
                 INSERT INTO ai_games (id, user_id, difficulty)

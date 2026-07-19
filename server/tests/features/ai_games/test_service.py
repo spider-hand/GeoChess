@@ -50,7 +50,7 @@ def test_create_ai_game_returns_400_for_invalid_payload():
 
     with pytest.raises(ApiError) as error:
         service.create_ai_game(
-            "user-123", {"difficulty": "medium", "result": "cancelled"}
+            "user-123", {"difficulty": "medium", "result": "win"}
         )
 
     assert error.value.status_code == 400
@@ -86,9 +86,7 @@ def test_create_ai_game_move_returns_404_for_missing_or_other_users_game(
 
 def test_create_ai_game_creates_guest_user_and_enqueues_when_ai_starts():
     ai_games_repository = MagicMock()
-    ai_games_repository.create_after_cancelling_incomplete_games.return_value = (
-        make_ai_game()
-    )
+    ai_games_repository.create.return_value = make_ai_game()
     users_repository = MagicMock()
     users_repository.get_by_id.return_value = None
     service = AiGamesService(
@@ -137,7 +135,7 @@ def test_create_ai_game_creates_guest_user_and_enqueues_when_ai_starts():
     assert result.available_moves == ["CC", "DD"]
     assert result.moves == {}
     users_repository.create.assert_called_once_with("user-123", "Guest", None)
-    ai_games_repository.create_after_cancelling_incomplete_games.assert_called_once_with(
+    ai_games_repository.create.assert_called_once_with(
         ANY, "user-123", "medium"
     )
     game_ref.set.assert_called_once_with(
@@ -160,9 +158,7 @@ def test_create_ai_game_creates_guest_user_and_enqueues_when_ai_starts():
 
 def test_create_ai_game_enqueues_timeout_when_player_starts():
     ai_games_repository = MagicMock()
-    ai_games_repository.create_after_cancelling_incomplete_games.return_value = (
-        make_ai_game()
-    )
+    ai_games_repository.create.return_value = make_ai_game()
     users_repository = MagicMock()
     users_repository.get_by_id.return_value = MagicMock()
     service = AiGamesService(

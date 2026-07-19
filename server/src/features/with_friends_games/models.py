@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
 
 RoomKey = Annotated[str, StringConstraints(pattern=r"^\d{6}$")]
-WithFriendsGameResult = Literal["player1_win", "player2_win", "cancelled"]
+WithFriendsGameResult = Literal["player1_win", "player2_win"]
 WithFriendsGameStatus = Literal["waiting", "starting", "active", "finished"]
 WithFriendsGameTurn = Literal["player1", "player2"]
 WithFriendsGameMoveActor = Literal["player1", "player2"]

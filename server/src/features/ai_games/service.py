@@ -198,11 +198,8 @@ class AiGamesService:
         if user is None:
             self.users_repository.create(user_id, "Guest", None)
 
-        # Update incomplete games and save a new game record into PostgreSQL
-        created_ai_game = (
-            self.ai_games_repository.create_after_cancelling_incomplete_games(
-                str(uuid4()), user_id, create_ai_game_input.difficulty
-            )
+        created_ai_game = self.ai_games_repository.create(
+            str(uuid4()), user_id, create_ai_game_input.difficulty
         )
         realtime_payload, realtime_ai_game = self._build_initial_realtime_ai_game(
             created_ai_game
@@ -302,10 +299,16 @@ class AiGamesService:
             realtime_ai_game = RealtimeAiGameRecord.model_validate(current_value)
 
             # If the player has already made a move or the game has already been finished, skip handling the timeout
-            if realtime_ai_game.turn != "player" or not realtime_ai_game.available_moves:
+            if (
+                realtime_ai_game.turn != "player"
+                or not realtime_ai_game.available_moves
+            ):
                 return current_value
 
-            if current_time_ms < realtime_ai_game.updated_at + self.PLAYER_TURN_TIMEOUT_MS:
+            if (
+                current_time_ms
+                < realtime_ai_game.updated_at + self.PLAYER_TURN_TIMEOUT_MS
+            ):
                 return current_value
 
             did_timeout = True
@@ -373,6 +376,8 @@ class AiGamesService:
     def delete_expired_ai_games(self) -> int:
         deleted_game_ids = self.ai_games_repository.delete_expired_games()
         if deleted_game_ids:
-            self._get_ai_games_ref().update({game_id: None for game_id in deleted_game_ids})
+            self._get_ai_games_ref().update(
+                {game_id: None for game_id in deleted_game_ids}
+            )
 
         return len(deleted_game_ids)

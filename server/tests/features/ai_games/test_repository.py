@@ -75,15 +75,29 @@ def test_finish_game_returns_false_when_game_was_already_finished():
     )
 
 
-def test_finish_game_skips_user_stats_for_cancelled_games():
+def test_create_inserts_ai_game():
     connection, cursor = make_connection_and_cursor()
-    cursor.fetchone.return_value = {"user_id": "user-123", "difficulty": "medium"}
+    cursor.fetchone.return_value = {
+        "id": "game-123",
+        "user_id": "user-123",
+        "difficulty": "medium",
+        "result": None,
+        "created_at": "2026-07-19T00:00:00Z",
+        "updated_at": "2026-07-19T00:00:00Z",
+    }
     with patch("features.ai_games.repository.get_connection", return_value=connection):
-        did_finish = AiGamesRepository().finish_game("game-123", "cancelled")
+        game = AiGamesRepository().create("game-123", "user-123", "medium")
 
-    assert did_finish is True
+    assert game.id == "game-123"
     assert cursor.execute.call_count == 1
-    cursor.executemany.assert_not_called()
+    cursor.execute.assert_called_once_with(
+        """
+                INSERT INTO ai_games (id, user_id, difficulty)
+                VALUES (%s, %s, %s)
+                RETURNING id, user_id, difficulty, result, created_at, updated_at
+                """,
+        ("game-123", "user-123", "medium"),
+    )
 
 
 def test_delete_expired_games_uses_strict_30_day_cutoff():

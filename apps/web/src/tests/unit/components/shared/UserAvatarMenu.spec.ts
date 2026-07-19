@@ -95,6 +95,8 @@ it("should show the country flag when a country is provided", async () => {
   await getByRole("button", { name: "Account menu" }).click();
 
   await expect
-    .element(container.querySelector(".user-avatar-menu__flag")!)
+    .element(
+      container.querySelector<HTMLImageElement>(".user-avatar-menu__flag")!,
+    )
     .toHaveAttribute("src", "/flags/jp.webp");
 });

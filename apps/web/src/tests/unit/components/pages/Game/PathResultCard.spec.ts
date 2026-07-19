@@ -11,7 +11,9 @@ const defaultResultSteps: Array<AiPathStep> = [
   { countryCode: "fr", owner: "ai" as const, turn: 2 },
 ];
 
-const renderPathResultCard = (resultSteps = defaultResultSteps) =>
+const renderPathResultCard = (
+  resultSteps: Array<AiPathStep | MultiplayerPathStep> = defaultResultSteps,
+) =>
   render(PathResultCard, {
     props: {
       resultSteps,

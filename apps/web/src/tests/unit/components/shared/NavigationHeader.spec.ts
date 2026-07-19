@@ -136,7 +136,9 @@ it("should not render the profile item for an anonymous user", async () => {
 
   await expect
     .element(
-      container.querySelector('[data-testid="navigation-header-mobile-user"]')!,
+      container.querySelector<HTMLElement>(
+        '[data-testid="navigation-header-mobile-user"]',
+      )!,
     )
     .toBeInTheDocument();
   await expect

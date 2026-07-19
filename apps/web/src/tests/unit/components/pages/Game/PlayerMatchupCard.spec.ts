@@ -79,6 +79,8 @@ it("should show the player country flag when one is provided", async () => {
   });
 
   await expect
-    .element(container.querySelector(".player-matchup-card__flag")!)
+    .element(
+      container.querySelector<HTMLImageElement>(".player-matchup-card__flag")!,
+    )
     .toHaveAttribute("src", "/flags/jp.webp");
 });

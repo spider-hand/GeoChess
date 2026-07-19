@@ -2,6 +2,10 @@ import { beforeEach, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { computed, ref } from "vue";
 
+import { createAppI18n } from "@/i18n";
+import HomePage from "@/pages/HomePage.vue";
+import router from "@/router";
+
 const mockCreateAiGame = vi.fn();
 const mockCreateWithFriendsGame = vi.fn();
 const mockJoinWithFriendsGame = vi.fn();
@@ -114,10 +118,6 @@ vi.mock("@/components/shared/SignUpPromptModal.vue", () => ({
       '<div v-if="isOpen" data-testid="sign-up-prompt-modal" :data-is-signing-up="String(isSigningUp)"><button @click="$emit(\'sign-up\')">Sign Up</button><button @click="$emit(\'close\')">Close sign up prompt</button></div>',
   },
 }));
-
-import { createAppI18n } from "@/i18n";
-import HomePage from "@/pages/HomePage.vue";
-import router from "@/router";
 
 beforeEach(() => {
   mockCreateAiGame.mockReset();

@@ -2,14 +2,19 @@ import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 import LanguageSelector from "@/components/shared/LanguageSelector.vue";
-import { createAppI18n, getStoredLocale, LOCALE_STORAGE_KEY } from "@/i18n";
+import {
+  createAppI18n,
+  getStoredLocale,
+  LOCALE_STORAGE_KEY,
+  type AppLocale,
+} from "@/i18n";
 
 const nextTick = async () => {
   await new Promise((resolve) => window.setTimeout(resolve, 0));
 };
 
 const renderLanguageSelector = (
-  locale: string | undefined = undefined,
+  locale: AppLocale | undefined = undefined,
   props: Record<string, unknown> = {},
 ) =>
   render(LanguageSelector, {

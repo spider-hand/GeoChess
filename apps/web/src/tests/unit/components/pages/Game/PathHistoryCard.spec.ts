@@ -12,7 +12,7 @@ const defaultHistorySteps: Array<AiPathStep> = [
 ];
 
 const renderPathHistoryCard = (
-  historySteps = defaultHistorySteps,
+  historySteps: Array<AiPathStep | MultiplayerPathStep> = defaultHistorySteps,
   isGameReady = true,
 ) =>
   render(PathHistoryCard, {

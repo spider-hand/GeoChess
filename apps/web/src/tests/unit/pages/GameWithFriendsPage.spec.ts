@@ -2,6 +2,10 @@ import { beforeEach, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { computed, ref } from "vue";
 
+import App from "@/App.vue";
+import { createAppI18n } from "@/i18n";
+import router from "@/router";
+
 const mockConfetti = vi.fn();
 const mockQueryClient = { invalidateQueries: vi.fn() };
 const currentUser = ref<null | { uid: string; isAnonymous: boolean }>(null);
@@ -208,10 +212,6 @@ vi.mock("@/components/pages/Game/PathHistoryCard.vue", () => ({
       '<div data-testid="path-history-card" :data-steps="String(historySteps.length)" :data-is-game-ready="String(isGameReady)" />',
   },
 }));
-
-import App from "@/App.vue";
-import { createAppI18n } from "@/i18n";
-import router from "@/router";
 
 beforeEach(() => {
   currentUser.value = { uid: "user-123", isAnonymous: false };

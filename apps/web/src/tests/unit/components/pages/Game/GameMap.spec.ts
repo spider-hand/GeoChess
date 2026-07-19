@@ -1,6 +1,9 @@
 import { beforeEach, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
+import GameMap from "@/components/pages/Game/GameMap.vue";
+import type { AiGameMapMarker, MultiplayerGameMapMarker } from "@/types/game";
+
 const mapboxMockState = vi.hoisted(() => ({
   addedMarkers: [] as Array<{ element: HTMLElement }>,
   maps: [] as Array<{
@@ -89,9 +92,6 @@ vi.mock("mapbox-gl", () => {
     default: mockMapbox,
   };
 });
-
-import GameMap from "@/components/pages/Game/GameMap.vue";
-import type { AiGameMapMarker, MultiplayerGameMapMarker } from "@/types/game";
 
 const finishedMarkers: Array<AiGameMapMarker> = [
   { countryCode: "JP", owner: "neutral" as const, label: "Start" },

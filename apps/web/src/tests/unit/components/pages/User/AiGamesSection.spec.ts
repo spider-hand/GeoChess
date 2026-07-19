@@ -42,9 +42,11 @@ const AiGamesSection = (
 const response: GetAiGames200ResponseInner[] = [
   {
     id: "game-1",
+    userId: "user-123",
     difficulty: "hard",
     result: "win",
     createdAt: new Date("2026-07-18T00:00:00.000Z"),
+    updatedAt: new Date("2026-07-18T00:00:00.000Z"),
   },
 ];
 

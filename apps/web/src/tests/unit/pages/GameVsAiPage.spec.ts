@@ -2,6 +2,10 @@ import { beforeEach, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { computed, ref } from "vue";
 
+import App from "@/App.vue";
+import { createAppI18n } from "@/i18n";
+import router from "@/router";
+
 const mockConfetti = vi.fn();
 const mockQueryClient = { invalidateQueries: vi.fn() };
 const realtimeAiGame = ref({
@@ -153,10 +157,6 @@ vi.mock("@tanstack/vue-query", async () => {
     useQueryClient: () => mockQueryClient,
   };
 });
-
-import App from "@/App.vue";
-import { createAppI18n } from "@/i18n";
-import router from "@/router";
 
 beforeEach(() => {
   realtimeAiGame.value = {

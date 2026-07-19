@@ -7,6 +7,7 @@ import { createAppI18n } from "@/i18n";
 const username = ref<string | null>(null);
 const userCountry = ref<string | undefined>(undefined);
 const isAuthenticatedUser = ref(false);
+const isRegisteredUser = ref(false);
 const isCurrentUserLoaded = ref(true);
 const signInWithGoogle = vi.fn();
 const signOutUser = vi.fn();
@@ -23,6 +24,7 @@ vi.mock("@/composables/useAuth", () => ({
     username,
     userCountry,
     isAuthenticatedUser,
+    isRegisteredUser,
     isCurrentUserLoaded,
     signInWithGoogle,
     signOutUser,
@@ -37,6 +39,7 @@ const resetAuthState = () => {
   username.value = null;
   userCountry.value = undefined;
   isAuthenticatedUser.value = false;
+  isRegisteredUser.value = false;
   isCurrentUserLoaded.value = true;
   push.mockReset();
   signInWithGoogle.mockReset();
@@ -119,6 +122,27 @@ it("should not render the user section when not logged in", async () => {
   expect(
     container.querySelector('[data-testid="navigation-header-mobile-user"]'),
   ).toBeNull();
+});
+
+it("should not render the profile item for an anonymous user", async () => {
+  resetAuthState();
+  username.value = "Guest";
+  isAuthenticatedUser.value = true;
+  const { container, getByRole } = renderNavigationHeader();
+
+  expect(container.querySelector('[aria-label="Account menu"]')).not.toBeNull();
+
+  await getByRole("button", { name: "Open navigation menu" }).click();
+
+  await expect
+    .element(
+      container.querySelector('[data-testid="navigation-header-mobile-user"]')!,
+    )
+    .toBeInTheDocument();
+  await expect
+    .element(getByRole("button", { name: "Sign Out" }))
+    .toBeInTheDocument();
+  expect(getByRole("button", { name: "Profile" }).query()).toBeNull();
 });
 
 it("should show the mobile how to play accordion content", async () => {
@@ -205,6 +229,7 @@ it("should render the user section when logged in", async () => {
   username.value = "Taylor Swift";
   userCountry.value = "JP";
   isAuthenticatedUser.value = true;
+  isRegisteredUser.value = true;
   const { container, getByRole, getByTestId } = renderNavigationHeader();
 
   expect(container.querySelector('[aria-label="Account menu"]')).not.toBeNull();
@@ -226,6 +251,7 @@ it("should navigate to the profile page from the mobile menu", async () => {
   resetAuthState();
   username.value = "Taylor Swift";
   isAuthenticatedUser.value = true;
+  isRegisteredUser.value = true;
   const { container, getByRole } = renderNavigationHeader();
 
   await getByRole("button", { name: "Open navigation menu" }).click();

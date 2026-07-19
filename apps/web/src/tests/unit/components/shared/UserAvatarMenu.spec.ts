@@ -1,8 +1,17 @@
 import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-vue";
+import { ref } from "vue";
 
-import UserAvatarMenu from "@/components/shared/UserAvatarMenu.vue";
 import { createAppI18n } from "@/i18n";
+
+const isRegisteredUser = ref(true);
+
+vi.mock("@/composables/useAuth", () => ({
+  useAuth: () => ({ isRegisteredUser }),
+}));
+
+const UserAvatarMenu = (await import("@/components/shared/UserAvatarMenu.vue"))
+  .default;
 
 const nextTick = async () => {
   await new Promise((resolve) => window.setTimeout(resolve, 0));
@@ -43,6 +52,19 @@ it("should open the menu and emit sign out", async () => {
 
   expect(onSignOutClick).toHaveBeenCalledTimes(1);
   expect(container.querySelector('[role="menu"]')).toBeNull();
+});
+
+it("should not render the profile item for an anonymous user", async () => {
+  isRegisteredUser.value = false;
+  const { getByRole } = renderUserAvatarMenu();
+
+  await getByRole("button", { name: "Account menu" }).click();
+
+  await expect
+    .element(getByRole("menuitem", { name: "Sign Out" }))
+    .toBeInTheDocument();
+  expect(getByRole("menuitem", { name: "Profile" }).query()).toBeNull();
+  isRegisteredUser.value = true;
 });
 
 it("should close the menu on outside click", async () => {

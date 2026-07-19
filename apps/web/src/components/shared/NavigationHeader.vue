@@ -29,6 +29,7 @@ const {
   username,
   userCountry,
   isAuthenticatedUser,
+  isRegisteredUser,
   isCurrentUserLoaded,
   signInWithGoogle,
   signOutUser,
@@ -262,7 +263,7 @@ useOnClickOutside({
             </div>
 
             <button
-              v-if="isCurrentUserLoaded && isAuthenticatedUser"
+              v-if="isCurrentUserLoaded && isRegisteredUser"
               class="navigation-header__mobile-row"
               type="button"
               @click="handleProfileClick"

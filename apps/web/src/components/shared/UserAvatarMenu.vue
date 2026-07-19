@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import { useAuth } from "@/composables/useAuth";
 import useCountry from "@/composables/useCountry";
 import useOnClickOutside from "@/composables/useOnClickOutside";
 import Avatar from "@/components/shared/Avatar.vue";
@@ -21,6 +22,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const { isRegisteredUser } = useAuth();
 const { countryFlagAlt, countryFlagSrc } = useCountry();
 const root = ref<HTMLElement | null>(null);
 const isOpen = ref(false);
@@ -87,6 +89,7 @@ useOnClickOutside({
       <div class="user-avatar-menu__divider" />
 
       <button
+        v-if="isRegisteredUser"
         class="user-avatar-menu__item"
         type="button"
         role="menuitem"

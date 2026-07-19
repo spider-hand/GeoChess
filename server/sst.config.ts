@@ -17,7 +17,7 @@ export default $config({
   async run() {
     const api = new sst.aws.ApiGatewayV2("Api");
     const aiGameMoveDlq = new sst.aws.Queue("AiGameMoveDLQ");
-    const aiGameMoveQueue = new sst.aws.Queue("AiGameMoveQueue", {
+    const aiGameMoveQueue = new sst.aws.Queue("AiGameMove", {
       delay: "5 seconds",
       dlq: {
         queue: aiGameMoveDlq.arn,
@@ -25,7 +25,7 @@ export default $config({
       },
     });
     const aiGameTimeoutDlq = new sst.aws.Queue("AiGameTimeoutDLQ");
-    const aiGameTimeoutQueue = new sst.aws.Queue("AiGameTimeoutQueue", {
+    const aiGameTimeoutQueue = new sst.aws.Queue("AiGameTimeout", {
       delay: "60 seconds",
       dlq: {
         queue: aiGameTimeoutDlq.arn,
@@ -34,7 +34,7 @@ export default $config({
     });
     const withFriendsGameStartDlq = new sst.aws.Queue("WithFriendsGameStartDLQ");
     const withFriendsGameStartQueue = new sst.aws.Queue(
-      "WithFriendsGameStartQueue",
+      "WithFriendsGameStart",
       {
         delay: "5 seconds",
         dlq: {
@@ -47,7 +47,7 @@ export default $config({
       "WithFriendsGameTimeoutDLQ",
     );
     const withFriendsGameTimeoutQueue = new sst.aws.Queue(
-      "WithFriendsGameTimeoutQueue",
+      "WithFriendsGameTimeout",
       {
         delay: "60 seconds",
         dlq: {
@@ -78,6 +78,93 @@ export default $config({
     const withFriendsGameTimeoutQueueSendPermission = sst.aws.permission({
       actions: ["sqs:SendMessage"],
       resources: [withFriendsGameTimeoutQueue.arn],
+    });
+    const queueReceiveActions = [
+      "sqs:ChangeMessageVisibility",
+      "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl",
+      "sqs:ReceiveMessage",
+    ];
+    const aiGameMoveQueueReceivePermission = sst.aws.permission({
+      actions: queueReceiveActions,
+      resources: [aiGameMoveQueue.arn],
+    });
+    const aiGameTimeoutQueueReceivePermission = sst.aws.permission({
+      actions: queueReceiveActions,
+      resources: [aiGameTimeoutQueue.arn],
+    });
+    const withFriendsGameStartQueueReceivePermission = sst.aws.permission({
+      actions: queueReceiveActions,
+      resources: [withFriendsGameStartQueue.arn],
+    });
+    const withFriendsGameTimeoutQueueReceivePermission = sst.aws.permission({
+      actions: queueReceiveActions,
+      resources: [withFriendsGameTimeoutQueue.arn],
+    });
+    const cleanupAiGames = new sst.aws.Function("CleanupAiGames", {
+      runtime: "python3.14",
+      handler: "src/jobs/cleanup_expired_ai_games.cleanup_expired_ai_games",
+      environment: {
+        ENVIRONMENT: $app.stage,
+      },
+      permissions: databasePermissions,
+    });
+    const cleanupFriendsGames = new sst.aws.Function("CleanupFriendsGames", {
+      runtime: "python3.14",
+      handler:
+        "src/jobs/cleanup_expired_with_friends_games.cleanup_expired_with_friends_games",
+      environment: {
+        ENVIRONMENT: $app.stage,
+      },
+      permissions: databasePermissions,
+    });
+    const aiMoveWorker = new sst.aws.Function("AiMoveWorker", {
+      runtime: "python3.14",
+      handler: "src/jobs/process_ai_game_move.process_ai_game_move",
+      environment: {
+        ENVIRONMENT: $app.stage,
+        AI_GAME_TIMEOUT_QUEUE_URL: aiGameTimeoutQueue.url,
+      },
+      permissions: [
+        ...databasePermissions,
+        aiGameMoveQueueReceivePermission,
+        aiGameTimeoutQueueSendPermission,
+      ],
+    });
+    const aiTimeoutWorker = new sst.aws.Function("AiTimeoutWorker", {
+      runtime: "python3.14",
+      handler: "src/jobs/process_ai_game_timeout.process_ai_game_timeout",
+      environment: {
+        ENVIRONMENT: $app.stage,
+      },
+      permissions: [...databasePermissions, aiGameTimeoutQueueReceivePermission],
+    });
+    const friendsStartWorker = new sst.aws.Function("FriendsStartWorker", {
+      runtime: "python3.14",
+      handler:
+        "src/jobs/process_with_friends_game_start.process_with_friends_game_start",
+      environment: {
+        ENVIRONMENT: $app.stage,
+        WITH_FRIENDS_GAME_TIMEOUT_QUEUE_URL: withFriendsGameTimeoutQueue.url,
+      },
+      permissions: [
+        ...databasePermissions,
+        withFriendsGameStartQueueReceivePermission,
+        withFriendsGameTimeoutQueueSendPermission,
+      ],
+    });
+    const friendsTimeoutWorker = new sst.aws.Function("FriendsTimeoutWorker", {
+      runtime: "python3.14",
+      handler:
+        "src/jobs/process_with_friends_game_timeout.process_with_friends_game_timeout",
+      environment: {
+        ENVIRONMENT: $app.stage,
+      },
+      permissions: [
+        ...databasePermissions,
+        withFriendsGameTimeoutQueueReceivePermission,
+      ],
     });
     const firebaseAuthorizer = api.addAuthorizer({
       name: "firebaseAuthorizer",
@@ -335,69 +422,18 @@ export default $config({
 
     new sst.aws.CronV2("DeleteExpiredAiGames", {
       schedule: "cron(0 0 * * ? *)",
-      function: {
-        runtime: "python3.14",
-        handler: "src/jobs/cleanup_expired_ai_games.cleanup_expired_ai_games",
-        environment: {
-          ENVIRONMENT: $app.stage,
-        },
-        permissions: databasePermissions,
-      },
+      function: cleanupAiGames,
     });
 
     new sst.aws.CronV2("DeleteExpiredWithFriendsGames", {
       schedule: "cron(0 0 1 * ? *)",
-      function: {
-        runtime: "python3.14",
-        handler:
-          "src/jobs/cleanup_expired_with_friends_games.cleanup_expired_with_friends_games",
-        environment: {
-          ENVIRONMENT: $app.stage,
-        },
-        permissions: databasePermissions,
-      },
+      function: cleanupFriendsGames,
     });
 
-    aiGameMoveQueue.subscribe({
-      handler: "src/jobs/process_ai_game_move.process_ai_game_move",
-      runtime: "python3.14",
-      environment: {
-        ENVIRONMENT: $app.stage,
-        AI_GAME_TIMEOUT_QUEUE_URL: aiGameTimeoutQueue.url,
-      },
-      permissions: [...databasePermissions, aiGameTimeoutQueueSendPermission],
-    });
-
-    aiGameTimeoutQueue.subscribe({
-      handler: "src/jobs/process_ai_game_timeout.process_ai_game_timeout",
-      runtime: "python3.14",
-      environment: {
-        ENVIRONMENT: $app.stage,
-      },
-      permissions: databasePermissions,
-    });
-
-    withFriendsGameStartQueue.subscribe({
-      handler: "src/jobs/process_with_friends_game_start.process_with_friends_game_start",
-      runtime: "python3.14",
-      environment: {
-        ENVIRONMENT: $app.stage,
-        WITH_FRIENDS_GAME_TIMEOUT_QUEUE_URL: withFriendsGameTimeoutQueue.url,
-      },
-      permissions: [
-        ...databasePermissions,
-        withFriendsGameTimeoutQueueSendPermission,
-      ],
-    });
-
-    withFriendsGameTimeoutQueue.subscribe({
-      handler: "src/jobs/process_with_friends_game_timeout.process_with_friends_game_timeout",
-      runtime: "python3.14",
-      environment: {
-        ENVIRONMENT: $app.stage,
-      },
-      permissions: databasePermissions,
-    });
+    aiGameMoveQueue.subscribe(aiMoveWorker);
+    aiGameTimeoutQueue.subscribe(aiTimeoutWorker);
+    withFriendsGameStartQueue.subscribe(friendsStartWorker);
+    withFriendsGameTimeoutQueue.subscribe(friendsTimeoutWorker);
 
     return {
       api: api.url,

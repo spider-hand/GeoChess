@@ -6,11 +6,15 @@
 
 declare module "sst" {
   export interface Resource {
+    "AiGameMove": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
     "AiGameMoveDLQ": {
       "type": "sst.aws.Queue"
       "url": string
     }
-    "AiGameMoveQueue": {
+    "AiGameTimeout": {
       "type": "sst.aws.Queue"
       "url": string
     }
@@ -18,27 +22,47 @@ declare module "sst" {
       "type": "sst.aws.Queue"
       "url": string
     }
-    "AiGameTimeoutQueue": {
-      "type": "sst.aws.Queue"
-      "url": string
+    "AiMoveWorker": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
+    "AiTimeoutWorker": {
+      "name": string
+      "type": "sst.aws.Function"
     }
     "Api": {
       "type": "sst.aws.ApiGatewayV2"
+      "url": string
+    }
+    "CleanupAiGames": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
+    "CleanupFriendsGames": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
+    "FriendsStartWorker": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
+    "FriendsTimeoutWorker": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
+    "WithFriendsGameStart": {
+      "type": "sst.aws.Queue"
       "url": string
     }
     "WithFriendsGameStartDLQ": {
       "type": "sst.aws.Queue"
       "url": string
     }
-    "WithFriendsGameStartQueue": {
+    "WithFriendsGameTimeout": {
       "type": "sst.aws.Queue"
       "url": string
     }
     "WithFriendsGameTimeoutDLQ": {
-      "type": "sst.aws.Queue"
-      "url": string
-    }
-    "WithFriendsGameTimeoutQueue": {
       "type": "sst.aws.Queue"
       "url": string
     }

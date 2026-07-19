@@ -4,34 +4,52 @@
 from typing import Any
 
 class Resource:
+    class AiGameMove:
+        type: str
+        url: str
     class AiGameMoveDLQ:
         type: str
         url: str
-    class AiGameMoveQueue:
+    class AiGameTimeout:
         type: str
         url: str
     class AiGameTimeoutDLQ:
         type: str
         url: str
-    class AiGameTimeoutQueue:
+    class AiMoveWorker:
+        name: str
         type: str
-        url: str
+    class AiTimeoutWorker:
+        name: str
+        type: str
     class Api:
         type: str
         url: str
     class App:
         name: str
         stage: str
+    class CleanupAiGames:
+        name: str
+        type: str
+    class CleanupFriendsGames:
+        name: str
+        type: str
+    class FriendsStartWorker:
+        name: str
+        type: str
+    class FriendsTimeoutWorker:
+        name: str
+        type: str
+    class WithFriendsGameStart:
+        type: str
+        url: str
     class WithFriendsGameStartDLQ:
         type: str
         url: str
-    class WithFriendsGameStartQueue:
+    class WithFriendsGameTimeout:
         type: str
         url: str
     class WithFriendsGameTimeoutDLQ:
-        type: str
-        url: str
-    class WithFriendsGameTimeoutQueue:
         type: str
         url: str
 

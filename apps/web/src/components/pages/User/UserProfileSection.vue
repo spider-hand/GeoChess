@@ -39,7 +39,8 @@ const deleteAccountErrorMessage = ref<string | null>(null);
 const canSaveProfile = computed(
   () =>
     displayName.value.trim().length > 0 &&
-    displayName.value.trim() !== username.value.trim(),
+    (displayName.value.trim() !== username.value.trim() ||
+      selectedCountry.value !== userCountry.value),
 );
 
 const startEditingProfile = () => {

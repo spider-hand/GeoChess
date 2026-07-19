@@ -141,22 +141,48 @@ it.each([
     .toBeDisabled();
 });
 
-it("should save the changed name and selected country", async () => {
-  const { getByRole } = renderUserProfileSection();
+it.each([
+  [
+    "the name and country change",
+    "  Updated name  ",
+    true,
+    "Updated name",
+    "US",
+  ],
+  ["only the name changes", "  Updated name  ", false, "Updated name", "JP"],
+  ["only the country changes", undefined, true, "Taylor Swift", "US"],
+])(
+  "should save when %s",
+  async (
+    _scenario,
+    displayName,
+    selectCountry,
+    expectedDisplayName,
+    country,
+  ) => {
+    const { getByRole } = renderUserProfileSection();
 
-  await getByRole("button", { name: "Edit Profile" }).click();
-  await getByRole("textbox").fill("  Updated name  ");
-  await getByRole("button", { name: "Select United States" }).click();
-  await getByRole("button", { name: "Save Changes" }).click();
+    await getByRole("button", { name: "Edit Profile" }).click();
 
-  expect(mocks.updateUserAsync).toHaveBeenCalledWith({
-    country: "US",
-    displayName: "Updated name",
-  });
-  await expect
-    .element(getByRole("button", { name: "Edit Profile" }))
-    .toBeVisible();
-});
+    if (displayName) {
+      await getByRole("textbox").fill(displayName);
+    }
+
+    if (selectCountry) {
+      await getByRole("button", { name: "Select United States" }).click();
+    }
+
+    await expect
+      .element(getByRole("button", { name: "Save Changes" }))
+      .toBeEnabled();
+    await getByRole("button", { name: "Save Changes" }).click();
+
+    expect(mocks.updateUserAsync).toHaveBeenCalledWith({
+      country,
+      displayName: expectedDisplayName,
+    });
+  },
+);
 
 it("should show an error and remain in edit mode when saving fails", async () => {
   mocks.updateUserAsync.mockRejectedValueOnce(new Error("Update failed"));

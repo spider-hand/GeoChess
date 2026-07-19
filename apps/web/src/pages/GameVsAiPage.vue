@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import confetti from "canvas-confetti";
+import { useQueryClient } from "@tanstack/vue-query";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -28,10 +29,11 @@ defineOptions({
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
+const queryClient = useQueryClient();
 const aiGameQuery = useAiGameQuery();
 const createAiGame = aiGameQuery.createAiGame;
 const createAiGameMove = aiGameQuery.createAiGameMove;
-const { username, userCountry } = useAuth();
+const { currentUser, username, userCountry } = useAuth();
 const gameId = computed(() =>
   typeof route.params.gameId === "string" ? route.params.gameId : null,
 );
@@ -129,6 +131,20 @@ watch(
     isSubmittingMove.value = false;
   },
 );
+
+watch(isFinished, (nextIsFinished) => {
+  if (!nextIsFinished) {
+    return;
+  }
+
+  queryClient.invalidateQueries({ queryKey: ["ai-games"] });
+
+  if (currentUser.value) {
+    queryClient.invalidateQueries({
+      queryKey: ["user", currentUser.value.uid],
+    });
+  }
+});
 
 watch(
   result,

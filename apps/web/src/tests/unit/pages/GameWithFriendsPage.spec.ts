@@ -3,6 +3,7 @@ import { render } from "vitest-browser-vue";
 import { computed, ref } from "vue";
 
 const mockConfetti = vi.fn();
+const mockQueryClient = { invalidateQueries: vi.fn() };
 const currentUser = ref<null | { uid: string; isAnonymous: boolean }>(null);
 const isCurrentUserLoaded = ref(true);
 const username = ref("Taylor Swift");
@@ -93,6 +94,17 @@ vi.mock("@/composables/useAiGameQuery", () => ({
 vi.mock("canvas-confetti", () => ({
   default: (...args: unknown[]) => mockConfetti(...args),
 }));
+
+vi.mock("@tanstack/vue-query", async () => {
+  const actual = await vi.importActual<typeof import("@tanstack/vue-query")>(
+    "@tanstack/vue-query",
+  );
+
+  return {
+    ...actual,
+    useQueryClient: () => mockQueryClient,
+  };
+});
 
 vi.mock("@/pages/HomePage.vue", () => ({
   default: {

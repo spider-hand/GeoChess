@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import confetti from "canvas-confetti";
+import { useQueryClient } from "@tanstack/vue-query";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -34,6 +35,7 @@ defineOptions({
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
+const queryClient = useQueryClient();
 const { currentUser, isCurrentUserLoaded, userCountry, username } = useAuth();
 const { createWithFriendsGame, createWithFriendsGameMove } =
   useWithFriendsGameQuery();
@@ -219,6 +221,14 @@ watch(
     isSubmittingMove.value = false;
   },
 );
+
+watch(isFinished, (nextIsFinished) => {
+  if (!nextIsFinished) {
+    return;
+  }
+
+  queryClient.invalidateQueries({ queryKey: ["with-friends-games"] });
+});
 
 watch(
   result,

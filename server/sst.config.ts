@@ -103,6 +103,7 @@ export default $config({
       resources: [withFriendsGameTimeoutQueue.arn],
     });
     const cleanupAiGames = new sst.aws.Function("CleanupAiGames", {
+      architecture: "arm64",
       runtime: "python3.14",
       handler: "src/jobs/cleanup_expired_ai_games.cleanup_expired_ai_games",
       environment: {
@@ -111,6 +112,7 @@ export default $config({
       permissions: databasePermissions,
     });
     const cleanupFriendsGames = new sst.aws.Function("CleanupFriendsGames", {
+      architecture: "arm64",
       runtime: "python3.14",
       handler:
         "src/jobs/cleanup_expired_with_friends_games.cleanup_expired_with_friends_games",
@@ -120,6 +122,7 @@ export default $config({
       permissions: databasePermissions,
     });
     const aiMoveWorker = new sst.aws.Function("AiMoveWorker", {
+      architecture: "arm64",
       runtime: "python3.14",
       handler: "src/jobs/process_ai_game_move.process_ai_game_move",
       environment: {
@@ -133,6 +136,7 @@ export default $config({
       ],
     });
     const aiTimeoutWorker = new sst.aws.Function("AiTimeoutWorker", {
+      architecture: "arm64",
       runtime: "python3.14",
       handler: "src/jobs/process_ai_game_timeout.process_ai_game_timeout",
       environment: {
@@ -141,6 +145,7 @@ export default $config({
       permissions: [...databasePermissions, aiGameTimeoutQueueReceivePermission],
     });
     const friendsStartWorker = new sst.aws.Function("FriendsStartWorker", {
+      architecture: "arm64",
       runtime: "python3.14",
       handler:
         "src/jobs/process_with_friends_game_start.process_with_friends_game_start",
@@ -155,6 +160,7 @@ export default $config({
       ],
     });
     const friendsTimeoutWorker = new sst.aws.Function("FriendsTimeoutWorker", {
+      architecture: "arm64",
       runtime: "python3.14",
       handler:
         "src/jobs/process_with_friends_game_timeout.process_with_friends_game_timeout",
@@ -170,6 +176,7 @@ export default $config({
       name: "firebaseAuthorizer",
       lambda: {
         function: {
+          architecture: "arm64",
           runtime: "python3.14",
           handler: "src/core/auth.lambda_handler",
           environment: {
@@ -190,6 +197,7 @@ export default $config({
     });
 
     api.route("GET /api/v1/health", {
+      architecture: "arm64",
       runtime: "python3.14",
       handler: "src/api/v1/health/handler.handler",
       environment: {
@@ -200,6 +208,7 @@ export default $config({
     api.route(
       "POST /api/v1/ai-games",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/ai_games/handler.create_ai_game",
         environment: {
@@ -223,6 +232,7 @@ export default $config({
     api.route(
       "GET /api/v1/ai-games",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/ai_games/handler.get_ai_games",
         environment: { ENVIRONMENT: $app.stage },
@@ -234,6 +244,7 @@ export default $config({
     api.route(
       "POST /api/v1/ai-games/{gameId}/moves",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/ai_games/moves/handler.create_ai_game_move",
         environment: {
@@ -257,6 +268,7 @@ export default $config({
     api.route(
       "GET /api/v1/users/{userId}",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/users/handler.get_user",
         environment: {
@@ -274,6 +286,7 @@ export default $config({
     api.route(
       "POST /api/v1/with-friends-games",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/with_friends_games/handler.create_with_friends_game",
         environment: {
@@ -291,6 +304,7 @@ export default $config({
     api.route(
       "GET /api/v1/with-friends-games",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/with_friends_games/handler.get_with_friends_games",
         environment: { ENVIRONMENT: $app.stage },
@@ -302,6 +316,7 @@ export default $config({
     api.route(
       "GET /api/v1/with-friends-games/stats",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/with_friends_games/handler.get_with_friends_game_stats",
         environment: { ENVIRONMENT: $app.stage },
@@ -313,6 +328,7 @@ export default $config({
     api.route(
       "POST /api/v1/with-friends-games/join",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/with_friends_games/join/handler.join_with_friends_game",
         environment: {
@@ -334,6 +350,7 @@ export default $config({
     api.route(
       "POST /api/v1/with-friends-games/{gameId}/moves",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/with_friends_games/moves/handler.create_with_friends_game_move",
         environment: {
@@ -355,6 +372,7 @@ export default $config({
     api.route(
       "GET /api/v1/users/me",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/users/handler.get_current_user",
         environment: {
@@ -372,6 +390,7 @@ export default $config({
     api.route(
       "POST /api/v1/users/me",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/users/handler.create_user",
         environment: {
@@ -389,6 +408,7 @@ export default $config({
     api.route(
       "PATCH /api/v1/users/me",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/users/handler.update_user",
         environment: {
@@ -406,6 +426,7 @@ export default $config({
     api.route(
       "DELETE /api/v1/users/me",
       {
+        architecture: "arm64",
         runtime: "python3.14",
         handler: "src/api/v1/users/handler.delete_user",
         environment: {

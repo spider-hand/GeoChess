@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import confetti from "canvas-confetti";
 import { useQueryClient } from "@tanstack/vue-query";
+import { LoaderCircle } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -405,6 +406,15 @@ const handleExit = async () => {
 
     <NavigationFooter />
   </main>
+  <main v-else class="game-page">
+    <NavigationHeader />
+
+    <section class="game-page__loader">
+      <LoaderCircle aria-hidden="true" :size="32" />
+    </section>
+
+    <NavigationFooter />
+  </main>
 </template>
 
 <style scoped>
@@ -430,6 +440,18 @@ const handleExit = async () => {
   width: min(100%, 1280px);
   margin: 0 auto;
   padding: var(--spacing-xl);
+}
+
+.game-page__loader {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+
+.game-page__loader svg {
+  animation: game-page-spin 1s linear infinite;
 }
 
 .game-page__top-row {
@@ -482,6 +504,12 @@ const handleExit = async () => {
   justify-content: center;
   gap: var(--spacing-md);
   width: 100%;
+}
+
+@keyframes game-page-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 960px) {

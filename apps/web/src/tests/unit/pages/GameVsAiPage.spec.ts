@@ -223,6 +223,22 @@ it("should render the active game layout for the default state", async () => {
   ).toBe("false");
 });
 
+it("should show a loader while the game is loading", async () => {
+  realtimeAiGame.value = null as never;
+  isLoadingRealtimeAiGame.value = true;
+
+  await router.push("/game/vs-ai/game-123");
+  await router.isReady();
+
+  const { container } = render(App, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  expect(container.querySelector(".game-page__loader")).not.toBeNull();
+});
+
 it("should render the finished loss layout with replay actions", async () => {
   realtimeAiGame.value = {
     ...realtimeAiGame.value,

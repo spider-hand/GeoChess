@@ -299,6 +299,22 @@ it("should render the active game layout for player1", async () => {
   ).toBe("false");
 });
 
+it("should show a loader while the game is loading", async () => {
+  realtimeWithFriendsGame.value = null as never;
+  isLoadingRealtimeWithFriendsGame.value = true;
+
+  await router.push("/game/with-friends/game-123");
+  await router.isReady();
+
+  const { container } = render(App, {
+    global: {
+      plugins: [createAppI18n(), router],
+    },
+  });
+
+  expect(container.querySelector(".game-page__loader")).not.toBeNull();
+});
+
 it.each(["waiting", "starting"] as const)(
   "should not show countdown timer, player matchup card, and turn status strip when the game is not active",
   async (status) => {

@@ -1,6 +1,8 @@
 # GeoChess
 
-A a fast-paced geography strategy game where you claim neighboring countries and outsmart your opponents
+[![CI](https://img.shields.io/github/actions/workflow/status/spider-hand/GeoChess/production.yml?label=CI)](https://github.com/spider-hand/GeoChess/actions/workflows/production.yml)
+
+A fast-paced geography strategy game where you claim neighboring countries and outsmart your opponents
 
 **[geochess.org](https://geochess.org/)**
 
@@ -39,7 +41,8 @@ Refer to the server setup guide for AWS SSO authentication and profile configura
 
 ## Credits
 
-Country data is provided by [REST Countries](https://restcountries.com/).
+- Country data is provided by [REST Countries](https://restcountries.com/).
+- Flag images are downloaded from [Flagpedia](https://flagpedia.net/).
 
 ## Contribution
 

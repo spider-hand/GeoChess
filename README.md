@@ -1,3 +1,5 @@
+<p align="center"> <img src="./apps/web/public/web-app-manifest-512x512.png" width="144" /> </p>
+
 # GeoChess
 
 [![CI](https://img.shields.io/github/actions/workflow/status/spider-hand/GeoChess/production.yml?label=CI)](https://github.com/spider-hand/GeoChess/actions/workflows/production.yml)
@@ -24,6 +26,7 @@ pnpm dev
 ```
 
 This starts:
+
 - Frontend development server
 - SST local development environment
 

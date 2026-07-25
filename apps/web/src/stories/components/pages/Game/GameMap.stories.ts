@@ -40,6 +40,18 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const ActiveGame: Story = {
+  args: {
+    markers: finishedMarkers,
+  },
+};
+
+export const ActiveMultiplayerGame: Story = {
+  args: {
+    markers: multiplayerFinishedMarkers,
+  },
+};
+
 export const FinishedState: Story = {
   args: {
     isFinished: true,

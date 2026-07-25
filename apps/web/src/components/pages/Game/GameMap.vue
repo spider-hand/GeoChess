@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
+import type { ExpressionSpecification, FilterSpecification } from "mapbox-gl";
 import { Bot } from "@lucide/vue";
 import {
   h,
@@ -34,6 +35,9 @@ const props = withDefaults(
 const mapElement = useTemplateRef("mapElement");
 const isMapReady = ref(false);
 let map: mapboxgl.Map | null = null;
+const countrySourceId = "game-map-countries";
+const countryFillLayerId = "game-map-country-fills";
+const countryOutlineLayerId = "game-map-country-outlines";
 const mapMarkers: Array<{
   marker: mapboxgl.Marker;
   cleanup: () => void;
@@ -43,21 +47,21 @@ const syncPlaceLabels = () => {
   map?.setConfigProperty("basemap", "showPlaceLabels", props.isFinished);
 };
 
-const syncCamera = () => {
+const syncCamera = (
+  marker: AiGameMapMarker | MultiplayerGameMapMarker | undefined,
+  shouldZoom = false,
+) => {
   if (map === null) {
     return;
   }
 
-  const startMarker = props.markers.find(
-    (marker) => marker.owner === "neutral",
-  );
-  if (!startMarker) {
+  if (!marker) {
     return;
   }
 
   const coordinates =
     countryCoordinates[
-      startMarker.countryCode.toUpperCase() as keyof typeof countryCoordinates
+      marker.countryCode.toUpperCase() as keyof typeof countryCoordinates
     ];
 
   if (!coordinates) {
@@ -66,9 +70,107 @@ const syncCamera = () => {
 
   map.easeTo({
     center: [coordinates.lng, coordinates.lat],
-    zoom: 3.5,
+    ...(shouldZoom ? { zoom: 3.5 } : {}),
     duration: 1500,
     essential: true,
+  });
+};
+
+const getCountryHighlightColor = (
+  marker: AiGameMapMarker | MultiplayerGameMapMarker,
+) =>
+  marker.owner === "player" || marker.owner === "neutral"
+    ? "#fcd535"
+    : "#2b3139";
+
+const createCountryColorExpression = (): ExpressionSpecification => [
+  "match",
+  ["get", "iso_3166_1"],
+  ...props.markers.flatMap((marker) => [
+    marker.countryCode.toUpperCase(),
+    getCountryHighlightColor(marker),
+  ]),
+  "rgba(0, 0, 0, 0)",
+];
+
+const createCurrentCountryOutlineWidthExpression =
+  (): ExpressionSpecification => [
+    "match",
+    ["get", "iso_3166_1"],
+    props.markers[props.markers.length - 1]?.countryCode.toUpperCase() ?? "",
+    4,
+    2,
+  ];
+
+const syncCountryHighlights = () => {
+  if (
+    map === null ||
+    !map.getLayer(countryFillLayerId) ||
+    !map.getLayer(countryOutlineLayerId)
+  ) {
+    return;
+  }
+
+  map.setPaintProperty(
+    countryFillLayerId,
+    "fill-color",
+    createCountryColorExpression(),
+  );
+  map.setPaintProperty(
+    countryOutlineLayerId,
+    "line-color",
+    createCountryColorExpression(),
+  );
+  map.setPaintProperty(
+    countryOutlineLayerId,
+    "line-width",
+    createCurrentCountryOutlineWidthExpression(),
+  );
+};
+
+const addCountryHighlightLayers = () => {
+  if (map === null || map.getSource(countrySourceId)) {
+    return;
+  }
+
+  map.addSource(countrySourceId, {
+    type: "vector",
+    url: "mapbox://mapbox.country-boundaries-v1",
+  });
+
+  // Mapbox has multiple boundary shapes for some countries.
+  // Use globally shared boundaries, or the US map version when multiple versions exist.
+  const filter: FilterSpecification = [
+    "all",
+    ["==", ["get", "disputed"], "false"],
+    [
+      "any",
+      ["==", "all", ["get", "worldview"]],
+      ["in", "US", ["get", "worldview"]],
+    ],
+  ];
+
+  map.addLayer({
+    id: countryFillLayerId,
+    type: "fill",
+    source: countrySourceId,
+    "source-layer": "country_boundaries",
+    filter,
+    paint: {
+      "fill-color": createCountryColorExpression(),
+      "fill-opacity": 0.28,
+    },
+  });
+  map.addLayer({
+    id: countryOutlineLayerId,
+    type: "line",
+    source: countrySourceId,
+    "source-layer": "country_boundaries",
+    filter,
+    paint: {
+      "line-color": createCountryColorExpression(),
+      "line-width": createCurrentCountryOutlineWidthExpression(),
+    },
   });
 };
 
@@ -170,30 +272,28 @@ onMounted(() => {
     },
   });
 
-  map.on("style.load", syncPlaceLabels);
+  map.on("style.load", () => {
+    addCountryHighlightLayers();
+    syncPlaceLabels();
+    syncCountryHighlights();
+  });
   isMapReady.value = true;
-  if (props.isFinished) {
-    syncMarkers();
-    syncCamera();
-  }
+  syncMarkers();
+  syncCamera(props.markers[0], true);
+  syncCountryHighlights();
 });
 
 watch(
-  [() => isMapReady.value, () => props.isFinished, () => props.markers],
+  [() => props.isFinished, () => props.markers],
   () => {
     if (!isMapReady.value) {
       return;
     }
 
     syncPlaceLabels();
-
-    if (!props.isFinished) {
-      removeMarkers();
-      return;
-    }
-
     syncMarkers();
-    syncCamera();
+    syncCamera(props.markers[props.markers.length - 1], props.isFinished);
+    syncCountryHighlights();
   },
   { deep: true, immediate: true },
 );

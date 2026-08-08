@@ -200,9 +200,9 @@ const handleSignUp = async () => {
   grid-template-columns: minmax(0, 1.4fr) minmax(280px, 440px);
   align-items: stretch;
   gap: var(--spacing-lg);
-  width: min(100%, 1440px);
+  width: min(100%, 1280px);
   margin: 0 auto;
-  padding: var(--spacing-xl);
+  padding: var(--spacing-xl) var(--spacing-lg);
 }
 
 .home-page__hero {
@@ -248,7 +248,7 @@ const handleSignUp = async () => {
 
 @media (max-width: 480px) {
   .home-page__content {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-md);
   }
 
   .home-page__hero {
